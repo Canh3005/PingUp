@@ -137,14 +137,14 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 -mt-10">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <ProfileCover coverImage={userCover} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-16 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Profile Info */}
-          <div className="lg:col-span-2">
-            <ProfileHeader 
+          <div className="lg:col-span-2 space-y-6">
+            <ProfileHeader
               userAvatar={userAvatar}
               userName={userName}
               userRole={userJobTitle}
@@ -152,25 +152,25 @@ const Profile = () => {
               onEditClick={handleEditProfile}
             />
             <AboutSection bio={profileData?.bio} />
+            <ProjectsSection projects={projects} />
             <PortfolioSection portfolioItems={portfolioItems} />
-            <ExperienceSection 
-              experiences={profileData?.experiences || []} 
+            <ExperienceSection
+              experiences={profileData?.experiences || []}
               onAddExperience={handleAddExperience}
               onEditExperience={handleEditExperience}
             />
-            <ProjectsSection projects={projects} />
             <ActivitySection activities={activities} />
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="lg:col-span-1">
-            <ContactSection 
+          <div className="lg:col-span-1 space-y-6">
+            <ContactSection
               website={profileData?.website}
               location={profileData?.location}
             />
             <SkillsSection skills={skills} />
-            <EducationSection 
-              education={profileData?.education || []} 
+            <EducationSection
+              education={profileData?.education || []}
               onAddEducation={handleAddEducation}
               onEditEducation={handleEditEducation}
             />

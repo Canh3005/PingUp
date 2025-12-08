@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Settings2, Palette, Image, Type, Grid3x3, Video, Code, Box, Workflow, Boxes, Pencil, Settings } from 'lucide-react';
+import { Image, Type, Grid3x3, Video, Code, Box, Workflow, Boxes, Pencil, Settings, Paperclip, Compass, ChevronLeft, Rocket } from 'lucide-react';
 import StylesModal from './sidebar/StylesModal';
 import SettingsModal from './sidebar/SettingsModal';
 import projectApi from '../../api/projectApi';
@@ -111,74 +111,99 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
         setProjectId={setProjectId}
       />
 
-      <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+      <div className="w-80 bg-white border-l border-gray-100 flex flex-col shadow-sm mt-8 rounded-l-2xl overflow-hidden">
+        {/* Header with Back Button */}
+        <div className="p-4 border-b border-gray-100 flex items-center gap-3">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all group"
+            title="Back to Explore"
+          >
+            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+            <Compass className="w-5 h-5" />
+          </button>
+          <div className="h-6 w-px bg-gray-200"></div>
+          <h2 className="font-bold text-gray-900">Project Editor</h2>
+        </div>
+
         {/* Add Content Section */}
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Add Content</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {contentTools.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <button
-                key={tool.type}
-                onClick={() => tool.type && addBlock(tool.type)}
-                className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-gray-900 hover:bg-gray-50 transition-all cursor-pointer group"
-              >
-                <Icon className="w-6 h-6 text-gray-700 mb-2 group-hover:text-gray-900" />
-                <span className="text-xs text-gray-700 text-center group-hover:text-gray-900">{tool.label}</span>
-              </button>
-            );
-          })}
+        <div className="p-5 border-b border-gray-100">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+              <Image className="w-4 h-4 text-blue-600" />
+            </div>
+            <h3 className="text-sm font-bold text-gray-900">Add Content</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {contentTools.map((tool) => {
+              const Icon = tool.icon;
+              return (
+                <button
+                  key={tool.type}
+                  onClick={() => tool.type && addBlock(tool.type)}
+                  className="flex flex-col items-center justify-center p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all cursor-pointer group"
+                >
+                  <Icon className="w-5 h-5 text-gray-500 mb-1.5 group-hover:text-blue-600 transition-colors" />
+                  <span className="text-xs text-gray-600 text-center group-hover:text-blue-700 font-medium">{tool.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Edit Project Section */}
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Edit Project</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {editTools.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <button
-                key={tool.label}
-                onClick={tool.onClick}
-                className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-gray-900 hover:bg-gray-50 transition-all cursor-pointer group"
-              >
-                <Icon className="w-6 h-6 text-gray-700 mb-2 group-hover:text-gray-900" />
-                <span className="text-xs text-gray-700 text-center group-hover:text-gray-900">{tool.label}</span>
-              </button>
-            );
-          })}
+        {/* Edit Project Section */}
+        <div className="p-5 border-b border-gray-100">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+              <Settings className="w-4 h-4 text-purple-600" />
+            </div>
+            <h3 className="text-sm font-bold text-gray-900">Edit Project</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {editTools.map((tool) => {
+              const Icon = tool.icon;
+              return (
+                <button
+                  key={tool.label}
+                  onClick={tool.onClick}
+                  className="flex flex-col items-center justify-center p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-purple-50 hover:border-purple-200 transition-all cursor-pointer group"
+                >
+                  <Icon className="w-5 h-5 text-gray-500 mb-1.5 group-hover:text-purple-600 transition-colors" />
+                  <span className="text-xs text-gray-600 text-center group-hover:text-purple-700 font-medium">{tool.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Custom Button Section */}
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">Custom Button</h3>
-        <p className="text-xs text-gray-500 mb-4">Customize the call to action on your project</p>
-      </div>
+        {/* Attach Assets Section */}
+        <div className="p-5 border-b border-gray-100">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
+              <Paperclip className="w-4 h-4 text-orange-600" />
+            </div>
+            <h3 className="text-sm font-bold text-gray-900">Attach Assets</h3>
+          </div>
+          <button className="w-full flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-orange-50 hover:border-orange-200 transition-all cursor-pointer group">
+            <Paperclip className="w-4 h-4 text-gray-500 group-hover:text-orange-600" />
+            <span className="text-sm text-gray-600 group-hover:text-orange-700 font-medium">Attach Files</span>
+          </button>
+          <p className="text-xs text-gray-400 mt-2 text-center leading-relaxed">
+            Add fonts, illustrations, photos, or templates as downloads.
+          </p>
+        </div>
 
-      {/* Attach Assets Section */}
-      <div className="p-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">Attach Assets</h3>
-        <button className="w-full flex items-center justify-center gap-2 p-4 border border-gray-200 rounded-lg hover:border-gray-900 hover:bg-gray-50 transition-all cursor-pointer group">
-          <span className="text-sm text-gray-700 group-hover:text-gray-900">📎 Attach Assets</span>
-        </button>
-        <p className="text-xs text-gray-500 mt-3 text-center">
-          Add files like fonts, illustrations, photos, zips, or templates as free or paid downloads.
-        </p>
-      </div>
-
-      {/* Continue Button */}
-      <div className="mt-auto p-6">
-        <button 
-          onClick={handleContinue}
-          disabled={isLoading}
-          className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Publishing...' : 'Continue'}
-        </button>
-      </div>
+        {/* Publish Button */}
+        <div className="mt-auto p-5">
+          <button
+            onClick={handleContinue}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-medium shadow-lg shadow-blue-600/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+          >
+            <Rocket className="w-4 h-4" />
+            {isLoading ? 'Publishing...' : 'Publish Project'}
+          </button>
+        </div>
       </div>
     </>
   );

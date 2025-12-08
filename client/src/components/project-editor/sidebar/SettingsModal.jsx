@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Upload } from 'lucide-react';
+import { X, Upload, Settings, ImagePlus, FileText, Tag, Folder, Wrench, Eye, Rocket, Save } from 'lucide-react';
 import projectApi from '../../../api/projectApi';
 import uploadApi from '../../../api/uploadApi';
 import { uploadBlocks } from '../../../utils/uploadBlocks';
@@ -208,26 +208,38 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl w-[900px] max-h-[90vh] overflow-y-auto m-4">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Project Settings</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-gray-600" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-[900px] max-h-[90vh] overflow-y-auto m-4">
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+              <Settings className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Project Settings</h2>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
         <div className="flex">
           {/* Left Column - Cover Image */}
-          <div className="w-[350px] p-6 border-r border-gray-200">
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
-              Project Cover <span className="text-red-500">(required)</span>
-            </label>
-            
+          <div className="w-[350px] p-6 border-r border-gray-100 bg-gray-50/50">
+            <div className="flex items-center gap-2 mb-3">
+              <ImagePlus className="w-4 h-4 text-blue-600" />
+              <label className="text-sm font-semibold text-gray-900">
+                Project Cover <span className="text-red-500">*</span>
+              </label>
+            </div>
+
             {!formData.coverImagePreview ? (
-              <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors">
-                <Upload className="w-12 h-12 text-blue-600 mb-3" />
-                <span className="text-blue-600 font-semibold mb-1">Upload Image</span>
+              <label className="border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition-all group">
+                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                  <Upload className="w-8 h-8 text-blue-600" />
+                </div>
+                <span className="text-blue-600 font-semibold mb-1">Upload Cover Image</span>
+                <span className="text-xs text-gray-400">Click to browse</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -236,35 +248,38 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
                 />
               </label>
             ) : (
-              <div className="relative">
-                <img 
-                  src={formData.coverImagePreview} 
-                  alt="Cover preview" 
-                  className="w-full h-auto rounded-lg"
+              <div className="relative group">
+                <img
+                  src={formData.coverImagePreview}
+                  alt="Cover preview"
+                  className="w-full h-auto rounded-2xl shadow-lg"
                 />
                 <button
                   onClick={() => setFormData(prev => ({ ...prev, coverImage: null, coverImagePreview: null }))}
-                  className="absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md hover:bg-gray-100"
+                  className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
                 >
                   <X className="w-4 h-4 text-gray-700" />
                 </button>
               </div>
             )}
-            
-            <p className="text-xs text-gray-500 mt-2">
-              Minimum size of "808 x 632px"<br/>
-              GIF files will not animate.
+
+            <p className="text-xs text-gray-400 mt-3 text-center">
+              Minimum size: 808 x 632px<br/>
+              GIF files will not animate
             </p>
           </div>
 
           {/* Right Column - Project Information */}
-          <div className="flex-1 p-6 h-full">
-            <h3 className="text-sm font-bold text-gray-900 mb-4 bg-white pb-2">PROJECT INFORMATION</h3>
+          <div className="flex-1 p-6">
+            <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
+              <FileText className="w-4 h-4 text-gray-500" />
+              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Project Information</h3>
+            </div>
 
             {/* Title */}
-            <div className="mb-4">
+            <div className="mb-5">
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Title <span className="text-red-500">(required)</span>
+                Title <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -272,12 +287,12 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Give your project a title"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
               />
             </div>
 
             {/* Description */}
-            <div className="mb-4">
+            <div className="mb-5">
               <label className="block text-sm font-semibold text-gray-900 mb-2">
                 Description
               </label>
@@ -287,71 +302,83 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
                 onChange={handleInputChange}
                 placeholder="Add a short description for your project"
                 rows="3"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all resize-none"
               />
             </div>
 
             {/* Tags */}
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Tags <span className="text-gray-500">(limit of 10)</span>
-              </label>
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Tag className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-gray-900">
+                  Tags <span className="text-gray-400 font-normal">(limit of 10)</span>
+                </label>
+              </div>
               <input
                 type="text"
                 name="tags"
                 value={formData.tags}
                 onChange={handleInputChange}
-                placeholder="Add up to 10 keywords to help people discover your project"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                placeholder="Add keywords separated by commas"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
               />
             </div>
 
             {/* Category */}
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Category <span className="text-red-500">(required, limit of 3)</span>
-              </label>
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Folder className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-gray-900">
+                  Category <span className="text-red-500">*</span> <span className="text-gray-400 font-normal">(limit of 3)</span>
+                </label>
+              </div>
               <input
                 type="text"
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                placeholder="How Would You Categorize This Project?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                placeholder="How would you categorize this project?"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
               />
             </div>
 
             {/* Tools Used */}
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Tools Used
-              </label>
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Wrench className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-gray-900">
+                  Tools Used
+                </label>
+              </div>
               <input
                 type="text"
                 name="toolsUsed"
                 value={formData.toolsUsed}
                 onChange={handleInputChange}
                 placeholder="What software, hardware, or materials did you use?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
               />
             </div>
 
-            {/* Behance Visibility */}
+            {/* Visibility */}
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Visibility <span className="text-red-500">(required)</span>
-              </label>
+              <div className="flex items-center gap-2 mb-2">
+                <Eye className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-gray-900">
+                  Visibility <span className="text-red-500">*</span>
+                </label>
+              </div>
               <select
                 name="visibility"
                 value={formData.visibility}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all appearance-none cursor-pointer"
               >
                 <option value="everyone">Everyone</option>
                 <option value="connections">Connections Only</option>
                 <option value="private">Private</option>
               </select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-400 mt-2">
                 Fully accessible and discoverable to anyone
               </p>
             </div>
@@ -359,26 +386,28 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
         </div>
 
         {/* Footer Buttons */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3">
+        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-100 px-6 py-4 flex items-center justify-end gap-3">
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 text-gray-700 hover:bg-gray-200 rounded-xl transition-colors font-medium disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSaveAsDraft}
             disabled={isLoading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium disabled:opacity-50 shadow-sm"
           >
+            <Save className="w-4 h-4" />
             {isLoading ? 'Saving...' : 'Save as Draft'}
           </button>
           <button
             onClick={handlePublish}
             disabled={isLoading}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-medium disabled:opacity-50 shadow-lg shadow-green-600/25"
           >
+            <Rocket className="w-4 h-4" />
             {isLoading ? 'Publishing...' : 'Publish'}
           </button>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ThumbsUp, Eye, MessageCircle, UserPlus, Mail, Trash2 } from 'lucide-react';
+import { Heart, Eye, MessageCircle, UserPlus, Mail, Trash2, Send, MapPin, Calendar, Tag } from 'lucide-react';
 import projectApi from '../../api/projectApi';
 import { useAuth } from '../../context/authContext';
 
@@ -34,8 +34,7 @@ const ProjectComments = ({ project, projectId }) => {
       setIsSubmitting(true);
       const response = await projectApi.addComment(projectId, comment);
       console.log('Posted comment response:', response);
-      
-      // Add new comment to the top
+
       setComments([response.data, ...comments]);
       setComment('');
     } catch (error) {
@@ -59,14 +58,13 @@ const ProjectComments = ({ project, projectId }) => {
   const handleLikeComment = async (commentId) => {
     try {
       const response = await projectApi.toggleCommentLike(commentId);
-      
-      // Update comment like state
-      setComments(comments.map(c => 
-        c._id === commentId 
-          ? { 
-              ...c, 
-              likes: response.data.isLiked 
-                ? [...c.likes, user.id] 
+
+      setComments(comments.map(c =>
+        c._id === commentId
+          ? {
+              ...c,
+              likes: response.data.isLiked
+                ? [...c.likes, user.id]
                 : c.likes.filter(id => id !== user.id),
               likesCount: response.data.likesCount
             }
@@ -82,7 +80,7 @@ const ProjectComments = ({ project, projectId }) => {
     const now = new Date();
     const diffInMs = now - date;
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'today';
     if (diffInDays === 1) return 'a day ago';
     if (diffInDays < 7) return `${diffInDays} days ago`;
@@ -90,34 +88,53 @@ const ProjectComments = ({ project, projectId }) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
+  const tagColors = [
+    'bg-blue-50 text-blue-700 border-blue-100',
+    'bg-purple-50 text-purple-700 border-purple-100',
+    'bg-green-50 text-green-700 border-green-100',
+    'bg-orange-50 text-orange-700 border-orange-100',
+    'bg-pink-50 text-pink-700 border-pink-100',
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 bg-white">
+    <div className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-b from-slate-50 to-white rounded-t-3xl">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Comments Section - Left 2/3 */}
         <div className="lg:col-span-2">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-blue-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Comments</h2>
+            <span className="px-2.5 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 font-medium">
+              {comments.length}
+            </span>
+          </div>
+
           {/* Comment Input */}
           <form onSubmit={handleSubmitComment} className="mb-8">
             <div className="flex gap-4">
               <img
-                src={user?.profile?.avatarUrl || 'https://via.placeholder.com/40'}
+                src={user?.profile?.avatarUrl || user?.imageUrl || 'https://via.placeholder.com/40'}
                 alt="Current user"
-                className="w-10 h-10 rounded-full"
+                className="w-11 h-11 rounded-xl object-cover ring-2 ring-gray-100"
               />
               <div className="flex-1">
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="What are your thoughts on this project?"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
+                  placeholder="Share your thoughts on this project..."
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none transition-all"
                   rows="3"
                 />
-                <div className="flex justify-end mt-2">
+                <div className="flex justify-end mt-3">
                   <button
                     type="submit"
                     disabled={!comment.trim() || isSubmitting}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-600/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none font-medium"
                   >
-                    {isSubmitting ? 'Posting...' : 'Post a Comment'}
+                    <Send className="w-4 h-4" />
+                    {isSubmitting ? 'Posting...' : 'Post Comment'}
                   </button>
                 </div>
               </div>
@@ -126,50 +143,63 @@ const ProjectComments = ({ project, projectId }) => {
 
           {/* Comments List */}
           {isLoading ? (
-            <div className="text-center text-gray-500 py-8">Loading comments...</div>
+            <div className="text-center py-12">
+              <div className="w-10 h-10 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading comments...</p>
+            </div>
           ) : comments.length === 0 ? (
-            <div className="text-center text-gray-500 py-8">No comments yet. Be the first to comment!</div>
+            <div className="text-center py-12 bg-gray-50 rounded-2xl">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <MessageCircle className="w-8 h-8 text-gray-300" />
+              </div>
+              <p className="text-gray-500 font-medium">No comments yet</p>
+              <p className="text-gray-400 text-sm mt-1">Be the first to share your thoughts!</p>
+            </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4">
               {comments.map((commentItem) => (
-                <div key={commentItem._id} className="flex gap-4">
+                <div key={commentItem._id} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 transition-all group">
                   <img
                     src={commentItem.author?.profile?.avatarUrl || commentItem.author?.imageUrl || 'https://via.placeholder.com/40'}
                     alt={commentItem.author?.profile?.name || commentItem.author?.userName}
-                    className="w-10 h-10 rounded-full"
+                    className="w-11 h-11 rounded-xl object-cover ring-2 ring-gray-100"
                   />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-900">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <h4 className="font-semibold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors">
                         {commentItem.author?.profile?.name || commentItem.author?.userName}
                       </h4>
                       {commentItem.author?.profile?.jobTitle && (
-                        <span className="text-sm text-gray-500">· {commentItem.author.profile.jobTitle}</span>
+                        <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-lg">
+                          {commentItem.author.profile.jobTitle}
+                        </span>
                       )}
-                      <span className="text-sm text-gray-500">· {formatDate(commentItem.createdAt)}</span>
+                      <span className="text-xs text-gray-400">{formatDate(commentItem.createdAt)}</span>
                       {user && commentItem.author?._id === user.id && (
                         <button
                           onClick={() => handleDeleteComment(commentItem._id)}
-                          className="ml-auto text-red-500 hover:text-red-700"
+                          className="ml-auto p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
-                    <p className="text-gray-700 mb-2">{commentItem.content}</p>
-                    <div className="flex items-center gap-4 text-sm">
+                    <p className="text-gray-700 mb-3 leading-relaxed">{commentItem.content}</p>
+                    <div className="flex items-center gap-4">
                       <button
                         onClick={() => handleLikeComment(commentItem._id)}
-                        className={`flex items-center gap-1 ${
-                          commentItem.likes?.includes(user?.id) 
-                            ? 'text-blue-600' 
-                            : 'text-gray-500 hover:text-blue-600'
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                          commentItem.likes?.includes(user?.id)
+                            ? 'bg-red-50 text-red-600'
+                            : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
                         }`}
                       >
-                        <ThumbsUp className="w-4 h-4" />
-                        <span>{commentItem.likesCount || commentItem.likes?.length || 0}</span>
+                        <Heart className={`w-4 h-4 ${commentItem.likes?.includes(user?.id) ? 'fill-current' : ''}`} />
+                        <span className="text-sm font-medium">{commentItem.likesCount || commentItem.likes?.length || 0}</span>
                       </button>
-                      <button className="text-gray-500 hover:text-gray-700">Reply</button>
+                      <button className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-500 hover:bg-gray-100 rounded-lg transition-all text-sm font-medium">
+                        Reply
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -179,98 +209,86 @@ const ProjectComments = ({ project, projectId }) => {
         </div>
 
         {/* Sidebar - Right 1/3 */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
           {/* Owner Card */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="text-sm font-bold text-gray-700 mb-4">OWNER</h3>
-            <div className="flex items-center gap-3 mb-4">
-              <img
-                src={project.owner?.profile?.avatarUrl || 'https://via.placeholder.com/60'}
-                alt={project.owner?.profile?.name || 'User'}
-                className="w-12 h-12 rounded-full"
-              />
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Project Owner</span>
+            </div>
+            <div className="flex items-center gap-4 mb-5">
+              <div className="relative">
+                <img
+                  src={project.owner?.profile?.avatarUrl || project.owner?.imageUrl || 'https://via.placeholder.com/60'}
+                  alt={project.owner?.profile?.name || 'User'}
+                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-gray-100"
+                />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-lg border-2 border-white"></div>
+              </div>
               <div>
-                <h4 className="font-bold text-gray-900">{project.owner?.profile?.name || 'Unknown User'}</h4>
-                <p className="text-sm text-gray-600">{project.owner?.profile?.location || 'Seoul, Korea, Republic of'}</p>
+                <h4 className="font-bold text-gray-900">{project.owner?.profile?.name || project.owner?.userName || 'Unknown User'}</h4>
+                {project.owner?.profile?.location && (
+                  <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3" />
+                    {project.owner.profile.location}
+                  </p>
+                )}
               </div>
             </div>
-            <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mb-2 flex items-center justify-center gap-2 cursor-pointer">
-              <UserPlus className="w-4 h-4" />
-              Follow
-            </button>
-            <button className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-              <Mail className="w-4 h-4" />
-              Message
-            </button>
+            <div className="flex gap-2">
+              <button className="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 font-medium">
+                <UserPlus className="w-4 h-4" />
+                Follow
+              </button>
+              <button className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all">
+                <Mail className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Project Stats */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="font-bold text-gray-900 mb-2">{project.title}</h3>
-            <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-              <div className="flex items-center gap-1">
-                <ThumbsUp className="w-4 h-4" />
-                <span>{project.likes?.length || 86}</span>
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+            <h3 className="font-bold text-gray-900 mb-4 line-clamp-2">{project.title}</h3>
+            <div className="grid grid-cols-3 gap-3 mb-5">
+              <div className="text-center p-3 bg-red-50 rounded-xl">
+                <Heart className="w-4 h-4 text-red-500 mx-auto mb-1" />
+                <span className="block font-bold text-gray-900">{project.likes?.length || 0}</span>
+                <span className="text-xs text-gray-500">Likes</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Eye className="w-4 h-4" />
-                <span>{project.views || 531}</span>
+              <div className="text-center p-3 bg-blue-50 rounded-xl">
+                <Eye className="w-4 h-4 text-blue-500 mx-auto mb-1" />
+                <span className="block font-bold text-gray-900">{project.views || 0}</span>
+                <span className="text-xs text-gray-500">Views</span>
               </div>
-              <div className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4" />
-                <span>{comments.length}</span>
+              <div className="text-center p-3 bg-green-50 rounded-xl">
+                <MessageCircle className="w-4 h-4 text-green-500 mx-auto mb-1" />
+                <span className="block font-bold text-gray-900">{comments.length}</span>
+                <span className="text-xs text-gray-500">Comments</span>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
-              Published: {project.publishedAt ? new Date(project.publishedAt).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              }) : 'September 5th 2025'}
-            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Calendar className="w-4 h-4" />
+              <span>
+                Published {project.publishedAt ? new Date(project.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }) : 'Not published'}
+              </span>
+            </div>
           </div>
-
-          {/* Creative Fields */}
-          {project.category && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-              <h3 className="text-sm font-bold text-gray-700 mb-4">CREATIVE FIELDS</h3>
-              <div className="space-y-2">
-                <div 
-                  className="relative h-24 rounded-lg overflow-hidden bg-cover bg-center"
-                  style={{ backgroundImage: 'url(https://via.placeholder.com/400x100/8B5CF6/FFFFFF?text=Toy+Design)' }}
-                >
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                    <span className="text-white font-bold">Toy Design</span>
-                  </div>
-                </div>
-                <div 
-                  className="relative h-24 rounded-lg overflow-hidden bg-cover bg-center"
-                  style={{ backgroundImage: 'url(https://via.placeholder.com/400x100/6B7280/FFFFFF?text=Character+Design)' }}
-                >
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                    <span className="text-white font-bold">Character Design</span>
-                  </div>
-                </div>
-                <div 
-                  className="relative h-24 rounded-lg overflow-hidden bg-cover bg-center"
-                  style={{ backgroundImage: 'url(https://via.placeholder.com/400x100/DC2626/FFFFFF?text=3D+Modeling)' }}
-                >
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                    <span className="text-white font-bold">3D Modeling</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Tags */}
           {project.tags && project.tags.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-2 mb-4">
+                <Tag className="w-4 h-4 text-gray-400" />
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Tags</span>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag, index) => (
-                  <span 
+                  <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 cursor-pointer"
+                    className={`px-3 py-1.5 rounded-xl text-sm font-medium border cursor-pointer hover:scale-105 transition-transform ${tagColors[index % tagColors.length]}`}
                   >
                     {tag}
                   </span>

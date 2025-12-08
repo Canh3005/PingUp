@@ -77,48 +77,41 @@ const FeedCategories = () => {
   const [activeCategory, setActiveCategory] = useState('for-you');
 
   return (
-    <div className="sticky top-[122px] z-20 bg-white border-b border-gray-200">
-      <div className="w-full px-6">
-        <div className="flex items-center justify-between gap-4 py-4">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            {categories.map((category) => {
+    <div className="sticky top-[141px] z-20 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <div className="w-full px-6 overflow-x-auto scrollbar-hide scroll-smooth">
+        <div className="flex items-center gap-3 py-4 px-1">
+          {categories.map((category) => {
             const Icon = category.icon;
             const isActive = activeCategory === category.id;
-            
+
             return (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`relative overflow-hidden flex items-center gap-2 px-7 py-3 rounded-lg whitespace-nowrap transition-colors cursor-pointer text-white ${
+                className={`relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-xl whitespace-nowrap transition-all duration-300 ${
                   isActive
-                    ? ''
-                    : 'hover:brightness-110'
+                    ? 'ring-2 ring-blue-500 ring-offset-2 shadow-lg scale-105'
+                    : 'hover:scale-105 hover:shadow-md'
                 }`}
-                style={
-                  category.bgImage
-                    ? isActive
-                      ? {
-                          backgroundImage: `linear-gradient(rgba(15, 79, 226, 0.7), rgba(13, 73, 211, 0.7)), url(${category.bgImage})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }
-                      : {
-                          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${category.bgImage})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }
-                    : {}
-                }
+                style={{
+                  backgroundImage: isActive
+                    ? `linear-gradient(135deg, rgba(59, 130, 246, 0.85), rgba(99, 102, 241, 0.85)), url(${category.bgImage})`
+                    : `linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${category.bgImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
               >
-                {Icon && <Icon className="w-4 h-4 relative z-10" />}
-                <span className="text-sm font-medium relative z-10">{category.label}</span>
+                {Icon && <Icon className="w-4 h-4 text-white relative z-10" />}
+                <span className="text-sm font-medium text-white relative z-10">{category.label}</span>
               </button>
             );
           })}
-          <button className="flex items-center gap-1 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-            <ChevronRight className="w-4 h-4" />
+
+          {/* See More Button */}
+          <button className="flex items-center gap-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all whitespace-nowrap">
+            <span className="text-sm font-medium text-gray-700">More</span>
+            <ChevronRight className="w-4 h-4 text-gray-500" />
           </button>
-          </div>
         </div>
       </div>
     </div>

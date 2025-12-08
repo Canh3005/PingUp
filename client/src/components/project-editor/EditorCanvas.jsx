@@ -9,14 +9,14 @@ const EditorCanvas = ({ blocks, updateBlock, deleteBlock, moveBlock, addBlock, b
   const [hoveredBlockId, setHoveredBlockId] = useState(null);
 
   const handleAddBlockAfter = (type) => {
-    setHoveredBlockId(null); // Hide immediately
+    setHoveredBlockId(null);
     addBlock(type);
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div 
-        className="max-w-7xl mx-auto py-12 border-l border-gray-200 border-r min-h-screen"
+    <div className="flex-1 overflow-y-auto bg-gray-100/50">
+      <div
+        className="max-w-6xl mx-auto my-8 rounded-2xl shadow-xl border border-gray-200/50 min-h-[calc(100vh-6rem)] overflow-hidden"
         style={{ backgroundColor }}
       >
         {/* Blocks */}
@@ -55,7 +55,7 @@ const EditorCanvas = ({ blocks, updateBlock, deleteBlock, moveBlock, addBlock, b
                   {blockElement}
                   {isLast && hoveredBlockId === block.id && (
                     <div
-                      className="relative"
+                      className="relative px-4"
                       onMouseLeave={() => setHoveredBlockId(null)}
                     >
                       <BlockOptions onSelectBlock={handleAddBlockAfter} />
@@ -63,9 +63,11 @@ const EditorCanvas = ({ blocks, updateBlock, deleteBlock, moveBlock, addBlock, b
                   )}
                   {isLast && hoveredBlockId !== block.id && (
                     <div
-                      className="h-12"
+                      className="h-16 flex items-center justify-center"
                       onMouseEnter={() => setHoveredBlockId(block.id)}
-                    />
+                    >
+                      <div className="w-12 h-1 bg-gray-200 rounded-full hover:bg-blue-300 transition-colors"></div>
+                    </div>
                   )}
                 </div>
               );

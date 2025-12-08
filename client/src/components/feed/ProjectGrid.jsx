@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Eye, MessageCircle } from 'lucide-react';
+import { Heart, Eye, Bookmark, Play } from 'lucide-react';
 import projectApi from '../../api/projectApi';
 
 const ProjectCard = ({ project, onClick }) => {
@@ -7,27 +7,46 @@ const ProjectCard = ({ project, onClick }) => {
     onClick(project._id);
   };
 
+  const formatCount = (count) => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count || 0;
+  };
+
   return (
     <div className="group cursor-pointer" onClick={handleClick}>
       {/* Project Image */}
-      <div className="relative aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden mb-3">
+      <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-3 shadow-sm hover:shadow-xl transition-all duration-300">
         <img
           src={project.coverImage || 'https://via.placeholder.com/600x400?text=No+Cover+Image'}
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
+
+        {/* Top Actions */}
+        <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <button
+            onClick={(e) => { e.stopPropagation(); }}
+            className="p-2 bg-white/90 backdrop-blur-sm rounded-xl hover:bg-white hover:scale-110 transition-all shadow-lg"
+          >
+            <Bookmark className="w-4 h-4 text-gray-700" />
+          </button>
+        </div>
+
+        {/* Bottom Stats */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <div className="flex items-center justify-between text-white">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />
-                <span className="text-sm">{project.likes?.length >= 1000 ? `${(project.likes.length / 1000).toFixed(1)}K` : project.likes?.length || 0}</span>
+                <span className="text-sm font-medium">{formatCount(project.likes?.length)}</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4" />
-                <span className="text-sm">{project.views >= 1000 ? `${(project.views / 1000).toFixed(1)}K` : project.views || 0}</span>
+                <span className="text-sm font-medium">{formatCount(project.views)}</span>
               </div>
             </div>
           </div>
@@ -35,21 +54,26 @@ const ProjectCard = ({ project, onClick }) => {
       </div>
 
       {/* Project Info */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-            {project.title}
-          </h3>
-          <p className="text-xs text-gray-600 truncate mt-1">{project.owner?.userName || 'Anonymous'}</p>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500 shrink-0">
-          <div className="flex items-center gap-1">
-            <Heart className="w-3.5 h-3.5" />
-            <span>{project.likes?.length >= 1000 ? `${(project.likes.length / 1000).toFixed(1)}K` : project.likes?.length || 0}</span>
+      <div className="px-1">
+        <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+          {project.title}
+        </h3>
+        <div className="flex items-center justify-between mt-1.5">
+          <div className="flex items-center gap-2">
+            {project.owner?.imageUrl && (
+              <img
+                src={project.owner.imageUrl}
+                alt={project.owner?.userName}
+                className="w-5 h-5 rounded-full object-cover ring-1 ring-gray-200"
+              />
+            )}
+            <p className="text-xs text-gray-500 truncate">{project.owner?.userName || 'Anonymous'}</p>
           </div>
-          <div className="flex items-center gap-1">
-            <Eye className="w-3.5 h-3.5" />
-            <span>{project.views >= 1000 ? `${(project.views / 1000).toFixed(1)}K` : project.views || 0}</span>
+          <div className="flex items-center gap-2 text-xs text-gray-400">
+            <span className="flex items-center gap-1">
+              <Heart className="w-3 h-3" />
+              {formatCount(project.likes?.length)}
+            </span>
           </div>
         </div>
       </div>
@@ -100,10 +124,11 @@ const ProjectGrid = ({ onProjectClick }) => {
 
   if (isLoading && projects.length === 0) {
     return (
-      <div className="bg-gray-50 min-h-screen py-4 mt-6">
+      <div className="min-h-screen py-6">
         <div className="w-full px-6">
-          <div className="flex justify-center items-center py-20">
-            <div className="text-gray-500">Loading projects...</div>
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500 font-medium">Loading amazing projects...</p>
           </div>
         </div>
       </div>
@@ -111,18 +136,15 @@ const ProjectGrid = ({ onProjectClick }) => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-4 mt-6">
+    <div className="min-h-screen py-6">
       <div className="w-full px-6">
-        {/* Personalize Feed Button */}
-        <div className="flex justify-start mb-4">
-          <div className="flex items-center gap-2 text-sm text-black">
-            <span className="font-medium">Recommended for you</span>
-          </div>
-        </div>
-
         {projects.length === 0 ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="text-gray-500">No projects found</div>
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Eye className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-gray-500 font-medium">No projects found</p>
+            <p className="text-sm text-gray-400 mt-1">Check back later for new content</p>
           </div>
         ) : (
           <>
@@ -136,9 +158,9 @@ const ProjectGrid = ({ onProjectClick }) => {
             {/* Load More */}
             {hasMore && (
               <div className="flex justify-center mt-12">
-                <button 
+                <button
                   onClick={loadMore}
-                  className="px-8 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700 cursor-pointer"
+                  className="px-8 py-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all font-medium text-gray-700"
                 >
                   Load More Projects
                 </button>
