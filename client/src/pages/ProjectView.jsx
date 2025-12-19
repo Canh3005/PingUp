@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ChevronUp } from 'lucide-react';
 import projectApi from '../api/projectApi';
+import followApi from '../api/followApi';
 import ProjectHeader from '../components/project-view/ProjectHeader';
 import ProjectSidebar from '../components/project-view/ProjectSidebar';
 import ProjectContent from '../components/project-view/ProjectContent';
@@ -17,6 +18,8 @@ const ProjectView = ({ projectId, onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const isOwnProject = user?._id === project?.owner?._id;
 
   useEffect(() => {
@@ -46,12 +49,36 @@ const ProjectView = ({ projectId, onClose }) => {
     };
   }, [projectId]);
 
+  // Check follow status
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (user && project?.owner?._id && !isOwnProject) {
+        try {
+          const response = await followApi.checkFollowStatus(project.owner._id);
+          if (response.success) {
+            setIsFollowing(response.data.isFollowing);
+          }
+        } catch (error) {
+          console.error('Error checking follow status:', error);
+        }
+      }
+    };
+    checkFollowStatus();
+  }, [user, project?.owner?._id, isOwnProject]);
+
   const handleScroll = (e) => {
     setShowScrollTop(e.target.scrollTop > 500);
   };
 
   const scrollToTop = () => {
     document.querySelector('.project-view-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToComments = () => {
+    const commentsSection = document.getElementById('project-comments');
+    if (commentsSection) {
+      commentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleBackdropClick = (e) => {
@@ -73,6 +100,29 @@ const ProjectView = ({ projectId, onClose }) => {
       }));
     } catch (error) {
       console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    if (isFollowLoading || !user) return;
+    
+    try {
+      setIsFollowLoading(true);
+      if (isFollowing) {
+        const response = await followApi.unfollowUser(project.owner._id);
+        if (response.success) {
+          setIsFollowing(false);
+        }
+      } else {
+        const response = await followApi.followUser(project.owner._id);
+        if (response.success) {
+          setIsFollowing(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
@@ -124,15 +174,36 @@ const ProjectView = ({ projectId, onClose }) => {
         ) : (
           <div className="bg-gradient-to-b from-black/40 to-black/60" onClick={(e) => e.stopPropagation()}>
             <ProjectHeader project={project} isOwnProject={isOwnProject} />
-            <ProjectSidebar project={project} onLike={handleLike} isOwnProject={isOwnProject} />
+            <ProjectSidebar 
+              project={project} 
+              onLike={handleLike} 
+              isOwnProject={isOwnProject}
+              isFollowing={isFollowing}
+              isFollowLoading={isFollowLoading}
+              onFollowToggle={handleFollowToggle}
+              onCommentClick={scrollToComments}
+            />
 
             <div className="max-w-7xl mx-auto">
               <ProjectContent project={project}/>
             </div>
 
             <ProjectFooter project={project} onLike={handleLike} isOwnProject={isOwnProject} />
-            <ProjectAuthorWorks project={project} isOwnProject={isOwnProject} />
-            <ProjectComments project={project} projectId={projectId} isOwnProject={isOwnProject} />
+            <ProjectAuthorWorks 
+              project={project} 
+              isOwnProject={isOwnProject}
+              isFollowing={isFollowing}
+              isFollowLoading={isFollowLoading}
+              onFollowToggle={handleFollowToggle}
+            />
+            <ProjectComments 
+              project={project} 
+              projectId={projectId} 
+              isOwnProject={isOwnProject}
+              isFollowing={isFollowing}
+              isFollowLoading={isFollowLoading}
+              onFollowToggle={handleFollowToggle}
+            />
           </div>
         )}
       </div>

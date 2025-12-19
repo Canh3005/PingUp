@@ -4,7 +4,7 @@ class FollowController {
   // Follow a user
   async followUser(req, res) {
     try {
-      const currentUserId = req.user.userId;
+      const currentUserId = req.user._id;
       const { userId: targetUserId } = req.params;
 
       if (currentUserId === targetUserId) {
@@ -33,7 +33,7 @@ class FollowController {
   // Unfollow a user
   async unfollowUser(req, res) {
     try {
-      const currentUserId = req.user.userId;
+      const currentUserId = req.user._id;
       const { userId: targetUserId } = req.params;
 
       if (currentUserId === targetUserId) {
@@ -104,7 +104,7 @@ class FollowController {
   // Check follow status
   async checkFollowStatus(req, res) {
     try {
-      const currentUserId = req.user.userId;
+      const currentUserId = req.user._id;
       const { userId: targetUserId } = req.params;
 
       const isFollowing = await followService.checkFollowStatus(currentUserId, targetUserId);

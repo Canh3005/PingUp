@@ -13,10 +13,14 @@ import ContactSection from '../components/profile/ContactSection';
 import SkillsSection from '../components/profile/SkillsSection';
 import EducationSection from '../components/profile/EducationSection';
 import CreditsSection from '../components/profile/CreditsSection';
+import FollowersSection from '../components/profile/FollowersSection';
+import FollowingSection from '../components/profile/FollowingSection';
+import FollowModal from '../components/profile/FollowModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
 import AddExperienceModal from '../components/profile/AddExperienceModal';
 import AddEducationModal from '../components/profile/AddEducationModal';
 import profileApi from '../api/profileApi';
+import followApi from '../api/followApi';
 import projectApi from '../api/projectApi';
 import Loading from '../components/Loading';
 import ProjectView from './ProjectView';
@@ -33,6 +37,12 @@ const Profile = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [showFollowModal, setShowFollowModal] = useState(false);
+  const [followModalType, setFollowModalType] = useState('followers');
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
 
   // Check if viewing own profile
   const isOwnProfile = !profileId || profileId === user?._id;
@@ -40,6 +50,8 @@ const Profile = () => {
   useEffect(() => {
     fetchProfile();
     fetchProjects();
+    fetchFollowData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId]); // Re-fetch when profileId changes
 
   const fetchProfile = async () => {
@@ -83,6 +95,39 @@ const Profile = () => {
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
+    }
+  };
+
+  const fetchFollowData = async () => {
+    try {
+      const targetUserId = isOwnProfile ? user?._id : profileId;
+      if (!targetUserId) return;
+
+      const promises = [
+        followApi.getFollowers(targetUserId, 1, 3),
+        followApi.getFollowing(targetUserId, 1, 3)
+      ];
+
+      // Check follow status if viewing other user's profile
+      if (!isOwnProfile && user) {
+        promises.push(followApi.checkFollowStatus(targetUserId));
+      }
+
+      const results = await Promise.all(promises);
+      const [followersRes, followingRes, followStatusRes] = results;
+      console.log('Fetched follow data:', { followersRes, followingRes, followStatusRes });
+
+      if (followersRes.success) {
+        setFollowers(followersRes.data.followers || []);
+      }
+      if (followingRes.success) {
+        setFollowing(followingRes.data.following || []);
+      }
+      if (followStatusRes && followStatusRes.success) {
+        setIsFollowing(followStatusRes.data.isFollowing);
+      }
+    } catch (error) {
+      console.error('Error fetching follow data:', error);
     }
   };
 
@@ -132,6 +177,43 @@ const Profile = () => {
     setSelectedEducation(null); // Reset after save
   };
 
+  const handleViewFollowers = () => {
+    setFollowModalType('followers');
+    setShowFollowModal(true);
+  };
+
+  const handleViewFollowing = () => {
+    setFollowModalType('following');
+    setShowFollowModal(true);
+  };
+
+  const handleFollowToggle = async () => {
+    if (isFollowLoading || !user || !profileId) return;
+    
+    try {
+      setIsFollowLoading(true);
+      if (isFollowing) {
+        const response = await followApi.unfollowUser(profileId);
+        if (response.success) {
+          setIsFollowing(false);
+          // Refresh follow data to update counts
+          fetchFollowData();
+        }
+      } else {
+        const response = await followApi.followUser(profileId);
+        if (response.success) {
+          setIsFollowing(true);
+          // Refresh follow data to update counts
+          fetchFollowData();
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
+
   const handleCloseProject = () => {
     setSelectedProjectId(null);
   };
@@ -179,6 +261,9 @@ const Profile = () => {
               userRole={userJobTitle}
               isOwnProfile={isOwnProfile}
               onEditClick={handleEditProfile}
+              isFollowing={isFollowing}
+              isFollowLoading={isFollowLoading}
+              onFollowToggle={handleFollowToggle}
             />
             <AboutSection bio={profileData?.bio} />
             <ProjectsSection projects={projects} onProjectClick={setSelectedProjectId} isOwnProfile={isOwnProfile} />
@@ -197,6 +282,14 @@ const Profile = () => {
             <ContactSection
               website={profileData?.website}
               location={profileData?.location}
+            />
+            <FollowersSection 
+              followers={followers}
+              onViewAll={handleViewFollowers}
+            />
+            <FollowingSection 
+              following={following} 
+              onViewAll={handleViewFollowing}
             />
             <SkillsSection skills={skills} />
             <EducationSection
@@ -236,6 +329,13 @@ const Profile = () => {
         onSuccess={handleSaveEducation}
         initialData={selectedEducation}
       />
+      <FollowModal
+        isOpen={showFollowModal}
+        onClose={() => setShowFollowModal(false)}
+        userId={isOwnProfile ? user?._id : profileId}
+        type={followModalType}
+      />
+
       {selectedProjectId && (
         <ProjectView 
           projectId={selectedProjectId} 

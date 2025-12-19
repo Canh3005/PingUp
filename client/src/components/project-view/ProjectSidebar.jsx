@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Heart, Share2, Bookmark, MessageCircle, Plus, Check } from "lucide-react";
 import { useAuth } from "../../context/authContext";
 
-const ProjectSidebar = ({ project, onLike }) => {
+const ProjectSidebar = ({ project, onLike, isOwnProject, isFollowing, isFollowLoading, onFollowToggle, onCommentClick }) => {
   const { user } = useAuth();
-  const isOwnProject = user?._id === project.owner?._id;
-  const [isFollowing, setIsFollowing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(project.likes?.includes(user?._id));
 
@@ -26,8 +24,9 @@ const ProjectSidebar = ({ project, onLike }) => {
         />
         {!isOwnProject && (
           <button
-            onClick={() => setIsFollowing(!isFollowing)}
-            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-lg flex items-center justify-center transition-all shadow-lg ${
+            onClick={onFollowToggle}
+            disabled={isFollowLoading}
+            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-lg flex items-center justify-center transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
               isFollowing
                 ? 'bg-green-500 hover:bg-green-600'
                 : 'bg-blue-600 hover:bg-blue-700'
@@ -64,7 +63,7 @@ const ProjectSidebar = ({ project, onLike }) => {
         </span>
       </button>
 
-      <button className="group flex flex-col items-center gap-1.5 cursor-pointer">
+      <button onClick={onCommentClick} className="group flex flex-col items-center gap-1.5 cursor-pointer">
         <div className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl transition-all border border-white/10 shadow-lg">
           <MessageCircle className="w-5 h-5 text-white transition-transform group-hover:scale-110" />
         </div>

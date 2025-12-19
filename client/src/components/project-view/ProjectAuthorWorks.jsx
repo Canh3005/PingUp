@@ -3,14 +3,13 @@ import { ChevronLeft, ChevronRight, Heart, Eye, UserPlus, MessageCircle } from '
 import { useNavigate } from 'react-router-dom';
 import projectApi from '../../api/projectApi';
 
-const ProjectAuthorWorks = ({ project, isOwnProject }) => {
+const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoading, onFollowToggle }) => {
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [authorProjects, setAuthorProjects] = useState([]);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     const fetchAuthorProjects = async () => {
@@ -94,8 +93,9 @@ const ProjectAuthorWorks = ({ project, isOwnProject }) => {
 
             {!isOwnProject && (<div className="flex items-center gap-3">
               <button
-                onClick={() => setIsFollowing(!isFollowing)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
+                onClick={onFollowToggle}
+                disabled={isFollowLoading}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                   isFollowing
                     ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
                     : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50'

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Edit, Mail, UserPlus } from 'lucide-react';
+import { Edit, Mail, UserPlus, Check } from 'lucide-react';
 
-const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditClick }) => {
+const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditClick, isFollowing, isFollowLoading, onFollowToggle }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
       <div className="flex flex-col sm:flex-row items-start gap-6">
@@ -35,9 +35,17 @@ const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditCli
                 </button>
               ) : (
                 <>
-                  <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg font-medium">
-                    <UserPlus className="w-4 h-4" />
-                    Follow
+                  <button 
+                    onClick={onFollowToggle}
+                    disabled={isFollowLoading}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed border-1 ${
+                      isFollowing
+                        ? 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
+                    }`}
+                  >
+                    {isFollowing ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                    {isFollowing ? 'Following' : 'Follow'}
                   </button>
                   <button className="px-5 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium text-gray-700">
                     Invite to Project

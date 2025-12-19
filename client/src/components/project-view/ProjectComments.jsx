@@ -3,7 +3,7 @@ import { Heart, Eye, MessageCircle, UserPlus, Mail, Trash2, Send, MapPin, Calend
 import projectApi from '../../api/projectApi';
 import { useAuth } from '../../context/authContext';
 
-const ProjectComments = ({ project, projectId, isOwnProject }) => {
+const ProjectComments = ({ project, projectId, isOwnProject, isFollowing, isFollowLoading, onFollowToggle }) => {
   const { user } = useAuth();
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
@@ -103,7 +103,7 @@ const ProjectComments = ({ project, projectId, isOwnProject }) => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-b from-slate-50 to-white rounded-t-3xl">
+    <div id="project-comments" className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-b from-slate-50 to-white rounded-t-3xl">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Comments Section - Left 2/3 */}
         <div className="lg:col-span-2">
@@ -241,9 +241,17 @@ const ProjectComments = ({ project, projectId, isOwnProject }) => {
               </div>
             </div>
             {!isOwnProject && (<div className="flex gap-2">
-              <button className="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 font-medium">
+              <button 
+                onClick={onFollowToggle}
+                disabled={isFollowLoading}
+                className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isFollowing
+                    ? 'bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25'
+                }`}
+              >
                 <UserPlus className="w-4 h-4" />
-                Follow
+                {isFollowing ? 'Following' : 'Follow'}
               </button>
               <button className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all">
                 <Mail className="w-4 h-4" />

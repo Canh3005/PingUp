@@ -1,4 +1,5 @@
-import User from '../models/User.js';
+import User from "../models/User.js";
+import UserProfile from "../models/UserProfile.js";
 
 class FollowService {
   // Follow a user
@@ -7,13 +8,13 @@ class FollowService {
       // Check if target user exists
       const targetUser = await User.findById(targetUserId);
       if (!targetUser) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       // Check if already following
       const currentUser = await User.findById(currentUserId);
       if (currentUser.following.includes(targetUserId)) {
-        throw new Error('Already following this user');
+        throw new Error("Already following this user");
       }
 
       // Add to following list of current user
@@ -32,7 +33,7 @@ class FollowService {
 
       return {
         followersCount: targetUser.followers.length + 1,
-        followingCount: currentUser.following.length + 1
+        followingCount: currentUser.following.length + 1,
       };
     } catch (error) {
       throw error;
@@ -45,7 +46,7 @@ class FollowService {
       // Check if target user exists
       const targetUser = await User.findById(targetUserId);
       if (!targetUser) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       // Remove from following list of current user
@@ -64,7 +65,10 @@ class FollowService {
 
       return {
         followersCount: Math.max(0, targetUser.followers.length - 1),
-        followingCount: Math.max(0, (await User.findById(currentUserId)).following.length)
+        followingCount: Math.max(
+          0,
+          (await User.findById(currentUserId)).following.length
+        ),
       };
     } catch (error) {
       throw error;
@@ -74,30 +78,28 @@ class FollowService {
   // Get followers list with pagination
   async getFollowers(userId, page = 1, limit = 20) {
     try {
-      const user = await User.findById(userId)
-        .populate({
-          path: 'followers',
-          select: 'userName email imageUrl type topics',
-          options: {
-            skip: (page - 1) * limit,
-            limit: limit
-          }
-        });
-
+      const user = await User.findById(userId);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
-
+      const followerIds = user.followers.slice(
+        (page - 1) * limit,
+        page * limit
+      );
+      const followerUsers = await UserProfile.find(
+        { userId: { $in: followerIds } },
+        { userId: 1, avatarUrl: 1, jobTitle: 1, name: 1 } // chỉ lấy các field này
+      );
       const total = user.followers.length;
 
       return {
-        followers: user.followers,
+        followers: followerUsers,
         pagination: {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
+          totalPages: Math.ceil(total / limit),
+        },
       };
     } catch (error) {
       throw error;
@@ -107,30 +109,28 @@ class FollowService {
   // Get following list with pagination
   async getFollowing(userId, page = 1, limit = 20) {
     try {
-      const user = await User.findById(userId)
-        .populate({
-          path: 'following',
-          select: 'userName email imageUrl type topics',
-          options: {
-            skip: (page - 1) * limit,
-            limit: limit
-          }
-        });
-
+      const user = await User.findById(userId);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
-
+      const followingIds = user.following.slice(
+        (page - 1) * limit,
+        page * limit
+      );
+      const followingUsers = await UserProfile.find(
+        { userId: { $in: followingIds } },
+        { userId: 1, avatarUrl: 1, jobTitle: 1, name: 1 } // chỉ lấy các field này
+      );
       const total = user.following.length;
 
       return {
-        following: user.following,
+        following: followingUsers,
         pagination: {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
+          totalPages: Math.ceil(total / limit),
+        },
       };
     } catch (error) {
       throw error;
@@ -142,7 +142,7 @@ class FollowService {
     try {
       const currentUser = await User.findById(currentUserId);
       if (!currentUser) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       return currentUser.following.includes(targetUserId);
@@ -154,14 +154,14 @@ class FollowService {
   // Get follow counts (followers and following)
   async getFollowCounts(userId) {
     try {
-      const user = await User.findById(userId).select('followers following');
+      const user = await User.findById(userId).select("followers following");
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       return {
         followersCount: user.followers.length,
-        followingCount: user.following.length
+        followingCount: user.following.length,
       };
     } catch (error) {
       throw error;
