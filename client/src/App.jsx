@@ -15,6 +15,7 @@ import TopicSelection from "./pages/TopicSelection.jsx";
 import ProjectEditor from "./pages/ProjectEditor.jsx";
 import ProjectView from "./pages/ProjectView.jsx";
 import ProjectHub from "./pages/ProjectHub.jsx";
+import CreateProjectHub from "./pages/CreateProjectHub.jsx";
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="project/:projectId" element={<ProjectView />} />
           <Route path="discover" element={<Discover />} />
         </Route>
+        <Route path="project-hub/create" element={<CreateProjectHub />} />
         <Route path="project-hub/:projectId" element={<ProjectHub />} />
         <Route path="project-hub" element={<ProjectHub />} />
       </Routes>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProjectHubSidebar from '../components/project-hub/ProjectHubSidebar';
 import ProjectHubTopBar from '../components/project-hub/ProjectHubTopBar';
 import OverviewTab from '../components/project-hub/tabs/OverviewTab';
@@ -10,48 +10,59 @@ import RecruitmentTab from '../components/project-hub/tabs/RecruitmentTab';
 import TeamTab from '../components/project-hub/tabs/TeamTab';
 import SettingsTab from '../components/project-hub/tabs/SettingsTab';
 import Loading from '../components/Loading';
+import projectHubApi from '../api/projectHubApi';
+import milestoneApi from '../api/milestoneApi';
 
 const ProjectHub = () => {
   const { projectId } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [project, setProject] = useState(null);
+  const [milestones, setMilestones] = useState([]);
+  const [error, setError] = useState('');
 
-  // Mock project data - will be replaced with API call
-  const [project, setProject] = useState({
-    id: projectId || '1',
-    name: 'Cosmic Explorer',
-    logo: 'https://images.unsplash.com/photo-1614851099511-773084f6911d?w=100&h=100&fit=crop',
-    coverImage: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1200&h=400&fit=crop',
-    description: 'An immersive space exploration game with stunning visuals and engaging gameplay mechanics.',
-    visibility: 'public',
-    tags: ['Game Dev', 'Unity', '3D', 'Sci-Fi'],
-    progress: 68,
-    totalTasks: 47,
-    completedTasks: 32,
-    members: [
-      { id: 1, name: 'Alex Chen', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop', role: 'Project Lead' },
-      { id: 2, name: 'Sarah Kim', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop', role: 'UI Designer' },
-      { id: 3, name: 'Mike Johnson', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop', role: 'Developer' },
-      { id: 4, name: 'Emily Wang', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop', role: 'Sound Designer' },
-    ],
-    milestones: [
-      { id: 1, title: 'Alpha Release', date: '2024-02-15', status: 'completed' },
-      { id: 2, title: 'Beta Testing', date: '2024-03-01', status: 'in_progress' },
-      { id: 3, title: 'Final Release', date: '2024-04-15', status: 'upcoming' },
-    ],
-    integrations: {
-      github: 'https://github.com/cosmic-explorer',
-      figma: 'https://figma.com/cosmic-explorer',
-      discord: 'https://discord.gg/cosmic',
-    },
-    createdAt: '2024-01-10',
-  });
+  // Load project hub data
+  useEffect(() => {
+    if (projectId) {
+      loadProjectHub();
+    }
+  }, [projectId]);
+
+  const loadProjectHub = async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+
+      // Fetch project hub data
+      const response = await projectHubApi.getProjectHub(projectId);
+      const hubData = response.data;
+      console.log('Fetched project hub data:', hubData);
+      setProject(hubData);
+
+      // Fetch milestones for this project hub
+      if (hubData._id) {
+        const milestonesResponse = await milestoneApi.getMilestonesByProject(hubData._id);
+        setMilestones(milestonesResponse.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading project hub:', error);
+      setError(error.response?.data?.message || 'Failed to load project hub');
+      
+      // Redirect if project not found
+      if (error.response?.status === 404) {
+        setTimeout(() => navigate('/'), 2000);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab project={project} />;
+        return <OverviewTab project={project} milestones={milestones} />;
       case 'tasks':
         return <TasksTab project={project} />;
       case 'devlogs':
@@ -65,12 +76,34 @@ const ProjectHub = () => {
       case 'settings':
         return <SettingsTab project={project} setProject={setProject} />;
       default:
-        return <OverviewTab project={project} />;
+        return <OverviewTab project={project} milestones={milestones} />;
     }
   };
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Project Hub</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!project) {
+    return null;
   }
 
   return (

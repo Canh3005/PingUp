@@ -6,6 +6,12 @@ const profileApi = {
     const res = await httpClient.get("/profile");
     return res.data;
   },
+  
+  getProfileByUserId: async (userId) => {
+    const res = await httpClient.get(`/profile/${userId}`);
+    return res.data;
+  },
+  
   updateProfile: async (profileData) => {
     const res = await httpClient.post("/profile", profileData);
     return res.data;

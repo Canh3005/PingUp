@@ -58,7 +58,6 @@ export const uploadBlockImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    console.log("Uploaded block image:", req.file);
 
     res.json({
       success: true,

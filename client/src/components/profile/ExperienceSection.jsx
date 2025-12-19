@@ -1,7 +1,7 @@
 import React from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 
-const ExperienceSection = ({ experiences = [], onAddExperience, onEditExperience }) => {
+const ExperienceSection = ({ experiences = [], onAddExperience, onEditExperience, isOwnProfile }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-5">
@@ -11,13 +11,14 @@ const ExperienceSection = ({ experiences = [], onAddExperience, onEditExperience
           </div>
           <h2 className="text-xl font-bold text-gray-900">Experience</h2>
         </div>
-        <button
+        {isOwnProfile && (<button
           onClick={() => onAddExperience()}
           className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all border border-blue-200 hover:border-blue-600"
         >
           <Plus className="w-4 h-4" />
           Add
         </button>
+        )}
       </div>
 
       {experiences.length > 0 ? (

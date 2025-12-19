@@ -9,12 +9,15 @@ import ProjectFooter from '../components/project-view/ProjectFooter';
 import ProjectAuthorWorks from '../components/project-view/ProjectAuthorWorks';
 import ProjectComments from '../components/project-view/ProjectComments';
 import Loading from '../components/Loading';
+import { useAuth } from '../context/authContext';
 
 const ProjectView = ({ projectId, onClose }) => {
+  const { user } = useAuth();
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const isOwnProject = user?._id === project?.owner?._id;
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -23,7 +26,6 @@ const ProjectView = ({ projectId, onClose }) => {
       try {
         setIsLoading(true);
         const response = await projectApi.getProject(projectId);
-        console.log("Fetched project data:", response);
         setProject(response.data);
 
         await projectApi.incrementView(projectId);
@@ -121,16 +123,16 @@ const ProjectView = ({ projectId, onClose }) => {
           </div>
         ) : (
           <div className="bg-gradient-to-b from-black/40 to-black/60" onClick={(e) => e.stopPropagation()}>
-            <ProjectHeader project={project} />
-            <ProjectSidebar project={project} onLike={handleLike} />
+            <ProjectHeader project={project} isOwnProject={isOwnProject} />
+            <ProjectSidebar project={project} onLike={handleLike} isOwnProject={isOwnProject} />
 
             <div className="max-w-7xl mx-auto">
-              <ProjectContent project={project} />
+              <ProjectContent project={project}/>
             </div>
 
-            <ProjectFooter project={project} onLike={handleLike} />
-            <ProjectAuthorWorks project={project} />
-            <ProjectComments project={project} projectId={projectId} />
+            <ProjectFooter project={project} onLike={handleLike} isOwnProject={isOwnProject} />
+            <ProjectAuthorWorks project={project} isOwnProject={isOwnProject} />
+            <ProjectComments project={project} projectId={projectId} isOwnProject={isOwnProject} />
           </div>
         )}
       </div>

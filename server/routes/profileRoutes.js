@@ -7,6 +7,8 @@ const router = express.Router();
 // GET /api/profile - Get user profile
 router.get('/', auth, profileController.getProfile);
 
+router.get('/:userId', profileController.getProfileByUserId);
+
 // POST /api/profile - Update user profile
 router.post('/', auth, profileController.updateProfile);
 

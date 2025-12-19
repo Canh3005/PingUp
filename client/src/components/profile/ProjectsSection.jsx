@@ -1,8 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Heart, Eye, ChevronLeft, ChevronRight, Plus, FolderOpen } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from "react";
+import {
+  Heart,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  FolderOpen,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const ProjectsSection = ({ projects = [] }) => {
+const ProjectsSection = ({ projects = [], onProjectClick, isOwnProfile }) => {
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -13,11 +20,13 @@ const ProjectsSection = ({ projects = [] }) => {
   }, [projects]);
 
   const handleProjectClick = (projectId) => {
-    navigate(`/project/${projectId}`);
+    if (onProjectClick) {
+      onProjectClick(projectId);
+    }
   };
 
   const handleCreateProject = () => {
-    navigate('/create-project');
+    navigate("/create-project");
   };
 
   const checkScrollPosition = () => {
@@ -25,7 +34,8 @@ const ProjectsSection = ({ projects = [] }) => {
     if (container) {
       setShowLeftArrow(container.scrollLeft > 0);
       setShowRightArrow(
-        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+        container.scrollLeft <
+          container.scrollWidth - container.clientWidth - 10
       );
     }
   };
@@ -33,8 +43,8 @@ const ProjectsSection = ({ projects = [] }) => {
   const scroll = (direction) => {
     const container = scrollContainerRef.current;
     if (container) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      const scrollAmount = direction === "left" ? -400 : 400;
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
       setTimeout(checkScrollPosition, 300);
     }
   };
@@ -48,27 +58,31 @@ const ProjectsSection = ({ projects = [] }) => {
           </div>
           <h2 className="text-xl font-bold text-gray-900">Projects</h2>
         </div>
-        <button
-          onClick={handleCreateProject}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg text-sm font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create new</span>
-        </button>
+        {isOwnProfile && (
+          <button
+            onClick={handleCreateProject}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg text-sm font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create new</span>
+          </button>
+        )}
       </div>
 
       {projects.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-xl">
           <FolderOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 font-medium">No projects yet</p>
-          <p className="text-sm text-gray-400 mt-1">Create your first project to showcase your work</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Create your first project to showcase your work
+          </p>
         </div>
       ) : (
         <div className="relative">
           {/* Left Arrow */}
           {showLeftArrow && (
             <button
-              onClick={() => scroll('left')}
+              onClick={() => scroll("left")}
               className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all -ml-5"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -80,7 +94,7 @@ const ProjectsSection = ({ projects = [] }) => {
             ref={scrollContainerRef}
             onScroll={checkScrollPosition}
             className="flex gap-5 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {projects.map((project) => (
               <div
@@ -90,7 +104,10 @@ const ProjectsSection = ({ projects = [] }) => {
               >
                 <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden mb-3 relative shadow-sm group-hover:shadow-lg transition-all">
                   <img
-                    src={project.coverImage || 'https://via.placeholder.com/400x300?text=No+Cover+Image'}
+                    src={
+                      project.coverImage ||
+                      "https://via.placeholder.com/400x300?text=No+Cover+Image"
+                    }
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -102,11 +119,15 @@ const ProjectsSection = ({ projects = [] }) => {
                     <div className="flex items-center gap-4 text-white">
                       <div className="flex items-center gap-1.5">
                         <Heart className="w-4 h-4" />
-                        <span className="text-sm font-medium">{project.likes?.length || 0}</span>
+                        <span className="text-sm font-medium">
+                          {project.likes?.length || 0}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Eye className="w-4 h-4" />
-                        <span className="text-sm font-medium">{project.views || 0}</span>
+                        <span className="text-sm font-medium">
+                          {project.views || 0}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -115,7 +136,9 @@ const ProjectsSection = ({ projects = [] }) => {
                   {project.title}
                 </h3>
                 {project.description && (
-                  <p className="text-gray-500 text-sm line-clamp-2">{project.description}</p>
+                  <p className="text-gray-500 text-sm line-clamp-2">
+                    {project.description}
+                  </p>
                 )}
               </div>
             ))}
@@ -124,7 +147,7 @@ const ProjectsSection = ({ projects = [] }) => {
           {/* Right Arrow */}
           {showRightArrow && (
             <button
-              onClick={() => scroll('right')}
+              onClick={() => scroll("right")}
               className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all -mr-5"
             >
               <ChevronRight className="w-5 h-5 text-gray-700" />

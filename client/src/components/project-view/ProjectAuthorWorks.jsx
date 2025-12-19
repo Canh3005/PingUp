@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Heart, Eye, UserPlus, MessageCircle } from '
 import { useNavigate } from 'react-router-dom';
 import projectApi from '../../api/projectApi';
 
-const ProjectAuthorWorks = ({ project }) => {
+const ProjectAuthorWorks = ({ project, isOwnProject }) => {
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [authorProjects, setAuthorProjects] = useState([]);
@@ -92,7 +92,7 @@ const ProjectAuthorWorks = ({ project }) => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {!isOwnProject && (<div className="flex items-center gap-3">
               <button
                 onClick={() => setIsFollowing(!isFollowing)}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all ${
@@ -108,6 +108,7 @@ const ProjectAuthorWorks = ({ project }) => {
                 <MessageCircle className="w-4 h-4" />
               </button>
             </div>
+            )}
           </div>
         </div>
 

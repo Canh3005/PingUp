@@ -65,6 +65,9 @@ const projectSchema = new mongoose.Schema(
       figma: { type: String, trim: true },
       discord: { type: String, trim: true },
     },
+    invisibility: {
+      type: String,
+    },
   },
   {
     timestamps: true,

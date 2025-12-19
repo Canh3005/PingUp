@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { assets } from '../assets/assets';
 import ProfileCover from '../components/profile/ProfileCover';
@@ -18,8 +19,10 @@ import AddEducationModal from '../components/profile/AddEducationModal';
 import profileApi from '../api/profileApi';
 import projectApi from '../api/projectApi';
 import Loading from '../components/Loading';
+import ProjectView from './ProjectView';
 
 const Profile = () => {
+  const { profileId } = useParams(); // Get userId from URL params
   const { user } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
@@ -29,16 +32,29 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+  // Check if viewing own profile
+  const isOwnProfile = !profileId || profileId === user?._id;
 
   useEffect(() => {
     fetchProfile();
     fetchProjects();
-  }, []);
+  }, [profileId]); // Re-fetch when profileId changes
 
   const fetchProfile = async () => {
     try {
       setIsLoading(true);
-      const response = await profileApi.getProfile();
+      let response;
+      
+      if (isOwnProfile) {
+        // Fetch own profile
+        response = await profileApi.getProfile();
+      } else {
+        // Fetch other user's profile
+        response = await profileApi.getProfileByUserId(profileId);
+      }
+      
       if (response.success) {
         setProfileData(response.profile);
       }
@@ -51,7 +67,16 @@ const Profile = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await projectApi.getUserProjects('published');
+      let response;
+      
+      if (isOwnProfile) {
+        // Fetch own projects (published only for display)
+        response = await projectApi.getUserProjects('published');
+      } else {
+        // Fetch other user's published projects
+        response = await projectApi.getUserPublishedProjects(profileId);
+      }
+      
       console.log('Fetched projects:', response);
       if (response.success) {
         setProjects(response.data);
@@ -107,6 +132,10 @@ const Profile = () => {
     setSelectedEducation(null); // Reset after save
   };
 
+  const handleCloseProject = () => {
+    setSelectedProjectId(null);
+  };
+
   // Sample data
   const portfolioItems = [
     { id: 1, tag: '#UIUX', image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=300&h=200&fit=crop' },
@@ -148,16 +177,17 @@ const Profile = () => {
               userAvatar={userAvatar}
               userName={userName}
               userRole={userJobTitle}
-              isOwnProfile={true}
+              isOwnProfile={isOwnProfile}
               onEditClick={handleEditProfile}
             />
             <AboutSection bio={profileData?.bio} />
-            <ProjectsSection projects={projects} />
+            <ProjectsSection projects={projects} onProjectClick={setSelectedProjectId} isOwnProfile={isOwnProfile} />
             <PortfolioSection portfolioItems={portfolioItems} />
             <ExperienceSection
               experiences={profileData?.experiences || []}
-              onAddExperience={handleAddExperience}
-              onEditExperience={handleEditExperience}
+              onAddExperience={isOwnProfile ? handleAddExperience : null}
+              onEditExperience={isOwnProfile ? handleEditExperience : null}
+              isOwnProfile={isOwnProfile}
             />
             <ActivitySection activities={activities} />
           </div>
@@ -171,8 +201,9 @@ const Profile = () => {
             <SkillsSection skills={skills} />
             <EducationSection
               education={profileData?.education || []}
-              onAddEducation={handleAddEducation}
-              onEditEducation={handleEditEducation}
+              onAddEducation={isOwnProfile ? handleAddEducation : null}
+              onEditEducation={isOwnProfile ? handleEditEducation : null}
+              isOwnProfile={isOwnProfile}
             />
             <CreditsSection />
           </div>
@@ -205,6 +236,12 @@ const Profile = () => {
         onSuccess={handleSaveEducation}
         initialData={selectedEducation}
       />
+      {selectedProjectId && (
+        <ProjectView 
+          projectId={selectedProjectId} 
+          onClose={handleCloseProject} 
+        />
+      )}
     </div>
   );
 };

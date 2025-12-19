@@ -65,7 +65,6 @@ class ProjectService {
       if (project.owner.toString() !== userId) {
         throw new Error('Not authorized to update this project');
       }
-
       Object.assign(project, updateData);
       await project.save();
       

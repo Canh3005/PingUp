@@ -47,7 +47,6 @@ const uploadApi = {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("Uploaded block image response:", res.data);
     return res.data;
   },
 

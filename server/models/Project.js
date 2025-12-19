@@ -111,6 +111,10 @@ const projectSchema = new mongoose.Schema(
     publishedAt: {
       type: Date,
     },
+    projectHubId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ProjectHub',
+    }
   },
   {
     timestamps: true,

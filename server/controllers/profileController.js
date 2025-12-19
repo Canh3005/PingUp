@@ -206,6 +206,25 @@ class ProfileController {
       });
     }
   }
+
+  // GET /api/profile/:userId - Get profile by user ID
+  async getProfileByUserId(req, res) {
+    try {
+      const { userId } = req.params;
+      const profile = await profileService.getProfile(userId);
+      return res.status(200).json({
+        success: true,
+        profile
+      });
+    } catch (error) {
+      console.error('Get profile by user ID error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to get profile',
+        error: error.message
+      });
+    }
+  }
 }
 
 export default new ProfileController();

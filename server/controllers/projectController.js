@@ -154,7 +154,6 @@ class ProjectController {
   async getUserProjects(req, res) {
     try {
       const userId = req.user.id;
-      console.log('Getting projects for userId:', userId);
       const { status } = req.query;
 
       const projects = await projectService.getUserProjects(userId, status);

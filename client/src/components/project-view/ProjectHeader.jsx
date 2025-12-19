@@ -1,15 +1,16 @@
 import React from 'react';
 import { Edit3, ExternalLink, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/authContext';
 
-const ProjectHeader = ({ project }) => {
-  const { user } = useAuth();
+const ProjectHeader = ({ project, isOwnProject }) => {
   const navigate = useNavigate();
-  const isOwnProject = user?._id === project.owner?._id;
+  const hasProjectHub = !!project.projectHubId;
 
   const handleOpenHub = () => {
-    navigate(`/project-hub/${project._id}`);
+      navigate(`/project-hub/${project.projectHubId}`);
+  };
+  const handleCreateHub = () => {
+      navigate(`/project-hub/create`);
   };
 
   return (
@@ -46,13 +47,26 @@ const ProjectHeader = ({ project }) => {
         {/* Actions */}
         <div className="flex items-center gap-3">
           {/* Project Hub Button */}
-          <button
-            onClick={handleOpenHub}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25"
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            Project Hub
-          </button>
+          {hasProjectHub && (
+            <button
+              onClick={handleOpenHub}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Project Hub
+            </button>
+          )}
+          {
+            !hasProjectHub && isOwnProject && (
+              <button
+                onClick={handleCreateHub}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all shadow-lg shadow-green-600/25"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Create Project Hub
+              </button>
+            )
+          }
 
           {isOwnProject && (
             <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-white/10 hover:border-white/20">
