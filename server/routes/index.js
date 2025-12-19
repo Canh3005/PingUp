@@ -6,6 +6,7 @@ import projectRoutes from "./projectRoutes.js";
 import commentRoutes from "./commentRoutes.js";
 import projectHubRoutes from "./projectHubRoutes.js";
 import milestoneRoutes from "./milestoneRoutes.js";
+import followRoutes from "./followRoutes.js";
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use("/projects", projectRoutes);
 router.use("/comments", commentRoutes);
 router.use("/project-hubs", projectHubRoutes);
 router.use("/milestones", milestoneRoutes);
+router.use("/users", followRoutes);
 
 export default router;
