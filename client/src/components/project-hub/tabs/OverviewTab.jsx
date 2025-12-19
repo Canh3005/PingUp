@@ -193,7 +193,7 @@ const OverviewTab = ({ project }) => {
           <h3 className="font-bold text-gray-900 mb-4">Upcoming Milestones</h3>
 
           <div className="space-y-3">
-            {project.milestones.map((milestone, index) => (
+            {project.milestones.map((milestone) => (
               <div
                 key={milestone.id}
                 className={`flex items-center gap-3 p-3 rounded-lg ${
