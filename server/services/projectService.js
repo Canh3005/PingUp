@@ -1,7 +1,6 @@
 import Project from '../models/Project.js';
 import UserProfile from '../models/UserProfile.js';
 import { cloudinary } from '../configs/cloudinary.js';
-import { Types } from 'mongoose';
 
 class ProjectService {
   // Create new project
