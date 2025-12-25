@@ -1,7 +1,9 @@
 import React from 'react';
 import { Activity, Clock, FolderOpen, Users, Heart } from 'lucide-react';
 
-const ActivitySection = ({ activities }) => {
+const ActivitySection = ({ activities, isOwnProfile }) => {
+  if ((!activities || activities.length === 0) && !isOwnProfile) return null;
+
   const activityIcons = {
     project: FolderOpen,
     community: Users,

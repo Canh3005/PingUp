@@ -1,7 +1,9 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 
-const SkillsSection = ({ skills }) => {
+const SkillsSection = ({ skills, isOwnProfile }) => {
+  if ((!skills || skills.length === 0) && !isOwnProfile) return null;
+
   const skillColors = [
     'bg-blue-50 text-blue-700 border-blue-100',
     'bg-purple-50 text-purple-700 border-purple-100',

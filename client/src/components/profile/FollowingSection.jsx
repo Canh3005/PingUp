@@ -2,9 +2,9 @@ import React from "react";
 import { UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const FollowingSection = ({ following = [], onViewAll }) => {
+const FollowingSection = ({ following = [], onViewAll, isOwnProfile }) => {
   const navigate = useNavigate();
-  if (!following || following.length === 0) return null;
+  if ((!following || following.length === 0) && !isOwnProfile) return null;
 
   const displayFollowing = following.slice(0, 3);
 

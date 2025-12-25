@@ -22,8 +22,8 @@ const NavItems = ({ onNavigate }) => {
     if (onNavigate) onNavigate();
   };
 
-  const userAvatar = user?.imageUrl || user?.profile_picture || assets.sample_profile;
-  const userName = user?.userName || user?.full_name || user?.email || "User";
+  const userAvatar = user?.profile?.avatarUrl || assets.sample_profile;
+  const userName = user?.profile?.name || "User";
 
   return (
     <div className="flex h-full flex-col">

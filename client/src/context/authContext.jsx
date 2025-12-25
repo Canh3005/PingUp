@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
     const fetchProfile = async () => {
       try {
         const data = await authApi.getProfile();
+        console.log(data);
         setUser(data?.user || null);
       } catch {
         setUser(null);
@@ -35,4 +36,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// Export hook separately for Fast Refresh compatibility
+export function useAuth() {
+  return useContext(AuthContext);
+}

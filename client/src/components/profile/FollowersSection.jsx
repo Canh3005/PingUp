@@ -2,9 +2,9 @@ import React from 'react';
 import { Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const FollowersSection = ({ followers = [], onViewAll }) => {
+const FollowersSection = ({ followers = [], onViewAll, isOwnProfile }) => {
   const navigate = useNavigate();
-  if (!followers || followers.length === 0) return null;
+  if ((!followers || followers.length === 0) && !isOwnProfile) return null;
 
   const displayFollowers = followers.slice(0, 3);
 

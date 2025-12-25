@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import crypto from 'crypto';
+import UserProfile from '../models/UserProfile.js';
 
  
 const APP_ID = process.env.FACEBOOK_APP_ID;
@@ -47,7 +48,7 @@ const login = async ({ email, password }) => {
 };
 
 const getProfile = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).select('-password').lean();
   if (!user) {
     throw new Error('User not found');
   }

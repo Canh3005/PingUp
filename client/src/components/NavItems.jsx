@@ -20,8 +20,8 @@ const NavItems = ({ onNavigate, horizontal = false }) => {
     if (onNavigate) onNavigate();
   };
 
-  const userAvatar = user?.imageUrl || user?.profile_picture || assets.sample_profile;
-  const userName = user?.username || user?.full_name || user?.email || "User";
+  const userAvatar = user?.profile?.avatarUrl || assets.sample_profile;
+  const userName = user?.profile?.name || "User";
 
   if (horizontal) {
     // Horizontal layout for Navbar with underline on active/hover

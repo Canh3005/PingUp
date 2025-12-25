@@ -360,33 +360,37 @@ const Profile = () => {
               isFollowLoading={isFollowLoading}
               onFollowToggle={handleFollowToggle}
             />
-            <AboutSection bio={profileData?.bio} />
+            <AboutSection bio={profileData?.bio} isOwnProfile={isOwnProfile} />
             <ProjectsSection projects={projects} onProjectClick={setSelectedProjectId} isOwnProfile={isOwnProfile} />
-            <PortfolioSection portfolioItems={portfolioItems} />
+            <PortfolioSection portfolioItems={portfolioItems} isOwnProfile={isOwnProfile} />
             <ExperienceSection
               experiences={profileData?.experiences || []}
               onAddExperience={isOwnProfile ? handleAddExperience : null}
               onEditExperience={isOwnProfile ? handleEditExperience : null}
               isOwnProfile={isOwnProfile}
             />
-            <ActivitySection activities={activities} />
+            <ActivitySection activities={activities} isOwnProfile={isOwnProfile} />
           </div>
+
 
           {/* Right Column - Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             <ContactSection
               website={profileData?.website}
               location={profileData?.location}
+              isOwnProfile={isOwnProfile}
             />
             <FollowersSection 
               followers={followers}
               onViewAll={handleViewFollowers}
+              isOwnProfile={isOwnProfile}
             />
             <FollowingSection 
               following={following} 
               onViewAll={handleViewFollowing}
+              isOwnProfile={isOwnProfile}
             />
-            <SkillsSection skills={skills} />
+            <SkillsSection skills={skills} isOwnProfile={isOwnProfile} />
             <EducationSection
               education={profileData?.education || []}
               onAddEducation={isOwnProfile ? handleAddEducation : null}

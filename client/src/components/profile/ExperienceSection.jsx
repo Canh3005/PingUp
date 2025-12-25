@@ -2,6 +2,9 @@ import React from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 
 const ExperienceSection = ({ experiences = [], onAddExperience, onEditExperience, isOwnProfile }) => {
+  // Hide if no experiences and not own profile
+  if ((!experiences || experiences.length === 0) && !isOwnProfile) return null;
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-5">

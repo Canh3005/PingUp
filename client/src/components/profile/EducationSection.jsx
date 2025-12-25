@@ -2,6 +2,9 @@ import React from 'react';
 import { GraduationCap, Plus } from 'lucide-react';
 
 const EducationSection = ({ education = [], onAddEducation, onEditEducation, isOwnProfile }) => {
+  // Hide if no education and not own profile
+  if ((!education || education.length === 0) && !isOwnProfile) return null;
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">

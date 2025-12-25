@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image, ExternalLink } from 'lucide-react';
 
-const PortfolioSection = ({ portfolioItems }) => {
-  if (!portfolioItems || portfolioItems.length === 0) return null;
+const PortfolioSection = ({ portfolioItems, isOwnProfile }) => {
+  if ((!portfolioItems || portfolioItems.length === 0) && !isOwnProfile) return null;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">

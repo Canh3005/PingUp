@@ -1,8 +1,8 @@
 import React from 'react';
 import { Globe, MapPin, Mail } from 'lucide-react';
 
-const ContactSection = ({ website, location }) => {
-  if (!website && !location) return null;
+const ContactSection = ({ website, location, isOwnProfile }) => {
+  if ((!website && !location) && !isOwnProfile) return null;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
