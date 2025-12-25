@@ -7,7 +7,7 @@ import commentRoutes from "./commentRoutes.js";
 import projectHubRoutes from "./projectHubRoutes.js";
 import milestoneRoutes from "./milestoneRoutes.js";
 import followRoutes from "./followRoutes.js";
-import chatRoutes from "../chat/routes/ChatRoutes.js";
+import chatRoutes from "../chat/routes/chatRoutes.js";
 import conversationRoutes from "../chat/routes/conversationRoutes.js";
 import messageRoutes from "../chat/routes/messageRoutes.js";
 
