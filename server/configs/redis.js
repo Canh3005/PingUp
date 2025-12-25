@@ -1,5 +1,5 @@
-import { createClient } from "redis";
-import { env } from "./env.js";
+import { createClient } from 'redis';
+import { env } from './env.js';
 
 export async function createRedisClients() {
   if (!env.redisUrl) return null;
@@ -9,6 +9,6 @@ export async function createRedisClients() {
   await pubClient.connect();
   await subClient.connect();
 
-  console.log("[redis] connected");
+  console.log('[redis] connected');
   return { pubClient, subClient };
 }

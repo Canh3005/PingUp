@@ -1,10 +1,14 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
     userName: {
       type: String,
       required: true,
+    },
+    profileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'UserProfile',
     },
     email: {
       type: String,
@@ -19,12 +23,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ['user', 'admin'],
+      default: 'user',
     },
     type: {
       type: String,
-      enum: ["freelancer", "hirer", "both"],
+      enum: ['freelancer', 'hirer', 'both'],
       default: null,
     },
     topics: {
@@ -49,6 +53,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;

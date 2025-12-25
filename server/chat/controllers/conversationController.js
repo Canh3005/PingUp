@@ -1,4 +1,4 @@
-import conversationService from "../services/conversationService.js";
+import conversationService from '../services/conversationService.js';
 
 class ConversationController {
   async createConversation(req, res) {
@@ -16,10 +16,10 @@ class ConversationController {
 
       res.status(200).json({ ok: true, conversation: conv });
     } catch (error) {
-      console.error("Error in createConversation controller:", error);
+      console.error('Error in createConversation controller:', error);
       res.status(500).json({
         ok: false,
-        message: error.message || "Failed to create conversation",
+        message: error.message || 'Failed to create conversation',
       });
     }
   }
@@ -35,10 +35,10 @@ class ConversationController {
       });
       res.json({ ok: true, ...data });
     } catch (error) {
-      console.error("Error in listInbox controller:", error);
+      console.error('Error in listInbox controller:', error);
       res.status(500).json({
         ok: false,
-        message: error.message || "Failed to list inbox",
+        message: error.message || 'Failed to list inbox',
       });
     }
   }
@@ -53,10 +53,10 @@ class ConversationController {
       });
       res.json({ ok: true, conversation: conv });
     } catch (error) {
-      console.error("Error in getConversation controller:", error);
+      console.error('Error in getConversation controller:', error);
       res.status(500).json({
         ok: false,
-        message: error.message || "Failed to get conversation",
+        message: error.message || 'Failed to get conversation',
       });
     }
   }

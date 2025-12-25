@@ -4,6 +4,9 @@ import followController from '../controllers/followController.js';
 
 const router = express.Router();
 
+// Discover users (for People grid)
+router.get('/discover', followController.discoverUsers.bind(followController));
+
 // Follow/Unfollow user
 router.post('/:userId/follow', auth, followController.followUser.bind(followController));
 router.delete('/:userId/unfollow', auth, followController.unfollowUser.bind(followController));

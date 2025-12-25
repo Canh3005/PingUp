@@ -1,6 +1,6 @@
-import { parseLimit } from "../../utils/pagination.js";
-import Message from "../models/Message.js";
-import conversationService from "./conversationService.js";
+import { parseLimit } from '../../utils/pagination.js';
+import Message from '../models/Message.js';
+import conversationService from './conversationService.js';
 
 class MessageService {
   async listMessages({ userId, conversationId, limit, before }) {

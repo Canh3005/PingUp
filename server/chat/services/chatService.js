@@ -1,5 +1,5 @@
-import conversationService from "./conversationService.js";
-import ReadState from "../models/ReadState.js";
+import conversationService from './conversationService.js';
+import ReadState from '../models/ReadState.js';
 
 class ChatService {
   async updateRead({ userId, conversationId, lastReadMessageId }) {

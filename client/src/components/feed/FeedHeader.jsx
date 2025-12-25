@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Search, SlidersHorizontal, ChevronDown, Sparkles } from 'lucide-react';
 
-const FeedHeader = ({ selectedFilter, onFilterChange }) => {
+const FeedHeader = ({ selectedFilter, onFilterChange, activeTab, onTabChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('projects');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   const filterOptions = [
@@ -49,13 +48,11 @@ const FeedHeader = ({ selectedFilter, onFilterChange }) => {
                     <button
                       key={option.id}
                       onClick={() => handleFilterSelect(option.id)}
-                      className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
-                        selectedFilter === option.id
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50'
+                      className={`w-full text-left px-4 py-2.5 hover:bg-gray-50 transition-colors ${
+                        selectedFilter === option.id ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
                       }`}
                     >
-                      {option.label}
+                      <span className="text-sm font-medium">{option.label}</span>
                     </button>
                   ))}
                 </div>
@@ -65,23 +62,23 @@ const FeedHeader = ({ selectedFilter, onFilterChange }) => {
 
           {/* Search Bar */}
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search projects, people, assets..."
+              placeholder="Search Ping..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 text-sm bg-gray-100 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="hidden lg:flex items-center bg-gray-100 rounded-xl p-1">
+          {/* Tabs */}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                onClick={() => onTabChange(tab.id)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeTab === tab.id
                     ? 'bg-white text-gray-900 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
@@ -92,12 +89,14 @@ const FeedHeader = ({ selectedFilter, onFilterChange }) => {
             ))}
           </div>
 
-          {/* Sort Dropdown */}
-          <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">
-            <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="hidden sm:inline">Recommended</span>
-            <ChevronDown className="w-4 h-4" />
-          </button>
+          {/* Recommended Dropdown */}
+          <div className="relative">
+            <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">
+              <Sparkles className="w-4 h-4 text-gray-600" />
+              <span className="text-sm font-medium text-gray-700">Recommended</span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

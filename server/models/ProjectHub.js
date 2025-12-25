@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema(
   {
@@ -34,14 +34,14 @@ const projectSchema = new mongoose.Schema(
     ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     members: [
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "UserProfile",
+          ref: 'UserProfile',
           required: true,
         },
         role: {
@@ -53,12 +53,12 @@ const projectSchema = new mongoose.Schema(
     milestones: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Milestone",
+        ref: 'Milestone',
       },
     ],
     showcaseProjectId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+      ref: 'Project',
     },
     integrations: {
       github: { type: String, trim: true },
@@ -74,6 +74,6 @@ const projectSchema = new mongoose.Schema(
   }
 );
 
-const ProjectHub = mongoose.model("ProjectHub", projectSchema);
+const ProjectHub = mongoose.model('ProjectHub', projectSchema);
 
 export default ProjectHub;

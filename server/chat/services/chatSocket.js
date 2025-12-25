@@ -1,15 +1,15 @@
-import conversationService from "./conversationService.js";
-import chatService from "./chatService.js";
-import Message from "../models/Message.js";
-import Conversation from "../models/Conversation.js";
+import conversationService from './conversationService.js';
+import chatService from './chatService.js';
+import Message from '../models/Message.js';
+import Conversation from '../models/Conversation.js';
 
 export function registerChatSocket(io) {
-  io.on("connection", (socket) => {
+  io.on('connection', (socket) => {
     const userId = socket.data.userId;
 
     socket.join(`user:${userId}`);
 
-    socket.on("CONV_JOIN", async ({ conversationId }) => {
+    socket.on('CONV_JOIN', async ({ conversationId }) => {
       try {
         console.log('[CONV_JOIN] userId:', userId, 'conversationId:', conversationId);
         const conv = await conversationService.getConversationOrThrow({
@@ -24,13 +24,13 @@ export function registerChatSocket(io) {
       }
     });
 
-    socket.on("CONV_LEAVE", ({ conversationId }) => {
+    socket.on('CONV_LEAVE', ({ conversationId }) => {
       socket.leave(`conv:${conversationId}`);
     });
 
-    socket.on("MSG_SEND", async (payload, ack) => {
+    socket.on('MSG_SEND', async (payload, ack) => {
       try {
-        const { conversationId, clientMsgId, type = "text", content } = payload;
+        const { conversationId, clientMsgId, type = 'text', content } = payload;
 
         await conversationService.getConversationOrThrow({
           userId,
@@ -54,7 +54,7 @@ export function registerChatSocket(io) {
           { new: true }
         ).lean();
 
-        io.to(`conv:${conversationId}`).emit("MSG_NEW", {
+        io.to(`conv:${conversationId}`).emit('MSG_NEW', {
           conversationId,
           message: {
             _id: String(msg._id),
@@ -73,25 +73,25 @@ export function registerChatSocket(io) {
           createdAt: msg.createdAt,
         });
       } catch (e) {
-        ack?.({ ok: false, code: "SEND_FAILED" });
+        ack?.({ ok: false, code: 'SEND_FAILED' });
       }
     });
 
-    socket.on("READ_UPDATE", async ({ conversationId, lastReadMessageId }) => {
+    socket.on('READ_UPDATE', async ({ conversationId, lastReadMessageId }) => {
       try {
         const data = await chatService.updateRead({
           userId,
           conversationId,
           lastReadMessageId,
         });
-        socket.to(`conv:${conversationId}`).emit("READ_UPDATED", data);
+        socket.to(`conv:${conversationId}`).emit('READ_UPDATED', data);
       } catch {
         // ignore or emit error
       }
     });
 
     // Optional typing
-    socket.on("TYPING", async ({ conversationId, isTyping }) => {
+    socket.on('TYPING', async ({ conversationId, isTyping }) => {
       try {
         await conversationService.getConversationOrThrow({
           userId,
@@ -99,7 +99,7 @@ export function registerChatSocket(io) {
         });
         socket
           .to(`conv:${conversationId}`)
-          .emit("TYPING", { conversationId, userId, isTyping: !!isTyping });
+          .emit('TYPING', { conversationId, userId, isTyping: !!isTyping });
       } catch {}
     });
   });

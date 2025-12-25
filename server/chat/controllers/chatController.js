@@ -1,4 +1,4 @@
-import chatService from "../services/chatService.js";
+import chatService from '../services/chatService.js';
 
 class ChatController {
   async updateRead(req, res) {
@@ -11,10 +11,10 @@ class ChatController {
     res.json({ ok: true, ...data });
   }
     catch (error) {
-        console.error("Error in updateRead controller:", error);
+        console.error('Error in updateRead controller:', error);
         res.status(500).json({
             ok: false,
-            message: error.message || "Failed to update read state",
+            message: error.message || 'Failed to update read state',
         });
     }
   }

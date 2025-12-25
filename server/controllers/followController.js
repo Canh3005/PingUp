@@ -1,6 +1,7 @@
 import followService from '../services/followService.js';
 import User from '../models/User.js';
 import UserProfile from '../models/UserProfile.js';
+import Project from '../models/Project.js';
 
 class FollowController {
   // Follow a user
@@ -99,6 +100,30 @@ class FollowController {
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to get following'
+      });
+    }
+  }
+
+  // Discover users (for People grid)
+  async discoverUsers(req, res) {
+    try {
+      const { page = 1, limit = 12 } = req.query;
+
+      const result = await followService.discoverUsers(
+        parseInt(page),
+        parseInt(limit)
+      );
+
+      res.status(200).json({
+        success: true,
+        data: result.users,
+        pagination: result.pagination
+      });
+    } catch (error) {
+      console.error('Error in discoverUsers controller:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to discover users'
       });
     }
   }

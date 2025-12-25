@@ -20,5 +20,5 @@
 // app.listen(PORT, () => {
 //   console.log(`Server is running on port ${PORT}`);
 // });
-import { bootstrap } from "./loaders/index.js";
+import { bootstrap } from './loaders/index.js';
 bootstrap();

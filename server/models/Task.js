@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const tashkSchema = new mongoose.Schema(
   {
@@ -13,22 +13,22 @@ const tashkSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Not Started", "In Progress", "Completed"],
-      default: "Not Started",
+      enum: ['Not Started', 'In Progress', 'Completed'],
+      default: 'Not Started',
     },
     mileStoneId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Milestone",
+      ref: 'Milestone',
       required: true,
     },
     projectHubId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ProjectHub",
+        ref: 'ProjectHub',
         required: true,
     }
   },
   { timestamps: true }
 );
 
-const Task = mongoose.model("Task", tashkSchema);
+const Task = mongoose.model('Task', tashkSchema);
 export default Task;

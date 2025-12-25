@@ -179,7 +179,7 @@ class ProjectService {
       
       return projects;
     } catch (error) {
-      console.error("Error in getUserProjects:", error);
+      console.error('Error in getUserProjects:', error);
       throw new Error(`Error fetching user projects: ${error.message}`);
     }
   }
@@ -454,6 +454,57 @@ class ProjectService {
       return matches ? matches[1] : null;
     } catch {
       return null;
+    }
+  }
+
+  // Get projects from followed users
+  async getFollowingProjects(followingIds, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc') {
+    try {
+      // If not following anyone, return empty result
+      if (!followingIds || followingIds.length === 0) {
+        return {
+          projects: [],
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            pages: 0
+          }
+        };
+      }
+
+      // Build sort object
+      const sortObj = {};
+      sortObj[sortBy] = sortOrder === 'desc' ? -1 : 1;
+
+      // Get total count
+      const total = await Project.countDocuments({
+        owner: { $in: followingIds },
+        status: 'published'
+      });
+
+      // Fetch projects from followed users
+      const projects = await Project.find({
+        owner: { $in: followingIds },
+        status: 'published'
+      })
+        .populate('owner', 'userName imageUrl email')
+        .sort(sortObj)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean();
+
+      return {
+        projects,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit)
+        }
+      };
+    } catch (error) {
+      throw new Error(`Error fetching following projects: ${error.message}`);
     }
   }
 }

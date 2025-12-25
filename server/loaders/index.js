@@ -1,8 +1,8 @@
-import connectDB from "../configs/db.js";
-import { env } from "../configs/env.js";
-import { createRedisClients } from "../configs/redis.js";
-import { createExpressApp } from "./expressLoader.js";
-import { createSocketServer } from "./socketLoader.js";
+import connectDB from '../configs/db.js';
+import { env } from '../configs/env.js';
+import { createRedisClients } from '../configs/redis.js';
+import { createExpressApp } from './expressLoader.js';
+import { createSocketServer } from './socketLoader.js';
 
 export async function bootstrap() {
   await connectDB();
@@ -13,7 +13,7 @@ export async function bootstrap() {
   if (env.enableRedisAdapter) {
     const clients = await createRedisClients();
     if (clients) {
-      const { createAdapter } = await import("@socket.io/redis-adapter");
+      const { createAdapter } = await import('@socket.io/redis-adapter');
       const { pubClient, subClient } = clients;
       redisAdapterFactory = () => createAdapter(pubClient, subClient);
     }

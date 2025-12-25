@@ -1,20 +1,20 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import crypto from "crypto";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import crypto from 'crypto';
 
-// eslint-disable-next-line no-undef
+ 
 const APP_ID = process.env.FACEBOOK_APP_ID;
-// eslint-disable-next-line no-undef
+ 
 const APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-// eslint-disable-next-line no-undef
+ 
 const REDIRECT_URI = process.env.FACEBOOK_REDIRECT_URI;
 
 const register = async ({ userName, email, password }) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new Error('User already exists');
   }
   const user = new User({ userName, email, password: hashedPassword });
   await user.save();
@@ -24,21 +24,21 @@ const register = async ({ userName, email, password }) => {
 const login = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new Error("Invalid credentials");
+    throw new Error('Invalid credentials');
   }
-  // eslint-disable-next-line no-undef
+   
   const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: '1h',
   });
   const refreshToken = jwt.sign(
     { userId: user._id },
-    // eslint-disable-next-line no-undef
+     
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: '7d' }
   );
   const userWithoutPassword = user.toObject();
   delete userWithoutPassword.password;
@@ -49,71 +49,71 @@ const login = async ({ email, password }) => {
 const getProfile = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
   return user;
 };
 
 const refreshAccessToken = (token) => {
-  // eslint-disable-next-line no-undef
+   
   const { userId } = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-  // eslint-disable-next-line no-undef
+   
   const newAccessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: '1h',
   });
   return newAccessToken;
 };
 
 // Verify access token and return decoded payload
 const verifyToken = (token) => {
-  // eslint-disable-next-line no-undef
+   
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
 const getFacebookAuthUrl = async (req, res) => {
-  const state = crypto.randomBytes(16).toString("hex");
+  const state = crypto.randomBytes(16).toString('hex');
   // lưu state vào session/redis/cookie để đối chiếu
   const stateJwt = jwt.sign(
     { state: state },
-    // eslint-disable-next-line no-undef
+     
     process.env.JWT_SECRET,
-    { expiresIn: "5m" } // state chỉ hợp lệ 5 phút
+    { expiresIn: '5m' } // state chỉ hợp lệ 5 phút
   );
   console.log(stateJwt);
-  // eslint-disable-next-line no-undef
+   
   const authUrl = new URL(process.env.FACEBOOK_AUTH_URL);
-  authUrl.searchParams.set("client_id", APP_ID);
-  authUrl.searchParams.set("redirect_uri", REDIRECT_URI);
-  authUrl.searchParams.set("state", stateJwt);
-  authUrl.searchParams.set("scope", "email,public_profile");
+  authUrl.searchParams.set('client_id', APP_ID);
+  authUrl.searchParams.set('redirect_uri', REDIRECT_URI);
+  authUrl.searchParams.set('state', stateJwt);
+  authUrl.searchParams.set('scope', 'email,public_profile');
   return authUrl.toString();
 };
 
 const handleFacebookCallback = async (code) => {
   // 1) Lấy access token
   const tokenUrl = new URL(
-    "https://graph.facebook.com/v19.0/oauth/access_token"
+    'https://graph.facebook.com/v19.0/oauth/access_token'
   );
-  tokenUrl.searchParams.set("client_id", APP_ID);
-  tokenUrl.searchParams.set("client_secret", APP_SECRET);
-  tokenUrl.searchParams.set("redirect_uri", REDIRECT_URI);
-  tokenUrl.searchParams.set("code", code);
+  tokenUrl.searchParams.set('client_id', APP_ID);
+  tokenUrl.searchParams.set('client_secret', APP_SECRET);
+  tokenUrl.searchParams.set('redirect_uri', REDIRECT_URI);
+  tokenUrl.searchParams.set('code', code);
 
   const tokenRes = await fetch(tokenUrl.toString());
   const tokenJson = await tokenRes.json();
 
   if (!tokenJson.access_token) {
-    throw new Error("Failed to obtain access token");
+    throw new Error('Failed to obtain access token');
   }
 
   // 2) Lấy profile
   const meRes = await fetch(
-    "https://graph.facebook.com/v19.0/me?fields=id,name,email,picture.type(large)&access_token=" +
+    'https://graph.facebook.com/v19.0/me?fields=id,name,email,picture.type(large)&access_token=' +
       tokenJson.access_token
   );
   const me = await meRes.json();
   if (!me.id) {
-    throw new Error("Failed to fetch user profile");
+    throw new Error('Failed to fetch user profile');
   }
 
   // 3) Tạo người dùng mới
@@ -132,22 +132,22 @@ const handleFacebookCallback = async (code) => {
   }
 
   // 4) Trả về access token và refresh token cho fe
-  // eslint-disable-next-line no-undef
+   
   const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: '1h',
   });
   const refreshToken = jwt.sign(
     { userId: user._id },
-    // eslint-disable-next-line no-undef
+     
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: '7d' }
   );
 
   return { accessToken, refreshToken, user };
 };
 
 const updateUserType = async (userId, type) => {
-  const validTypes = ["freelancer", "hirer", "both"];
+  const validTypes = ['freelancer', 'hirer', 'both'];
   if (!validTypes.includes(type)) {
     throw new Error("Invalid user type. Must be 'freelancer', 'hirer', or 'both'");
   }
@@ -156,10 +156,10 @@ const updateUserType = async (userId, type) => {
     userId,
     { type },
     { new: true, runValidators: true }
-  ).select("-password");
+  ).select('-password');
   
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
   
   return user;
@@ -167,17 +167,17 @@ const updateUserType = async (userId, type) => {
 
 const updateUserTopics = async (userId, topics) => {
   if (!Array.isArray(topics)) {
-    throw new Error("Topics must be an array");
+    throw new Error('Topics must be an array');
   }
   
   const user = await User.findByIdAndUpdate(
     userId,
     { topics },
     { new: true, runValidators: true }
-  ).select("-password");
+  ).select('-password');
   
   if (!user) {
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
   
   return user;

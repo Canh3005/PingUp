@@ -1,4 +1,5 @@
 import projectService from '../services/projectService.js';
+import User from '../models/User.js';
 import _ from 'lodash';
 
 class ProjectController {
@@ -255,6 +256,46 @@ class ProjectController {
       });
     } catch (error) {
       res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  // Get projects from followed users
+  async getFollowingProjects(req, res) {
+    try {
+      const userId = req.user.id;
+      const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
+
+      // Get user's following list
+      const user = await User.findById(userId).select('following');
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      const followingIds = user.following || [];
+
+      // Pass followingIds to project service
+      const result = await projectService.getFollowingProjects(
+        followingIds,
+        parseInt(page),
+        parseInt(limit),
+        sortBy,
+        sortOrder
+      );
+
+      res.status(200).json({
+        success: true,
+        data: result.projects,
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      res.status(500).json({
         success: false,
         message: error.message,
       });

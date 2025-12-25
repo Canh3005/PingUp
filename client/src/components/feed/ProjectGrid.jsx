@@ -148,7 +148,20 @@ const ProjectGrid = ({ onProjectClick, filter, category }) => {
     try {
       setIsLoading(true);
       const filterParams = getFilterParams();
-      const response = await projectApi.getPublishedProjects(1, 15, filterParams);
+      
+      let response;
+      if (category === 'following') {
+        // Fetch projects from followed users
+        response = await projectApi.getFollowingProjects(
+          1,
+          15,
+          filterParams.sortBy || 'createdAt',
+          filterParams.sortOrder || 'desc'
+        );
+      } else {
+        // Fetch regular published projects
+        response = await projectApi.getPublishedProjects(1, 15, filterParams);
+      }
       
       if (response.success) {
         setProjects(response.data || []);
@@ -169,7 +182,20 @@ const ProjectGrid = ({ onProjectClick, filter, category }) => {
       setIsLoadingMore(true);
       const nextPage = page + 1;
       const filterParams = getFilterParams();
-      const response = await projectApi.getPublishedProjects(nextPage, 15, filterParams);
+      
+      let response;
+      if (category === 'following') {
+        // Load more from followed users
+        response = await projectApi.getFollowingProjects(
+          nextPage,
+          15,
+          filterParams.sortBy || 'createdAt',
+          filterParams.sortOrder || 'desc'
+        );
+      } else {
+        // Load more regular published projects
+        response = await projectApi.getPublishedProjects(nextPage, 15, filterParams);
+      }
       
       if (response.success) {
         setProjects([...projects, ...(response.data || [])]);
@@ -185,12 +211,24 @@ const ProjectGrid = ({ onProjectClick, filter, category }) => {
 
   if (isLoading && projects.length === 0) {
     return (
-      <div className="min-h-screen py-6">
-        <div className="w-full px-6">
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-500 font-medium">Loading amazing projects...</p>
-          </div>
+      <div className="w-full px-6 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+            <div key={i} className="animate-pulse">
+              {/* Image skeleton */}
+              <div className="aspect-[4/3] bg-gray-200 rounded-2xl mb-3"></div>
+              {/* Title skeleton */}
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              {/* Info skeleton */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-gray-200 rounded-full"></div>
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                </div>
+                <div className="h-3 bg-gray-200 rounded w-8"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

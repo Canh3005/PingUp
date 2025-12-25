@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema(
   {
@@ -42,6 +42,6 @@ commentSchema.virtual('likesCount').get(function() {
   return this.likes.length;
 });
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
 export default Comment;

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const milestoneSchema = new mongoose.Schema(
     {
@@ -16,18 +16,18 @@ const milestoneSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["Not Started", "In Progress", "Completed"],
-            default: "Not Started",
+            enum: ['Not Started', 'In Progress', 'Completed'],
+            default: 'Not Started',
         },
         project: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "ProjectHub",
+            ref: 'ProjectHub',
             required: true,
         },
     },
     { timestamps: true }
 );
 
-const Milestone = mongoose.model("Milestone", milestoneSchema);
+const Milestone = mongoose.model('Milestone', milestoneSchema);
 
 export default Milestone;

@@ -1,17 +1,17 @@
-import { parseLimit } from "../../utils/pagination.js";
-import Conversation from "../models/Conversation.js";
-import User from "../../models/User.js";
-import UserProfile from "../../models/UserProfile.js";
-import Message from "../models/Message.js";
+import { parseLimit } from '../../utils/pagination.js';
+import Conversation from '../models/Conversation.js';
+import User from '../../models/User.js';
+import UserProfile from '../../models/UserProfile.js';
+import Message from '../models/Message.js';
 
 class ConversationService {
   async createConversation({ userId, type, memberIds, title, avatar }) {
     // Validate inputs
     if (!userId) {
-      throw new Error("userId is required");
+      throw new Error('userId is required');
     }
     if (!memberIds || !Array.isArray(memberIds)) {
-      throw new Error("memberIds must be an array");
+      throw new Error('memberIds must be an array');
     }
     
     // auto include self - convert all to strings
@@ -19,15 +19,15 @@ class ConversationService {
     const memberIdsStr = memberIds.map(id => id.toString ? id.toString() : String(id));
     const uniqueMembers = Array.from(new Set([userIdStr, ...memberIdsStr]));
 
-    if (type === "direct") {
+    if (type === 'direct') {
       if (uniqueMembers.length !== 2) {
-        throw new Error("Direct conversation must have exactly 2 members");
+        throw new Error('Direct conversation must have exactly 2 members');
       }
       // reuse existing direct conv
       const existing = await Conversation.findOne({
-        type: "direct",
+        type: 'direct',
         memberIds: { $all: [uniqueMembers[0], uniqueMembers[1]] },
-        $expr: { $eq: [{ $size: "$memberIds" }, 2] },
+        $expr: { $eq: [{ $size: '$memberIds' }, 2] },
       }).lean();
       if (existing) return existing;
     }
@@ -45,7 +45,7 @@ class ConversationService {
 
   async getConversationOrThrow({ userId, conversationId }) {
     const conv = await Conversation.findById(conversationId);
-    if (!conv) throw new Error("Conversation not found");
+    if (!conv) throw new Error('Conversation not found');
     
     // Convert userId to string for comparison since memberIds are strings
     const userIdStr = userId.toString ? userId.toString() : String(userId);

@@ -51,6 +51,13 @@ const projectApi = {
     return res.data;
   },
 
+  // Get projects from followed users
+  getFollowingProjects: async (page = 1, limit = 12, sortBy = 'createdAt', sortOrder = 'desc') => {
+    const params = { page, limit, sortBy, sortOrder };
+    const res = await httpClient.get('/projects/following', { params });
+    return res.data;
+  },
+
   // Get user's published projects by userId
   getUserPublishedProjects: async (userId, limit = 6, excludeProjectId = null) => {
     const params = { limit };

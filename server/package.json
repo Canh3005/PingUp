@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +30,9 @@
     "redis": "^5.10.0",
     "socket.io": "^4.8.1",
     "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-plugin-import": "^2.32.0"
   }
 }

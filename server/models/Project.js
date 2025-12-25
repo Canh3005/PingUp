@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const blockSchema = new mongoose.Schema({
   type: {
@@ -145,6 +145,6 @@ projectSchema.methods.incrementViews = function() {
   return this.save();
 };
 
-const Project = mongoose.model("Project", projectSchema);
+const Project = mongoose.model('Project', projectSchema);
 
 export default Project;

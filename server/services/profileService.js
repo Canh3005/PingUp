@@ -65,7 +65,7 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       profile.experiences.push(experienceData);
@@ -83,12 +83,12 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       const experience = profile.experiences.id(experienceId);
       if (!experience) {
-        throw new Error("Experience not found");
+        throw new Error('Experience not found');
       }
 
       Object.assign(experience, experienceData);
@@ -106,7 +106,7 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       profile.experiences.pull(experienceId);
@@ -124,7 +124,7 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       profile.education.push(educationData);
@@ -142,12 +142,12 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       const edu = profile.education.id(educationId);
       if (!edu) {
-        throw new Error("Education not found");
+        throw new Error('Education not found');
       }
 
       Object.assign(edu, educationData);
@@ -165,7 +165,7 @@ class ProfileService {
       const profile = await UserProfile.findOne({ userId });
 
       if (!profile) {
-        throw new Error("Profile not found");
+        throw new Error('Profile not found');
       }
 
       profile.education.pull(educationId);

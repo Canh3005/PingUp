@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const userProfileSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       unique: true,
     },
@@ -20,17 +20,17 @@ const userProfileSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     website: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     location: {
       type: String,
-      default: "",
+      default: '',
       trim: true,
     },
     skills: {
@@ -39,11 +39,11 @@ const userProfileSchema = new mongoose.Schema(
     },
     avatarUrl: {
       type: String,
-      default: "",
+      default: '',
     },
     coverImageUrl: {
       type: String,
-      default: "",
+      default: '',
     },
     portfolioItems: [
       {
@@ -51,7 +51,7 @@ const userProfileSchema = new mongoose.Schema(
         publicId: String,
         title: String,
         description: String,
-        type: { type: String, enum: ["image", "video", "pdf"] },
+        type: { type: String, enum: ['image', 'video', 'pdf'] },
         createdAt: { type: Date, default: Date.now },
       },
     ],
@@ -83,7 +83,7 @@ const userProfileSchema = new mongoose.Schema(
         },
         endYear: {
           type: String,
-          default: "",
+          default: '',
         },
         currentlyWorking: {
           type: Boolean,
@@ -91,7 +91,7 @@ const userProfileSchema = new mongoose.Schema(
         },
         description: {
           type: String,
-          default: "",
+          default: '',
           trim: true,
         },
         createdAt: {
@@ -137,4 +137,4 @@ const userProfileSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("UserProfile", userProfileSchema);
+export default mongoose.model('UserProfile', userProfileSchema);

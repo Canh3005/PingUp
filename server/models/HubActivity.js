@@ -1,15 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const hubActivitySchema = new mongoose.Schema(
   {
     projectHubId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ProjectHub",
+        ref: 'ProjectHub',
         required: true,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserProfile",
+        ref: 'UserProfile',
         required: true,
     },
     action: {
@@ -25,5 +25,5 @@ const hubActivitySchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const HubActivity = mongoose.model("HubActivity", hubActivitySchema);
+const HubActivity = mongoose.model('HubActivity', hubActivitySchema);
 export default HubActivity;

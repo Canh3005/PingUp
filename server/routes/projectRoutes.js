@@ -13,6 +13,9 @@ router.get('/my-projects', auth, projectController.getUserProjects);
 // Get published projects (public feed)
 router.get('/published', projectController.getPublishedProjects);
 
+// Get projects from followed users (authenticated)
+router.get('/following', auth, projectController.getFollowingProjects);
+
 // Get user's published projects by userId (public)
 router.get('/user/:userId/published', projectController.getUserPublishedProjects);
 

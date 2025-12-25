@@ -244,7 +244,102 @@ const Profile = () => {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+        {/* Cover skeleton */}
+        <div className="w-full h-64 bg-gray-200 animate-pulse"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-16 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column Skeleton */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Profile Header Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="flex items-start gap-6">
+                  <div className="w-32 h-32 bg-gray-200 rounded-full"></div>
+                  <div className="flex-1 space-y-3">
+                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                    <div className="flex gap-3 mt-4">
+                      <div className="h-10 bg-gray-200 rounded w-24"></div>
+                      <div className="h-10 bg-gray-200 rounded w-24"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* About Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+                </div>
+              </div>
+
+              {/* Projects Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="grid grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="aspect-[4/3] bg-gray-200 rounded-xl"></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Experience Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="space-y-4">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="flex gap-4">
+                      <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column Skeleton */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Contact Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+                <div className="space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </div>
+              </div>
+
+              {/* Followers Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+                <div className="flex gap-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skills Section Skeleton */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-24 mb-4"></div>
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-8 bg-gray-200 rounded-full w-24"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
