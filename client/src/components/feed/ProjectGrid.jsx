@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Eye, Bookmark, Play } from 'lucide-react';
 import projectApi from '../../api/projectApi';
 
@@ -84,21 +84,46 @@ const ProjectCard = ({ project, onClick }) => {
 const ProjectGrid = ({ onProjectClick }) => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const observerTarget = useRef(null);
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isLoading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, isLoadingMore, isLoading, page]);
+
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const response = await projectApi.getPublishedProjects(page, 20);
+      const response = await projectApi.getPublishedProjects(1, 15);
       
       if (response.success) {
         setProjects(response.data || []);
         setHasMore(response.pagination?.page < response.pagination?.pages);
+        setPage(1);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -108,9 +133,12 @@ const ProjectGrid = ({ onProjectClick }) => {
   };
 
   const loadMore = async () => {
+    if (isLoadingMore || !hasMore) return;
+    
     try {
+      setIsLoadingMore(true);
       const nextPage = page + 1;
-      const response = await projectApi.getPublishedProjects(nextPage, 20);
+      const response = await projectApi.getPublishedProjects(nextPage, 15);
       
       if (response.success) {
         setProjects([...projects, ...(response.data || [])]);
@@ -119,6 +147,8 @@ const ProjectGrid = ({ onProjectClick }) => {
       }
     } catch (error) {
       console.error('Error loading more projects:', error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -155,17 +185,18 @@ const ProjectGrid = ({ onProjectClick }) => {
               ))}
             </div>
 
-            {/* Load More */}
-            {hasMore && (
-              <div className="flex justify-center mt-12">
-                <button
-                  onClick={loadMore}
-                  className="px-8 py-3 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all font-medium text-gray-700"
-                >
-                  Load More Projects
-                </button>
-              </div>
-            )}
+            {/* Infinite Scroll Observer Target */}
+            <div ref={observerTarget} className="h-20 flex items-center justify-center mt-8">
+              {isLoadingMore && (
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                  <p className="text-gray-500 text-sm">Loading more projects...</p>
+                </div>
+              )}
+              {!hasMore && projects.length > 0 && (
+                <p className="text-gray-400 text-sm">You've reached the end! 🎉</p>
+              )}
+            </div>
           </>
         )}
       </div>

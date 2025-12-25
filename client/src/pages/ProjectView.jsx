@@ -12,7 +12,7 @@ import ProjectComments from '../components/project-view/ProjectComments';
 import Loading from '../components/Loading';
 import { useAuth } from '../context/authContext';
 
-const ProjectView = ({ projectId, onClose }) => {
+const ProjectView = ({ projectId, onClose, onProjectClick }) => {
   const { user } = useAuth();
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -195,6 +195,7 @@ const ProjectView = ({ projectId, onClose }) => {
               isFollowing={isFollowing}
               isFollowLoading={isFollowLoading}
               onFollowToggle={handleFollowToggle}
+              onProjectClick={onProjectClick}
             />
             <ProjectComments 
               project={project} 

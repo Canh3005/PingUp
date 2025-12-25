@@ -1,14 +1,13 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, LayoutDashboard, Briefcase, MessageCircle, LogOut } from "lucide-react";
+import { Home, Briefcase, MessageCircle, LogOut } from "lucide-react";
 import { useAuth } from "../context/authContext.jsx";
 import { assets } from "../assets/assets";
 
 const navItems = [
   { to: "/", label: "Explore", Icon: Home },
-  { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { to: "/jobs", label: "Jobs", Icon: Briefcase },
   { to: "/message", label: "Message", Icon: MessageCircle },
+  { to: "/jobs", label: "Jobs", Icon: Briefcase },
 ];
 
 const NavItems = ({ onNavigate, horizontal = false }) => {

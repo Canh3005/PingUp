@@ -26,7 +26,8 @@ const Feed = () => {
       {selectedProjectId && (
         <ProjectView 
           projectId={selectedProjectId} 
-          onClose={handleCloseProject} 
+          onClose={handleCloseProject}
+          onProjectClick={setSelectedProjectId}
         />
       )}
     </div>

@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Heart, Eye, UserPlus, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import projectApi from '../../api/projectApi';
 
-const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoading, onFollowToggle }) => {
-  const navigate = useNavigate();
+const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoading, onFollowToggle, onProjectClick }) => {
   const scrollContainerRef = useRef(null);
   const [authorProjects, setAuthorProjects] = useState([]);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -56,7 +54,9 @@ const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoadin
   };
 
   const handleProjectClick = (projectId) => {
-    navigate(`/project/${projectId}`);
+    if (onProjectClick) {
+      onProjectClick(projectId);
+    }
   };
 
   if (authorProjects.length === 0 && !isLoading) {
