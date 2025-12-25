@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import userApi from '../../api/userApi';
+import chatApi from '../../api/chatApi';
 import HireBanner from './HireBanner';
 
 const PeopleGrid = () => {
@@ -12,6 +13,22 @@ const PeopleGrid = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const observerTarget = useRef(null);
   const navigate = useNavigate();
+
+  // Handle message button click
+  const handleMessageClick = async (userId, e) => {
+    e.stopPropagation(); // Prevent triggering other clicks
+    try {
+      const data = await chatApi.createConversation({
+        type: 'direct',
+        memberIds: [userId],
+        title: '',
+        avatar: '',
+      });
+      navigate(`/message/${data.conversation._id}`);
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+    }
+  };
 
   // Fetch users
   const fetchUsers = async (pageNum = 1) => {
@@ -101,8 +118,7 @@ const PeopleGrid = () => {
             {users.map((user) => (
               <div 
                 key={user._id} 
-                onClick={() => handleUserClick(user._id)}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
               >
                 {/* Project Thumbnails */}
                 <div className="grid grid-cols-4 gap-0.5 bg-gray-100">
@@ -126,15 +142,21 @@ const PeopleGrid = () => {
 
                 {/* User Info */}
                 <div className="p-6">
-                  {/* Avatar & Name */}
+                  {/* Avatar & Name - Clickable */}
                   <div className="flex items-start gap-4 mb-4">
                     <img 
                       src={user.profile.avatarUrl || 'https://via.placeholder.com/64'} 
                       alt={user.profile.name}
-                      className="w-16 h-16 rounded-full object-cover ring-2 ring-gray-100"
+                      onClick={() => handleUserClick(user._id)}
+                      className="w-16 h-16 rounded-full object-cover ring-2 ring-gray-100 cursor-pointer hover:ring-blue-500 transition-all"
                     />
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 mb-1">{user.profile.name}</h3>
+                      <h3 
+                        onClick={() => handleUserClick(user._id)}
+                        className="font-bold text-gray-900 mb-1 cursor-pointer hover:text-blue-600 transition-colors"
+                      >
+                        {user.profile.name}
+                      </h3>
                       <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
                         <MapPin className="w-3.5 h-3.5" />
                         <span>{user.profile.location}</span>
@@ -169,7 +191,10 @@ const PeopleGrid = () => {
                   </div>
 
                   {/* Message Button */}
-                  <button className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                  <button 
+                    onClick={(e) => handleMessageClick(user._id, e)}
+                    className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                  >
                     <MessageCircle className="w-4 h-4" />
                     Message {user.profile.name.split(' ')[0]}
                   </button>

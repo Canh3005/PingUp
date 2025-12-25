@@ -51,7 +51,18 @@ const getProfile = async (userId) => {
   if (!user) {
     throw new Error('User not found');
   }
-  return user;
+  const profile = await UserProfile.findOne({ userId: user._id })
+    .select('name avatarUrl')
+    .lean();
+
+  const userWithProfile = {
+    ...user,
+    profile: {
+      name: profile?.name,
+      avatarUrl: profile?.avatarUrl
+    }
+  };
+  return userWithProfile;
 };
 
 const refreshAccessToken = (token) => {

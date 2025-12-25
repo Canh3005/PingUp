@@ -30,8 +30,8 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const userAvatar = user?.imageUrl || user?.profile_picture || assets.sample_profile;
-  const userName = user?.username || user?.userName || user?.full_name || user?.email || "User";
+  const userAvatar = user?.profile?.avatarUrl || assets.sample_profile;
+  const userName = user?.profile?.name || "User";
 
   const hasCompletedOnboarding = user?.type && user?.topics && user?.topics.length > 0;
 

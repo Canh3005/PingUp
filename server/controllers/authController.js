@@ -26,11 +26,13 @@ const login = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    // auth middleware already attaches sanitized user to req.user
+    // auth middleware attaches sanitized user to req.user
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    return res.status(200).json({ user: req.user });
+
+    const user = await authService.getProfile(req.user.id);
+    return res.status(200).json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

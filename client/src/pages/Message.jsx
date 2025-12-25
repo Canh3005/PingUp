@@ -106,13 +106,15 @@ const Message = () => {
             </div>
           ) : (
             <div className="p-2 space-y-1">
-              {filteredConversations.map((conv) => (
-                <ConversationItem
-                  key={conv._id}
-                  conversation={conv}
-                  isActive={conv._id === conversationId}
-                />
-              ))}
+              {filteredConversations
+                .filter(conv => conv.lastMessage) // Only show conversations with messages
+                .map((conv) => (
+                  <ConversationItem
+                    key={conv._id}
+                    conversation={conv}
+                    isActive={conv._id === conversationId}
+                  />
+                ))}
             </div>
           )}
         </div>

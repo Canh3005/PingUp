@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Eye, MessageCircle, UserPlus, Mail, Trash2, Send, MapPin, Calendar, Tag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import projectApi from '../../api/projectApi';
+import chatApi from '../../api/chatApi';
 import { useAuth } from '../../context/authContext';
 
 const ProjectComments = ({ project, projectId, isOwnProject, isFollowing, isFollowLoading, onFollowToggle }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,6 +81,20 @@ const ProjectComments = ({ project, projectId, isOwnProject, isFollowing, isFoll
   const handleViewProfile = (author) => {
     if (author?._id) {
       window.open(`/profile/${author._id}`, '_blank');
+    }
+  };
+
+  const handleMessageClick = async () => {
+    try {
+      const data = await chatApi.createConversation({
+        type: 'direct',
+        memberIds: [project.owner._id],
+        title: '',
+        avatar: '',
+      });
+      navigate(`/message/${data.conversation._id}`);
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
     }
   };
 
@@ -253,7 +270,10 @@ const ProjectComments = ({ project, projectId, isOwnProject, isFollowing, isFoll
                 <UserPlus className="w-4 h-4" />
                 {isFollowing ? 'Following' : 'Follow'}
               </button>
-              <button className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all">
+              <button 
+                onClick={handleMessageClick}
+                className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
+              >
                 <Mail className="w-4 h-4" />
               </button>
             </div>)}

@@ -1,7 +1,25 @@
 import React from 'react';
 import { Edit, Mail, UserPlus, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import chatApi from '../../api/chatApi';
 
-const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditClick, isFollowing, isFollowLoading, onFollowToggle }) => {
+const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditClick, isFollowing, isFollowLoading, onFollowToggle, userId }) => {
+  const navigate = useNavigate();
+
+  const handleMessageClick = async () => {
+    try {
+      const data = await chatApi.createConversation({
+        type: 'direct',
+        memberIds: [userId],
+        title: '',
+        avatar: '',
+      });
+      navigate(`/message/${data.conversation._id}`);
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
       <div className="flex flex-col sm:flex-row items-start gap-6">
@@ -50,7 +68,10 @@ const ProfileHeader = ({ userAvatar, userName, userRole, isOwnProfile, onEditCli
                   <button className="px-5 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium text-gray-700">
                     Invite to Project
                   </button>
-                  <button className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all">
+                  <button 
+                    onClick={handleMessageClick}
+                    className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
+                  >
                     <Mail className="w-5 h-5 text-gray-600" />
                   </button>
                 </>

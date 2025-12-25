@@ -1,13 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Heart, Eye, UserPlus, MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import projectApi from '../../api/projectApi';
+import chatApi from '../../api/chatApi';
 
 const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoading, onFollowToggle, onProjectClick }) => {
+  const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [authorProjects, setAuthorProjects] = useState([]);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleMessageClick = async () => {
+    try {
+      const data = await chatApi.createConversation({
+        type: 'direct',
+        memberIds: [project.owner._id],
+        title: '',
+        avatar: '',
+      });
+      navigate(`/message/${data.conversation._id}`);
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchAuthorProjects = async () => {
@@ -104,7 +121,10 @@ const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoadin
                 <UserPlus className="w-4 h-4" />
                 {isFollowing ? 'Following' : 'Follow'}
               </button>
-              <button className="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all border border-white/10">
+              <button 
+                onClick={handleMessageClick}
+                className="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all border border-white/10"
+              >
                 <MessageCircle className="w-4 h-4" />
               </button>
             </div>
