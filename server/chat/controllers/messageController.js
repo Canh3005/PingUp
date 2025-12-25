@@ -3,9 +3,9 @@ import messageService from "../services/messageService.js";
 class MessageController {
   async list(req, res) {
     try {
-      const { userId } = req.user;
-      const { conversationId } = req.validated.params;
-      const { limit, before } = req.validated.query;
+      const userId = req.user._id || req.user.id;
+      const { conversationId } = req.params;
+      const { limit, before } = req.query;
 
       const data = await messageService.listMessages({
         userId,

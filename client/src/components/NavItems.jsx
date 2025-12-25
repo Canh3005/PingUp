@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, LayoutDashboard, Briefcase, UserPlus, LogOut } from "lucide-react";
+import { Home, LayoutDashboard, Briefcase, MessageCircle, LogOut } from "lucide-react";
 import { useAuth } from "../context/authContext.jsx";
 import { assets } from "../assets/assets";
 
@@ -8,7 +8,7 @@ const navItems = [
   { to: "/", label: "Explore", Icon: Home },
   { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { to: "/jobs", label: "Jobs", Icon: Briefcase },
-  { to: "/connection", label: "Connection", Icon: UserPlus },
+  { to: "/message", label: "Message", Icon: MessageCircle },
 ];
 
 const NavItems = ({ onNavigate, horizontal = false }) => {

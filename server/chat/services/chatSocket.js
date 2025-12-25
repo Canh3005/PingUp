@@ -10,11 +10,18 @@ export function registerChatSocket(io) {
     socket.join(`user:${userId}`);
 
     socket.on("CONV_JOIN", async ({ conversationId }) => {
-      const conv = await conversationService.getConversationOrThrow({
-        userId,
-        conversationId,
-      });
-      socket.join(`conv:${conv._id}`);
+      try {
+        console.log('[CONV_JOIN] userId:', userId, 'conversationId:', conversationId);
+        const conv = await conversationService.getConversationOrThrow({
+          userId,
+          conversationId,
+        });
+        socket.join(`conv:${conv._id}`);
+        console.log('[CONV_JOIN] Success - joined conv:', conv._id);
+      } catch (error) {
+        console.error('[CONV_JOIN] Error:', error.message);
+        socket.emit('error', { code: 'CONV_JOIN_FAILED', message: error.message });
+      }
     });
 
     socket.on("CONV_LEAVE", ({ conversationId }) => {

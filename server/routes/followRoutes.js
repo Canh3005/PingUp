@@ -15,4 +15,7 @@ router.get('/:userId/following', followController.getFollowing.bind(followContro
 // Check if current user is following target user
 router.get('/:userId/status', auth, followController.checkFollowStatus.bind(followController));
 
+// Search users
+router.get('/search', auth, followController.searchUsers.bind(followController));
+
 export default router;

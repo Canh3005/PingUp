@@ -10,4 +10,7 @@ router.post('/', auth, ConversationController.createConversation);
 // Get inbox conversations (authenticated)
 router.get('/', auth, ConversationController.listInbox);
 
+// Get conversation by ID (authenticated)
+router.get('/:conversationId', auth, ConversationController.getConversation);
+
 export default router;

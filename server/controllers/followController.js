@@ -1,4 +1,6 @@
 import followService from '../services/followService.js';
+import User from '../models/User.js';
+import UserProfile from '../models/UserProfile.js';
 
 class FollowController {
   // Follow a user
@@ -118,6 +120,56 @@ class FollowController {
       res.status(500).json({
         success: false,
         message: error.message || 'Failed to check follow status'
+      });
+    }
+  }
+
+  // Search users
+  async searchUsers(req, res) {
+    try {
+      const { q } = req.query;
+      
+      if (!q || q.trim().length < 2) {
+        return res.status(200).json({
+          success: true,
+          users: []
+        });
+      }
+
+      // Search users by userName or email
+      const users = await User.find({
+        $or: [
+          { userName: { $regex: q, $options: 'i' } },
+          { email: { $regex: q, $options: 'i' } }
+        ]
+      })
+      .select('userName email imageUrl')
+      .limit(20)
+      .lean();
+
+      // Populate avatarUrl from UserProfile for each user
+      const usersWithProfile = await Promise.all(
+        users.map(async (user) => {
+          const profile = await UserProfile.findOne({ userId: user._id })
+            .select('avatarUrl')
+            .lean();
+          
+          return {
+            ...user,
+            avatarUrl: profile?.avatarUrl || user.imageUrl || null
+          };
+        })
+      );
+
+      res.status(200).json({
+        success: true,
+        users: usersWithProfile
+      });
+    } catch (error) {
+      console.error('Error in searchUsers controller:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to search users'
       });
     }
   }

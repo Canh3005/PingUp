@@ -3,8 +3,9 @@ import conversationService from "../services/conversationService.js";
 class ConversationController {
   async createConversation(req, res) {
     try {
-      const { userId } = req.user;
-      const { type, memberIds, title, avatar } = req.validated.body;
+      const userId = req.user._id || req.user.id;
+      const { type, memberIds, title, avatar } = req.body;
+      console.log(req.body);
       const conv = await conversationService.createConversation({
         userId,
         type,
@@ -25,8 +26,8 @@ class ConversationController {
 
   async listInbox(req, res) {
     try {
-      const { userId } = req.user;
-      const { limit, cursor } = req.validated.query;
+      const userId = req.user._id || req.user.id;
+      const { limit, cursor } = req.query;
       const data = await conversationService.listInbox({
         userId,
         limit,
@@ -38,6 +39,24 @@ class ConversationController {
       res.status(500).json({
         ok: false,
         message: error.message || "Failed to list inbox",
+      });
+    }
+  }
+
+  async getConversation(req, res) {
+    try {
+      const userId = req.user._id || req.user.id;
+      const { conversationId } = req.params;
+      const conv = await conversationService.getConversationOrThrow({
+        userId,
+        conversationId,
+      });
+      res.json({ ok: true, conversation: conv });
+    } catch (error) {
+      console.error("Error in getConversation controller:", error);
+      res.status(500).json({
+        ok: false,
+        message: error.message || "Failed to get conversation",
       });
     }
   }

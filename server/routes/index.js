@@ -22,7 +22,7 @@ router.use("/project-hubs", projectHubRoutes);
 router.use("/milestones", milestoneRoutes);
 router.use("/users", followRoutes);
 router.use("/chat", chatRoutes);
-router.use("/conversations", conversationRoutes);
-router.use("/messages", messageRoutes);
+router.use("/chat/conversations", conversationRoutes);
+router.use("/chat/conversations", messageRoutes);
 
 export default router;

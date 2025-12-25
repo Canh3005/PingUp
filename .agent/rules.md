@@ -475,12 +475,35 @@ const someController = async (req, res) => {
 
 ### JavaScript/ES6+
 - Use **ES Modules** (`import/export`)
+- **All imports MUST be at the top of the file** - no dynamic imports inside functions
 - Use `const` by default, `let` when reassignment needed
 - Never use `var`
 - Use arrow functions for callbacks
 - Use template literals for strings
 - Use destructuring when appropriate
 - Use async/await instead of promises chains
+
+**Example:**
+```javascript
+// ✅ CORRECT: Imports at top
+import User from '../models/User.js';
+import UserProfile from '../models/UserProfile.js';
+
+class MyController {
+  async myMethod() {
+    const user = await User.findById(id);
+    const profile = await UserProfile.findOne({ userId: id });
+  }
+}
+
+// ❌ WRONG: Dynamic import inside function
+class MyController {
+  async myMethod() {
+    const User = (await import('../models/User.js')).default;
+    const user = await User.findById(id);
+  }
+}
+```
 
 ### Naming Conventions
 - **Variables/Functions**: camelCase (`getUserProfile`, `isActive`)
