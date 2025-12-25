@@ -58,21 +58,25 @@ const ProjectCard = ({ project, onClick }) => {
         <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
           {project.title}
         </h3>
-        <div className="flex items-center justify-between mt-1.5">
+        <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-2">
             {project.owner?.imageUrl && (
               <img
                 src={project.owner.imageUrl}
                 alt={project.owner?.userName}
-                className="w-5 h-5 rounded-full object-cover ring-1 ring-gray-200"
+                className="w-6 h-6 rounded-full object-cover ring-1 ring-gray-200"
               />
             )}
             <p className="text-xs text-gray-500 truncate">{project.owner?.userName || 'Anonymous'}</p>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-gray-400">
             <span className="flex items-center gap-1">
               <Heart className="w-3 h-3" />
               {formatCount(project.likes?.length)}
+            </span>
+            <span className="flex items-center gap-1">
+              <Eye className="w-3 h-3" />
+              {formatCount(project.views)}
             </span>
           </div>
         </div>
