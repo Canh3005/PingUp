@@ -1,16 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Heart, Share2, Bookmark, MessageCircle, Plus, Check } from "lucide-react";
 import { useAuth } from "../../context/authContext";
 
 const ProjectSidebar = ({ project, onLike, isOwnProject, isFollowing, isFollowLoading, onFollowToggle, onCommentClick }) => {
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
-  const [isLiked, setIsLiked] = useState(project.likes?.includes(user?._id));
+  const [isLiked, setIsLiked] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Sync isLiked state with project data
+  useEffect(() => {
+    if (project?.likes && user?._id) {
+      setIsLiked(project.likes.includes(user._id));
+      setIsInitialized(true);
+    } else if (project?.likes) {
+      setIsInitialized(true);
+    }
+  }, [project?.likes, user?._id]);
 
   const handleLike = () => {
-    setIsLiked(!isLiked);
     onLike();
   };
+
+  // Don't render until initialized to prevent flash
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <div className="fixed right-16 xl:right-32 top-1/3 flex flex-col items-center gap-3 z-40">

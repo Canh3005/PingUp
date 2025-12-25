@@ -1,13 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Eye, MessageCircle, Calendar, Share2, Bookmark } from 'lucide-react';
+import { useAuth } from '../../context/authContext';
 
 const ProjectFooter = ({ project, onLike }) => {
+  const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Sync isLiked state with project data
+  useEffect(() => {
+    if (project?.likes && user?._id) {
+      setIsLiked(project.likes.includes(user._id));
+      setIsInitialized(true);
+    } else if (project?.likes) {
+      setIsInitialized(true);
+    }
+  }, [project?.likes, user?._id]);
 
   const handleLike = () => {
-    setIsLiked(!isLiked);
     onLike();
   };
+
+  // Don't render until initialized to prevent flash
+  if (!isInitialized) {
+    return null;
+  }
 
   const formatCount = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;

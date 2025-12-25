@@ -6,6 +6,8 @@ import ProjectView from './ProjectView';
 
 const Feed = () => {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState('recent');
+  const [selectedCategory, setSelectedCategory] = useState('for-you');
 
   const handleCloseProject = () => {
     setSelectedProjectId(null);
@@ -14,13 +16,23 @@ const Feed = () => {
   return (
     <div className="min-h-screen bg-gray-50 min-w-full">
       {/* Header with Filter + Search + Recommended */}
-      <FeedHeader />
+      <FeedHeader 
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+      />
       
       {/* Category Pills - For You, Following, etc. */}
-      <FeedCategories />
+      <FeedCategories 
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
       
       {/* Project Grid - 5 columns */}
-      <ProjectGrid onProjectClick={setSelectedProjectId} />
+      <ProjectGrid 
+        onProjectClick={setSelectedProjectId}
+        filter={selectedFilter}
+        category={selectedCategory}
+      />
 
       {/* Project View Modal */}
       {selectedProjectId && (

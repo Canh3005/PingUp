@@ -178,6 +178,8 @@ class ProjectController {
       const filters = {
         category: req.query.category,
         tags: req.query.tags ? req.query.tags.split(',') : [],
+        sortBy: req.query.sortBy || 'publishedAt',
+        sortOrder: req.query.sortOrder || 'desc',
       };
 
       const result = await projectService.getPublishedProjects(page, limit, filters);

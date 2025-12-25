@@ -88,14 +88,16 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
   };
 
   const handleLike = async () => {
+    if (!user?._id) return;
+    
     try {
       const response = await projectApi.toggleLike(projectId);
 
       setProject(prev => ({
         ...prev,
         likes: response.data.isLiked
-          ? [...prev.likes, 'currentUser']
-          : prev.likes.filter(id => id !== 'currentUser'),
+          ? [...prev.likes, user._id]
+          : prev.likes.filter(id => id !== user._id),
         likesCount: response.data.likesCount,
       }));
     } catch (error) {

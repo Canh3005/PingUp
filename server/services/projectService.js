@@ -23,8 +23,7 @@ class ProjectService {
   async getProjectById(projectId, userId = null) {
     try {
       const project = await Project.findById(projectId)
-        .populate('owner', 'userName imageUrl email')
-        .populate('likes', 'userName imageUrl');
+        .populate('owner', 'userName imageUrl email');
       
       if (!project) {
         throw new Error('Project not found');
@@ -199,12 +198,55 @@ class ProjectService {
 
       const skip = (page - 1) * limit;
 
-      const projects = await Project.find(query)
-        .sort({ publishedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate('owner', 'userName imageUrl')
-        .select('-blocks'); // Don't return blocks in feed
+      // Build sort object
+      const sortBy = filters.sortBy || 'publishedAt';
+      const sortOrder = filters.sortOrder === 'asc' ? 1 : -1;
+      
+      let projects;
+      
+      // For sorting by likes count, we need to use aggregation
+      if (sortBy === 'likes') {
+        projects = await Project.aggregate([
+          { $match: query },
+          { $addFields: { likesCount: { $size: '$likes' } } },
+          { $sort: { likesCount: sortOrder } },
+          { $skip: skip },
+          { $limit: limit },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'owner',
+              foreignField: '_id',
+              as: 'owner'
+            }
+          },
+          { $unwind: '$owner' },
+          {
+            $project: {
+              blocks: 0,
+              'owner.password': 0,
+              'owner.email': 0
+            }
+          }
+        ]);
+      } else {
+        // For other sorts, use regular query
+        let sortObj = {};
+        if (sortBy === 'views') {
+          sortObj = { views: sortOrder };
+        } else if (sortBy === 'createdAt') {
+          sortObj = { createdAt: sortOrder };
+        } else {
+          sortObj = { publishedAt: sortOrder };
+        }
+
+        projects = await Project.find(query)
+          .sort(sortObj)
+          .skip(skip)
+          .limit(limit)
+          .populate('owner', 'userName imageUrl')
+          .select('-blocks'); // Don't return blocks in feed
+      }
 
       const total = await Project.countDocuments(query);
 

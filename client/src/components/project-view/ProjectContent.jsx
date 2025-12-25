@@ -57,7 +57,7 @@ const ProjectContent = ({ project }) => {
                 <img
                   src={block.mediaUrl}
                   alt="Project content"
-                  className="w-full h-auto transition-transform duration-700 group-hover:scale-[1.02]"
+                  className="w-full h-auto"
                   loading="lazy"
                 />
                 {/* Subtle vignette effect on hover */}

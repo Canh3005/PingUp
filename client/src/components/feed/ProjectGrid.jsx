@@ -20,7 +20,7 @@ const ProjectCard = ({ project, onClick }) => {
         <img
           src={project.coverImage || 'https://via.placeholder.com/600x400?text=No+Cover+Image'}
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500"
         />
 
         {/* Gradient Overlay */}
@@ -81,7 +81,7 @@ const ProjectCard = ({ project, onClick }) => {
   );
 };
 
-const ProjectGrid = ({ onProjectClick }) => {
+const ProjectGrid = ({ onProjectClick, filter, category }) => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -89,9 +89,38 @@ const ProjectGrid = ({ onProjectClick }) => {
   const [hasMore, setHasMore] = useState(true);
   const observerTarget = useRef(null);
 
+  // Map filter to API parameters
+  const getFilterParams = () => {
+    const params = {};
+    
+    // Sort by filter
+    if (filter === 'recent') {
+      params.sortBy = 'createdAt';
+      params.sortOrder = 'desc';
+    } else if (filter === 'popular') {
+      params.sortBy = 'likes';
+      params.sortOrder = 'desc';
+    } else if (filter === 'viewed') {
+      params.sortBy = 'views';
+      params.sortOrder = 'desc';
+    }
+    
+    // Category filter (if needed by backend)
+    if (category && category !== 'for-you') {
+      params.category = category;
+    }
+    
+    return params;
+  };
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Refetch when filter or category changes
+  useEffect(() => {
+    fetchProjects();
+  }, [filter, category]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -118,7 +147,8 @@ const ProjectGrid = ({ onProjectClick }) => {
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const response = await projectApi.getPublishedProjects(1, 15);
+      const filterParams = getFilterParams();
+      const response = await projectApi.getPublishedProjects(1, 15, filterParams);
       
       if (response.success) {
         setProjects(response.data || []);
@@ -138,7 +168,8 @@ const ProjectGrid = ({ onProjectClick }) => {
     try {
       setIsLoadingMore(true);
       const nextPage = page + 1;
-      const response = await projectApi.getPublishedProjects(nextPage, 15);
+      const filterParams = getFilterParams();
+      const response = await projectApi.getPublishedProjects(nextPage, 15, filterParams);
       
       if (response.success) {
         setProjects([...projects, ...(response.data || [])]);

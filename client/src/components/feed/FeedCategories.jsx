@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Star, Heart, Award, ChevronRight } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Star, Heart, Award, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const categories = [
   { 
@@ -73,46 +73,95 @@ const categories = [
   },
 ];
 
-const FeedCategories = () => {
-  const [activeCategory, setActiveCategory] = useState('for-you');
+const FeedCategories = ({ selectedCategory, onCategoryChange }) => {
+  const scrollContainerRef = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+
+  const checkScrollPosition = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+      );
+    }
+  };
+
+  useEffect(() => {
+    checkScrollPosition();
+    window.addEventListener('resize', checkScrollPosition);
+    return () => window.removeEventListener('resize', checkScrollPosition);
+  }, []);
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      setTimeout(checkScrollPosition, 300);
+    }
+  };
 
   return (
     <div className="sticky top-[141px] z-20 bg-white/80 backdrop-blur-md border-b border-gray-100">
-      <div className="w-full px-6 overflow-x-auto scrollbar-hide scroll-smooth">
-        <div className="flex items-center gap-3 py-4 px-1">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            const isActive = activeCategory === category.id;
-
-            return (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-xl whitespace-nowrap transition-all duration-300 ${
-                  isActive
-                    ? 'ring-2 ring-blue-500 ring-offset-2 shadow-lg scale-105'
-                    : 'hover:scale-105 hover:shadow-md'
-                }`}
-                style={{
-                  backgroundImage: isActive
-                    ? `linear-gradient(135deg, rgba(59, 130, 246, 0.85), rgba(99, 102, 241, 0.85)), url(${category.bgImage})`
-                    : `linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${category.bgImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {Icon && <Icon className="w-4 h-4 text-white relative z-10" />}
-                <span className="text-sm font-medium text-white relative z-10">{category.label}</span>
-              </button>
-            );
-          })}
-
-          {/* See More Button */}
-          <button className="flex items-center gap-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all whitespace-nowrap">
-            <span className="text-sm font-medium text-gray-700">More</span>
-            <ChevronRight className="w-4 h-4 text-gray-500" />
+      <div className="w-full px-6 relative">
+        {/* Left Arrow */}
+        {showLeftArrow && (
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
+        )}
+
+        {/* Categories Container */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={checkScrollPosition}
+          className="overflow-x-auto scrollbar-hide scroll-smooth"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <div className="flex items-center gap-3 py-4 px-1">
+            {categories.map((category) => {
+              const Icon = category.icon;
+              const isActive = selectedCategory === category.id;
+
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => onCategoryChange(category.id)}
+                  className={`relative overflow-hidden flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl whitespace-nowrap transition-all duration-300 min-w-[140px] ${
+                    isActive
+                      ? 'ring-2 ring-blue-500 ring-offset-2 shadow-lg scale-105'
+                      : 'hover:scale-105 hover:shadow-md'
+                  }`}
+                  style={{
+                    backgroundImage: isActive
+                      ? `linear-gradient(135deg, rgba(59, 130, 246, 0.85), rgba(99, 102, 241, 0.85)), url(${category.bgImage})`
+                      : `linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${category.bgImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                >
+                  {Icon && <Icon className="w-4 h-4 text-white relative z-10" />}
+                  <span className="text-sm font-medium text-white relative z-10">{category.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Right Arrow */}
+        {showRightArrow && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
+        )}
       </div>
     </div>
   );

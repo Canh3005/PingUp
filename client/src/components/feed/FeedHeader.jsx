@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { Search, SlidersHorizontal, ChevronDown, Sparkles } from 'lucide-react';
 
-const FeedHeader = () => {
+const FeedHeader = ({ selectedFilter, onFilterChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('projects');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  const filterOptions = [
+    { id: 'recent', label: 'Most Recent', sortBy: 'createdAt' },
+    { id: 'popular', label: 'Most Popular', sortBy: 'likes' },
+    { id: 'viewed', label: 'Most Viewed', sortBy: 'views' },
+  ];
+
+  const handleFilterSelect = (filterId) => {
+    onFilterChange(filterId);
+    setShowFilterDropdown(false);
+  };
 
   const tabs = [
     { id: 'projects', label: 'Projects' },
@@ -34,15 +45,19 @@ const FeedHeader = () => {
                   <div className="px-4 py-2 border-b border-gray-100">
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Filter by</p>
                   </div>
-                  <button className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    Most Recent
-                  </button>
-                  <button className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    Most Popular
-                  </button>
-                  <button className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    Most Viewed
-                  </button>
+                  {filterOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => handleFilterSelect(option.id)}
+                      className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
+                        selectedFilter === option.id
+                          ? 'bg-blue-50 text-blue-600 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
               </>
             )}
