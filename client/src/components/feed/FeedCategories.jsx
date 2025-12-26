@@ -32,6 +32,16 @@ const categories = [
     bgImage: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=300&h=100&fit=crop'
   },
   { 
+    id: 'web-design', 
+    label: 'Web Design',
+    bgImage: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=100&fit=crop'
+  },
+  { 
+    id: 'music', 
+    label: 'Music',
+    bgImage: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=100&fit=crop'
+  },
+  { 
     id: 'illustration', 
     label: 'Illustration',
     bgImage: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300&h=100&fit=crop'

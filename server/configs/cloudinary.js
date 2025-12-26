@@ -28,6 +28,17 @@ const portfolioStorage = new CloudinaryStorage({
   }
 });
 
+// Storage cho project blocks (chất lượng cao, không giới hạn kích thước)
+const projectBlockStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pingup/projects',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    quality: 'auto:best', // Tự động chọn chất lượng tốt nhất
+    fetch_format: 'auto' // Tự động chọn format tối ưu
+  }
+});
+
 export const uploadImage = multer({ 
   storage: imageStorage,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
@@ -36,6 +47,11 @@ export const uploadImage = multer({
 export const uploadPortfolio = multer({ 
   storage: portfolioStorage,
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
+
+export const uploadProjectBlock = multer({
+  storage: projectBlockStorage,
+  limits: { fileSize: 20 * 1024 * 1024 } // 20MB cho project blocks
 });
 
 export { cloudinary };

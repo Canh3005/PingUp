@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ChevronUp } from 'lucide-react';
+import { X, ChevronUp, AlertTriangle } from 'lucide-react';
 import projectApi from '../api/projectApi';
+import projectHubApi from '../api/projectHubApi';
 import followApi from '../api/followApi';
 import ProjectHeader from '../components/project-view/ProjectHeader';
 import ProjectSidebar from '../components/project-view/ProjectSidebar';
@@ -11,6 +12,7 @@ import ProjectAuthorWorks from '../components/project-view/ProjectAuthorWorks';
 import ProjectComments from '../components/project-view/ProjectComments';
 import Loading from '../components/Loading';
 import { useAuth } from '../context/authContext';
+import toast from 'react-hot-toast';
 
 const ProjectView = ({ projectId, onClose, onProjectClick }) => {
   const { user } = useAuth();
@@ -20,6 +22,8 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const isOwnProject = user?._id === project?.owner?._id;
 
   useEffect(() => {
@@ -128,6 +132,33 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
     }
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      setIsDeleting(true);
+      
+      // Delete project
+      await projectApi.deleteProject(projectId);
+      
+      // If project has ProjectHub, delete it too
+      if (project.projectHubId) {
+        await projectHubApi.deleteProjectHub(project.projectHubId);
+      }
+      
+      toast.success('Project deleted successfully!');
+      setShowDeleteConfirm(false);
+      onClose();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm overflow-y-auto project-view-scroll"
@@ -175,7 +206,7 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
           </div>
         ) : (
           <div className="bg-gradient-to-b from-black/40 to-black/60" onClick={(e) => e.stopPropagation()}>
-            <ProjectHeader project={project} isOwnProject={isOwnProject} />
+            <ProjectHeader project={project} isOwnProject={isOwnProject} onDelete={handleDeleteClick} />
             <ProjectSidebar 
               project={project} 
               onLike={handleLike} 
@@ -210,6 +241,49 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && createPortal(
+        <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Project?</h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  This action cannot be undone. This will permanently delete your project and all of its content.
+                </p>
+                {project?.projectHubId && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-3">
+                    <p className="text-orange-800 text-sm font-medium">
+                      ⚠️ This project has a Project Hub that will also be deleted.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Project'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ import Layout from "./pages/Layout.jsx";
 import OnBoarding from "./pages/OnBoarding.jsx";
 import TopicSelection from "./pages/TopicSelection.jsx";
 import ProjectEditor from "./pages/ProjectEditor.jsx";
-import ProjectView from "./pages/ProjectView.jsx";
+import ProjectViewPage from "./pages/ProjectViewPage.jsx";
 import ProjectHub from "./pages/ProjectHub.jsx";
 import CreateProjectHub from "./pages/CreateProjectHub.jsx";
 
@@ -30,7 +30,7 @@ const App = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:profileId" element={<Profile />} />
           <Route path="create-project" element={<ProjectEditor />} />
-          <Route path="project/:projectId" element={<ProjectView />} />
+          <Route path="project/:projectId" element={<ProjectViewPage />} />
           <Route path="discover" element={<Discover />} />
         </Route>
         <Route path="project-hub/create" element={<CreateProjectHub />} />

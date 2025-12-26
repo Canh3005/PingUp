@@ -1,8 +1,8 @@
 import React from 'react';
-import { Edit3, ExternalLink, LayoutDashboard } from 'lucide-react';
+import { Edit3, ExternalLink, LayoutDashboard, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const ProjectHeader = ({ project, isOwnProject }) => {
+const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
   const navigate = useNavigate();
   const hasProjectHub = !!project.projectHubId;
 
@@ -69,10 +69,19 @@ const ProjectHeader = ({ project, isOwnProject }) => {
           }
 
           {isOwnProject && (
-            <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-white/10 hover:border-white/20">
-              <Edit3 className="w-4 h-4" />
-              Edit Project
-            </button>
+            <>
+              <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-white/10 hover:border-white/20">
+                <Edit3 className="w-4 h-4" />
+                Edit Project
+              </button>
+              <button 
+                onClick={onDelete}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600/80 hover:bg-red-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-red-500/30 hover:border-red-500/50 shadow-lg shadow-red-600/25"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            </>
           )}
           <button className="p-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white transition-all border border-white/10 hover:border-white/20">
             <ExternalLink className="w-4 h-4" />

@@ -53,20 +53,27 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
         };
 
         let response;
+        let publishedProjectId;
+        
         if (projectId) {
           // Update existing project
           response = await projectApi.updateProject(projectId, projectPayload);
           await projectApi.publishProject(projectId);
+          publishedProjectId = projectId;
         } else {
           // Create new project
           response = await projectApi.createProject(projectPayload);
-          setProjectId(response.data._id);
-          await projectApi.publishProject(response.data._id);
+          const newProjectId = response.data._id;
+          setProjectId(newProjectId);
+          await projectApi.publishProject(newProjectId);
+          publishedProjectId = newProjectId;
         }
 
         toast.success('Project published successfully!');
         setIsLoading(false);
-        navigate(`/project/${response.data._id}`);
+        
+        // Use window.location instead of navigate to ensure fresh page load
+        window.location.href = `/project/${publishedProjectId}`;
       } catch (error) {
         console.error('Error publishing project:', error);
         toast.error('Failed to publish project. Please try again.');
@@ -111,7 +118,7 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
         setProjectId={setProjectId}
       />
 
-      <div className="w-80 bg-white border-l border-gray-100 flex flex-col shadow-sm mt-8 rounded-l-2xl overflow-hidden">
+      <div className="w-80 bg-white border-l border-gray-100 flex flex-col shadow-sm mt-8 rounded-l-2xl overflow-hidden sticky top-20 self-start">
         {/* Header with Back Button */}
         <div className="p-4 border-b border-gray-100 flex items-center gap-3">
           <button
@@ -176,8 +183,8 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
           </div>
         </div>
 
-        {/* Attach Assets Section */}
-        <div className="p-5 border-b border-gray-100">
+        {/* Attach Assets Section - Temporarily Hidden */}
+        {/* <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
               <Paperclip className="w-4 h-4 text-orange-600" />
@@ -191,7 +198,7 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
           <p className="text-xs text-gray-400 mt-2 text-center leading-relaxed">
             Add fonts, illustrations, photos, or templates as downloads.
           </p>
-        </div>
+        </div> */}
 
         {/* Publish Button */}
         <div className="mt-auto p-5">
