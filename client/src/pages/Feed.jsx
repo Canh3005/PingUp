@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FeedHeader from '../components/feed/FeedHeader';
 import FeedCategories from '../components/feed/FeedCategories';
+import CategoryBanner from '../components/feed/CategoryBanner';
 import ProjectGrid from '../components/feed/ProjectGrid';
 import PeopleGrid from '../components/feed/PeopleGrid';
 import ProjectView from './ProjectView';
@@ -33,6 +34,9 @@ const Feed = () => {
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
           />
+          
+          {/* Category Banner */}
+          <CategoryBanner category={selectedCategory} />
           
           {/* Project Grid - 5 columns */}
           <ProjectGrid 

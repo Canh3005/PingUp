@@ -109,9 +109,25 @@ const ProjectGrid = ({ onProjectClick, filter, category }) => {
       params.sortOrder = 'desc';
     }
     
-    // Category filter (if needed by backend)
-    if (category && category !== 'for-you') {
-      params.category = category;
+    // Category filter - map category ID to display name
+    if (category && category !== 'for-you' && category !== 'following' && category !== 'best') {
+      // Map category IDs to proper names for backend
+      const categoryMap = {
+        'graphic-design': 'Graphic Design',
+        'photography': 'Photography',
+        'web-design': 'Web Design',
+        'music': 'Music',
+        'illustration': 'Illustration',
+        '3d-art': '3D Art',
+        'ui-ux': 'UI/UX',
+        'motion': 'Motion',
+        'architecture': 'Architecture',
+        'product-design': 'Product Design',
+        'fashion': 'Fashion',
+        'advertising': 'Advertising'
+      };
+      
+      params.category = categoryMap[category] || category;
     }
     
     return params;

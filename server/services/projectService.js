@@ -190,7 +190,9 @@ class ProjectService {
       const query = { status: 'published', isPublic: true };
 
       if (filters.category) {
-        query.category = filters.category;
+        // Use regex to match category in comma-separated string
+        // This will match "Graphic Design" in "Graphic Design, Photography"
+        query.category = { $regex: new RegExp(filters.category, 'i') };
       }
       if (filters.tags && filters.tags.length > 0) {
         query.tags = { $in: filters.tags };
