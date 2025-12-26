@@ -99,7 +99,7 @@ const Message = () => {
                   : 'Start a conversation with your connections'}
               </p>
               {!searchQuery && (
-                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md">
+                <button onClick={() => setShowNewChatModal(true)} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md">
                   Start New Chat
                 </button>
               )}

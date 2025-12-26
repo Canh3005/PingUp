@@ -1,9 +1,9 @@
 import React from 'react';
 import { User } from 'lucide-react';
 
-const AboutSection = ({ bio, isOwnProfile }) => {
+const AboutSection = ({ bio }) => {
   // Hide if no bio and not own profile
-  if (!bio && !isOwnProfile) return null;
+  if (!bio) return null;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6 hover:shadow-md transition-shadow">

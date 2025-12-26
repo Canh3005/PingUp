@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   const userAvatar = user?.profile?.avatarUrl || assets.sample_profile;
-  const userName = user?.profile?.name || "User";
+  const userName = user?.userName || user?.profile?.name || "User";
 
   const hasCompletedOnboarding = user?.type && user?.topics && user?.topics.length > 0;
 
