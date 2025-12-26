@@ -194,7 +194,8 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
         status: 'published',
       });
 
-      toast.success('Project published successfully!');
+      const successMessage = projectId ? 'Project updated successfully!' : 'Project published successfully!';
+      toast.success(successMessage);
       navigate(`/project/${response.data._id}`);
       onClose();
     } catch (error) {
@@ -408,7 +409,10 @@ const SettingsModal = ({ isOpen, onClose, projectData, setProjectData, blocks, p
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-medium disabled:opacity-50 shadow-lg shadow-green-600/25"
           >
             <Rocket className="w-4 h-4" />
-            {isLoading ? 'Publishing...' : 'Publish'}
+            {isLoading 
+              ? (projectId ? 'Updating...' : 'Publishing...') 
+              : (projectId ? 'Update' : 'Publish')
+            }
           </button>
         </div>
       </div>

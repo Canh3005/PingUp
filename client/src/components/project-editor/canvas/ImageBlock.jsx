@@ -5,17 +5,20 @@ const ImageBlock = ({ block, updateBlock, deleteBlock, moveBlock, isFirst, isLas
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    // Initialize preview from block content
-    if (block.content instanceof File) {
+    // Initialize preview - prioritize mediaUrl (from database) over content
+    if (block.mediaUrl) {
+      // Load from database - mediaUrl contains the Cloudinary URL
+      setPreview(block.mediaUrl);
+    } else if (block.content instanceof File) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(block.content);
-    } else if (typeof block.content === 'string') {
+    } else if (typeof block.content === 'string' && block.content) {
       setPreview(block.content);
     }
-  }, [block.content]);
+  }, [block.content, block.mediaUrl]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

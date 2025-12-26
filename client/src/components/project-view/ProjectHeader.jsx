@@ -70,7 +70,10 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
 
           {isOwnProject && (
             <>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-white/10 hover:border-white/20">
+              <button 
+                onClick={() => navigate(`/edit-project/${project._id}`)}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all border border-white/10 hover:border-white/20"
+              >
                 <Edit3 className="w-4 h-4" />
                 Edit Project
               </button>

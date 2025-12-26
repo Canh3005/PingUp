@@ -7,7 +7,7 @@ import BlockOptions from './canvas/BlockOptions';
 
 const EditorCanvas = ({ blocks, updateBlock, deleteBlock, moveBlock, addBlock, backgroundColor = '#FFFFFF', contentSpacing = 60 }) => {
   const [hoveredBlockId, setHoveredBlockId] = useState(null);
-
+  console.log(blocks);
   const handleAddBlockAfter = (type) => {
     setHoveredBlockId(null);
     addBlock(type);

@@ -69,7 +69,8 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
           publishedProjectId = newProjectId;
         }
 
-        toast.success('Project published successfully!');
+        const successMessage = projectId ? 'Project updated successfully!' : 'Project published successfully!';
+        toast.success(successMessage);
         setIsLoading(false);
         
         // Use window.location instead of navigate to ensure fresh page load
@@ -208,7 +209,10 @@ const EditorSidebar = ({ addBlock, projectStyles, setProjectStyles, setPreviewSt
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-medium shadow-lg shadow-blue-600/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
           >
             <Rocket className="w-4 h-4" />
-            {isLoading ? 'Publishing...' : 'Publish Project'}
+            {isLoading 
+              ? (projectId ? 'Updating...' : 'Publishing...') 
+              : (projectId ? 'Update Project' : 'Publish Project')
+            }
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditorCanvas from '../components/project-editor/EditorCanvas';
 import EditorSidebar from '../components/project-editor/EditorSidebar';
 
-const ProjectEditor = () => {
+const ProjectEditor = ({ initialProjectData }) => {
   const [blocks, setBlocks] = useState([]);
   const [projectStyles, setProjectStyles] = useState({
     backgroundColor: '#FFFFFF',
@@ -21,6 +21,42 @@ const ProjectEditor = () => {
     coverImagePreview: null,
     status: 'draft',
   });
+
+  // Load initial project data if editing
+  useEffect(() => {
+    if (initialProjectData) {
+      console.log(initialProjectData.blocks);
+      // Set project ID
+      setProjectId(initialProjectData._id);
+
+      // Load blocks - convert _id to id for editor compatibility
+      if (initialProjectData.blocks) {
+        const mappedBlocks = initialProjectData.blocks.map(block => ({
+          ...block,
+          id: block._id || block.id || Date.now() + Math.random(),
+        }));
+        setBlocks(mappedBlocks);
+      }
+
+      // Load styles
+      if (initialProjectData.styles) {
+        setProjectStyles(initialProjectData.styles);
+      }
+
+      // Load project metadata
+      setProjectData({
+        title: initialProjectData.title || '',
+        description: initialProjectData.description || '',
+        tags: initialProjectData.tags || [],
+        category: initialProjectData.category || '',
+        toolsUsed: initialProjectData.toolsUsed || '',
+        visibility: initialProjectData.visibility || 'everyone',
+        coverImage: initialProjectData.coverImage || null,
+        coverImagePreview: initialProjectData.coverImage || null,
+        status: initialProjectData.status || 'published',
+      });
+    }
+  }, [initialProjectData]);
 
   const addBlock = (type) => {
     const newBlock = {

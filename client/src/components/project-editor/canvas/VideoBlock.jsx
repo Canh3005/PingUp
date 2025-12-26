@@ -6,15 +6,18 @@ const VideoBlock = ({ block, updateBlock, deleteBlock, moveBlock, isFirst, isLas
   const [isEmbedMode, setIsEmbedMode] = useState(false);
 
   useEffect(() => {
-    // Initialize video URL from block content
-    if (block.content instanceof File) {
+    // Initialize video URL - prioritize mediaUrl (from database) over content
+    if (block.mediaUrl) {
+      // Load from database - mediaUrl contains the Cloudinary URL
+      setVideoUrl(block.mediaUrl);
+    } else if (block.content instanceof File) {
       const url = URL.createObjectURL(block.content);
       setVideoUrl(url);
       return () => URL.revokeObjectURL(url); // Cleanup
-    } else if (typeof block.content === 'string') {
+    } else if (typeof block.content === 'string' && block.content) {
       setVideoUrl(block.content);
     }
-  }, [block.content]);
+  }, [block.content, block.mediaUrl]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
