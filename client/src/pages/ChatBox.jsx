@@ -165,10 +165,11 @@ const ChatBox = ({ conversationId }) => {
       };
     }
     
-    // For direct chat, use avatarUrl with fallback to imageUrl
+    
+    // For direct chat, use profile name and avatarUrl with fallbacks
     return {
-      name: conversation.otherUser?.userName || 'Use',
-      avatar: conversation.otherUser?.avatarUrl || conversation.otherUser?.imageUrl,
+      name: conversation.otherUser?.profile?.name || conversation.otherUser?.userName || 'User',
+      avatar: conversation.otherUser?.profile?.avatarUrl || conversation.otherUser?.imageUrl,
       isOnline: conversation.otherUser?.isOnline || false,
       isGroup: false,
     };

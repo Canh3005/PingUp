@@ -33,7 +33,7 @@ const Message = () => {
     if (!searchQuery) return true;
     const name = conv.type === 'group' 
       ? conv.title 
-      : conv.otherUser?.userName || '';
+      : conv.otherUser?.profile?.name || conv.otherUser?.userName || '';
     return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 

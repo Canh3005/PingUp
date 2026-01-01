@@ -17,8 +17,8 @@ const ConversationItem = ({ conversation, isActive = false }) => {
     // For direct chat, show the other user
     // avatarUrl from UserProfile, fallback to imageUrl
     return {
-      name: conversation.otherUser?.userName || 'User',
-      avatar: conversation.otherUser?.avatarUrl || conversation.otherUser?.imageUrl,
+      name: conversation.otherUser?.profile?.name || conversation.otherUser?.userName || 'User',
+      avatar: conversation.otherUser?.profile?.avatarUrl || conversation.otherUser?.imageUrl,
       isGroup: false,
     };
   };

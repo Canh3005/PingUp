@@ -174,12 +174,52 @@ class FollowService {
     try {
       const skip = (page - 1) * limit;
 
-      // Get users with profiles
-      const users = await User.find({})
-        .select('userName email imageUrl')
-        .skip(skip)
-        .limit(parseInt(limit))
-        .lean();
+      // Use aggregation to get users sorted by project count
+      const users = await User.aggregate([
+        // Lookup published projects count
+        {
+          $lookup: {
+            from: 'projects',
+            let: { userId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$owner', '$$userId'] },
+                      { $eq: ['$status', 'published'] }
+                    ]
+                  }
+                }
+              },
+              { $count: 'count' }
+            ],
+            as: 'projectStats'
+          }
+        },
+        // Add projectCount field
+        {
+          $addFields: {
+            projectCount: {
+              $ifNull: [{ $arrayElemAt: ['$projectStats.count', 0] }, 0]
+            }
+          }
+        },
+        // Sort by project count descending (users with more projects first)
+        { $sort: { projectCount: -1 } },
+        // Pagination
+        { $skip: skip },
+        { $limit: parseInt(limit) },
+        // Project only needed fields
+        {
+          $project: {
+            userName: 1,
+            email: 1,
+            imageUrl: 1,
+            projectCount: 1
+          }
+        }
+      ]);
 
       // Get total count
       const total = await User.countDocuments({});
@@ -191,12 +231,6 @@ class FollowService {
           const profile = await UserProfile.findOne({ userId: user._id })
             .select('name jobTitle location avatarUrl bio')
             .lean();
-
-          // Get user's published projects count
-          const projectCount = await Project.countDocuments({
-            owner: user._id,
-            status: 'published'
-          });
 
           // Get 4 recent project cover images
           const recentProjects = await Project.find({
@@ -212,7 +246,7 @@ class FollowService {
           const stats = {
             appreciations: Math.floor(Math.random() * 1000) + 'K',
             followers: Math.floor(Math.random() * 500) + 'K',
-            projectViews: projectCount + ' Projects'
+            projectViews: user.projectCount + ' Projects'
           };
 
           return {

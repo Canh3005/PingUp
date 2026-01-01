@@ -161,16 +161,60 @@ class FollowController {
         });
       }
 
-      // Search users by userName or email
-      const users = await User.find({
-        $or: [
-          { userName: { $regex: q, $options: 'i' } },
-          { email: { $regex: q, $options: 'i' } }
-        ]
-      })
-      .select('userName email imageUrl')
-      .limit(20)
-      .lean();
+      // Use aggregation to get users with project count
+      const users = await User.aggregate([
+        // Match users by userName or email
+        {
+          $match: {
+            $or: [
+              { userName: { $regex: q, $options: 'i' } },
+              { email: { $regex: q, $options: 'i' } }
+            ]
+          }
+        },
+        // Lookup published projects count
+        {
+          $lookup: {
+            from: 'projects',
+            let: { userId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$owner', '$$userId'] },
+                      { $eq: ['$status', 'published'] }
+                    ]
+                  }
+                }
+              },
+              { $count: 'count' }
+            ],
+            as: 'projectStats'
+          }
+        },
+        // Add projectCount field
+        {
+          $addFields: {
+            projectCount: {
+              $ifNull: [{ $arrayElemAt: ['$projectStats.count', 0] }, 0]
+            }
+          }
+        },
+        // Sort by project count descending (users with more projects first)
+        { $sort: { projectCount: -1 } },
+        // Limit results
+        { $limit: 20 },
+        // Project only needed fields
+        {
+          $project: {
+            userName: 1,
+            email: 1,
+            imageUrl: 1,
+            projectCount: 1
+          }
+        }
+      ]);
 
       // Populate avatarUrl from UserProfile for each user
       const usersWithProfile = await Promise.all(

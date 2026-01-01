@@ -49,11 +49,7 @@ class ConversationService {
     
     // Convert userId to string for comparison since memberIds are strings
     const userIdStr = userId.toString ? userId.toString() : String(userId);
-    
-    // Debug logging
-    console.log('[getConversationOrThrow] userId:', userIdStr, 'type:', typeof userIdStr);
-    console.log('[getConversationOrThrow] memberIds:', conv.memberIds, 'types:', conv.memberIds.map(id => typeof id));
-    console.log('[getConversationOrThrow] includes check:', conv.memberIds.includes(userIdStr));
+  
     
     if (!conv.memberIds.includes(userIdStr)) {
       throw new Error(`Not a member. userId: ${userIdStr}, memberIds: ${conv.memberIds.join(', ')}`);
@@ -66,13 +62,13 @@ class ConversationService {
         try {
           const otherUser = await User.findById(otherUserId).select('userName email').lean();
           
-          // Also get avatarUrl from UserProfile
-          const profile = await UserProfile.findOne({ userId: otherUserId }).select('avatarUrl').lean();
+          // Also get avatarUrl and name from UserProfile
+          const profile = await UserProfile.findOne({ userId: otherUserId }).select('avatarUrl name').lean();
           
           const convObj = conv.toObject ? conv.toObject() : conv;
           convObj.otherUser = {
             ...otherUser,
-            avatarUrl: profile?.avatarUrl || otherUser?.imageUrl || null
+            profile: profile ? { name: profile.name, avatarUrl: profile.avatarUrl } : null
           };
           return convObj;
         } catch (err) {
@@ -108,14 +104,14 @@ class ConversationService {
               .select('userName imageUrl email')
               .lean();
             
-            // Also get avatarUrl from UserProfile
+            // Also get avatarUrl and name from UserProfile
             const profile = await UserProfile.findOne({ userId: otherUserId })
-              .select('avatarUrl')
+              .select('avatarUrl name')
               .lean();
             
             conv.otherUser = {
               ...otherUser,
-              avatarUrl: profile?.avatarUrl || otherUser?.imageUrl || null
+              profile: profile ? { name: profile.name, avatarUrl: profile.avatarUrl } : null
             };
           }
         }
