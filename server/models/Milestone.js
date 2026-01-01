@@ -11,6 +11,9 @@ const milestoneSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
+        fromDate: {
+            type: Date,
+        },
         dueDate: {
             type: Date,
         },
@@ -19,7 +22,21 @@ const milestoneSchema = new mongoose.Schema(
             enum: ['Not Started', 'In Progress', 'Completed'],
             default: 'Not Started',
         },
-        project: {
+        progress: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100,
+        },
+        totalTasks: {
+            type: Number,
+            default: 0,
+        },
+        completedTasks: {
+            type: Number,
+            default: 0,
+        },
+        projectHubId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'ProjectHub',
             required: true,

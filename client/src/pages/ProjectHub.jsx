@@ -5,6 +5,7 @@ import ProjectHubTopBar from '../components/project-hub/ProjectHubTopBar';
 import OverviewTab from '../components/project-hub/tabs/OverviewTab';
 import TasksTab from '../components/project-hub/tabs/TasksTab';
 import DevlogsTab from '../components/project-hub/tabs/DevlogsTab';
+import MilestonesTab from '../components/project-hub/tabs/MilestonesTab';
 import FilesTab from '../components/project-hub/tabs/FilesTab';
 import RecruitmentTab from '../components/project-hub/tabs/RecruitmentTab';
 import TeamTab from '../components/project-hub/tabs/TeamTab';
@@ -44,7 +45,9 @@ const ProjectHub = () => {
       // Fetch milestones for this project hub
       if (hubData._id) {
         const milestonesResponse = await milestoneApi.getMilestonesByProject(hubData._id);
-        setMilestones(milestonesResponse.data || []);
+        // API returns { success: true, data: [...] }
+        const milestonesData = milestonesResponse.data || milestonesResponse;
+        setMilestones(Array.isArray(milestonesData) ? milestonesData : []);
       }
     } catch (error) {
       console.error('Error loading project hub:', error);
@@ -67,6 +70,8 @@ const ProjectHub = () => {
         return <TasksTab project={project} />;
       case 'devlogs':
         return <DevlogsTab project={project} />;
+      case 'milestones':
+        return <MilestonesTab project={project} />;
       case 'files':
         return <FilesTab project={project} />;
       case 'recruitment':

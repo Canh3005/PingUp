@@ -6,8 +6,7 @@ class MilestoneService {
   // Create new milestone
   async createMilestone(userId, milestoneData) {
     try {
-      const { project: projectHubId } = milestoneData;
-
+      const { projectHubId } = milestoneData;
       // Verify project hub exists and user has access
       const projectHub = await ProjectHub.findById(projectHubId);
 
@@ -45,7 +44,7 @@ class MilestoneService {
   async getMilestoneById(milestoneId) {
     try {
       const milestone = await Milestone.findById(milestoneId)
-        .populate('project', 'name owner');
+        .populate('projectHubId', 'name owner');
 
       if (!milestone) {
         throw new Error('Milestone not found');
@@ -60,7 +59,7 @@ class MilestoneService {
   // Get milestones by project hub ID
   async getMilestonesByProject(projectHubId, status = null) {
     try {
-      const query = { project: projectHubId };
+      const query = { projectHubId };
 
       if (status) {
         query.status = status;
@@ -79,13 +78,13 @@ class MilestoneService {
   async updateMilestone(milestoneId, userId, updateData) {
     try {
       const milestone = await Milestone.findById(milestoneId)
-        .populate('project');
+        .populate('projectHubId');
 
       if (!milestone) {
         throw new Error('Milestone not found');
       }
 
-      const projectHub = milestone.project;
+      const projectHub = milestone.projectHubId;
 
       // Check if user is owner or member
       const isOwner = projectHub.owner.toString() === userId;
@@ -121,13 +120,13 @@ class MilestoneService {
       }
 
       const milestone = await Milestone.findById(milestoneId)
-        .populate('project');
+        .populate('projectHubId');
 
       if (!milestone) {
         throw new Error('Milestone not found');
       }
 
-      const projectHub = milestone.project;
+      const projectHub = milestone.projectHubId;
 
       // Check if user is owner or member
       const isOwner = projectHub.owner.toString() === userId;
@@ -155,13 +154,13 @@ class MilestoneService {
   async deleteMilestone(milestoneId, userId) {
     try {
       const milestone = await Milestone.findById(milestoneId)
-        .populate('project');
+        .populate('projectHubId');
 
       if (!milestone) {
         throw new Error('Milestone not found');
       }
 
-      const projectHub = milestone.project;
+      const projectHub = milestone.projectHubId;
 
       // Check if user is owner or member
       const isOwner = projectHub.owner.toString() === userId;

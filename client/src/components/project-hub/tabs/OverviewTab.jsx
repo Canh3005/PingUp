@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TrendingUp,
   Clock,
@@ -9,52 +9,45 @@ import {
   Heart,
   Eye,
   ArrowRight,
-  Plus
+  Plus,
+  Loader2
 } from 'lucide-react';
+import devlogApi from '../../../api/devlogApi';
+import hubActivityApi from '../../../api/hubActivityApi';
 
-const OverviewTab = ({ project }) => {
-  // Mock data for devlogs
-  const recentDevlogs = [
-    {
-      id: 1,
-      title: 'Implemented new particle system',
-      author: { name: 'Alex Chen', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop' },
-      excerpt: 'Added a stunning particle system for space dust and nebula effects. Performance optimized for mobile devices.',
-      thumbnail: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=200&fit=crop',
-      date: '2 hours ago',
-      reactions: 12,
-      comments: 5
-    },
-    {
-      id: 2,
-      title: 'UI/UX overhaul for main menu',
-      author: { name: 'Sarah Kim', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop' },
-      excerpt: 'Redesigned the main menu with a cleaner, more intuitive layout. Added smooth transitions and hover effects.',
-      thumbnail: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&h=200&fit=crop',
-      date: '1 day ago',
-      reactions: 24,
-      comments: 8
-    },
-    {
-      id: 3,
-      title: 'Sound design progress update',
-      author: { name: 'Emily Wang', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop' },
-      excerpt: 'Finished composing ambient tracks for the exploration segments. Working on combat sound effects next.',
-      thumbnail: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=200&fit=crop',
-      date: '2 days ago',
-      reactions: 18,
-      comments: 3
+const OverviewTab = ({ project, milestones }) => {
+  const [recentDevlogs, setRecentDevlogs] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Load data when project changes
+  useEffect(() => {
+    if (project?._id) {
+      loadData();
     }
-  ];
+  }, [project]);
 
-  // Mock data for recent activity
-  const recentActivity = [
-    { id: 1, user: 'Alex Chen', action: 'completed task', target: 'Implement save system', time: '30 min ago' },
-    { id: 2, user: 'Sarah Kim', action: 'uploaded file', target: 'menu_mockup_v3.fig', time: '1 hour ago' },
-    { id: 3, user: 'Mike Johnson', action: 'commented on', target: 'Physics bug fix', time: '2 hours ago' },
-    { id: 4, user: 'Emily Wang', action: 'created task', target: 'Add footstep sounds', time: '3 hours ago' },
-    { id: 5, user: 'Alex Chen', action: 'moved task to Done', target: 'Level 3 design', time: '5 hours ago' },
-  ];
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Fetch recent devlogs and activities in parallel
+      const [devlogsData, activitiesData] = await Promise.all([
+        devlogApi.getRecentDevlogs(project._id, 3),
+        hubActivityApi.getRecentActivities(project._id, 5)
+      ]);
+
+      setRecentDevlogs(devlogsData);
+      setRecentActivity(activitiesData);
+    } catch (err) {
+      console.error('Error loading overview data:', err);
+      setError(err.response?.data?.message || 'Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Quick tasks
   const quickTasks = [
@@ -88,43 +81,54 @@ const OverviewTab = ({ project }) => {
           </div>
 
           <div className="space-y-4">
-            {recentDevlogs.map((devlog) => (
-              <div
-                key={devlog.id}
-                className="group flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <img
-                  src={devlog.thumbnail}
-                  alt={devlog.title}
-                  className="w-32 h-20 object-cover rounded-lg flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                    {devlog.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mt-1">{devlog.excerpt}</p>
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={devlog.author.avatar}
-                        alt={devlog.author.name}
-                        className="w-5 h-5 rounded-full"
-                      />
-                      <span className="text-xs text-gray-500">{devlog.author.name}</span>
-                    </div>
-                    <span className="text-xs text-gray-400">{devlog.date}</span>
-                    <div className="flex items-center gap-3 ml-auto">
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <Heart size={12} /> {devlog.reactions}
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+              </div>
+            ) : recentDevlogs.length > 0 ? (
+              recentDevlogs.map((devlog) => (
+                <div
+                  key={devlog._id}
+                  className="group flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  {devlog.media && devlog.media[0] && (
+                    <img
+                      src={devlog.media[0].url}
+                      alt={devlog.title}
+                      className="w-32 h-20 object-cover rounded-lg flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                      {devlog.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+                      {devlog.content?.substring(0, 150)}...
+                    </p>
+                    <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={devlog.author?.avatarUrl || 'https://via.placeholder.com/50'}
+                          alt={devlog.author?.name}
+                          className="w-5 h-5 rounded-full"
+                        />
+                        <span className="text-xs text-gray-500">{devlog.author?.name}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        {new Date(devlog.createdAt).toLocaleDateString()}
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <MessageSquare size={12} /> {devlog.comments}
-                      </span>
+                      <div className="flex items-center gap-3 ml-auto">
+                        <span className="flex items-center gap-1 text-xs text-gray-500">
+                          <Heart size={12} /> {devlog.reactions?.heart || 0}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-8">No devlogs yet</p>
+            )}
           </div>
 
           <button className="w-full mt-4 py-2 text-gray-600 hover:text-blue-600 text-sm font-medium flex items-center justify-center gap-2">
@@ -137,20 +141,30 @@ const OverviewTab = ({ project }) => {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
 
           <div className="space-y-3">
-            {recentActivity.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0"
-              >
-                <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                <p className="text-sm text-gray-600 flex-1">
-                  <span className="font-medium text-gray-900">{activity.user}</span>
-                  {' '}{activity.action}{' '}
-                  <span className="font-medium text-blue-600">{activity.target}</span>
-                </p>
-                <span className="text-xs text-gray-400 flex-shrink-0">{activity.time}</span>
+            {loading ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
               </div>
-            ))}
+            ) : recentActivity.length > 0 ? (
+              recentActivity.map((activity) => (
+                <div
+                  key={activity._id}
+                  className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0"
+                >
+                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                  <p className="text-sm text-gray-600 flex-1">
+                    <span className="font-medium text-gray-900">{activity.user?.name || 'User'}</span>
+                    {' '}{activity.action}{' '}
+                    <span className="font-medium text-blue-600">{activity.targetName || activity.details}</span>
+                  </p>
+                  <span className="text-xs text-gray-400 flex-shrink-0">
+                    {new Date(activity.createdAt).toLocaleTimeString()}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-4">No recent activity</p>
+            )}
           </div>
         </div>
       </div>
@@ -193,44 +207,44 @@ const OverviewTab = ({ project }) => {
           <h3 className="font-bold text-gray-900 mb-4">Upcoming Milestones</h3>
 
           <div className="space-y-3">
-            {project.milestones.map((milestone) => (
-              <div
-                key={milestone.id}
-                className={`flex items-center gap-3 p-3 rounded-lg ${
-                  milestone.status === 'completed'
-                    ? 'bg-green-50'
-                    : milestone.status === 'in_progress'
-                    ? 'bg-blue-50'
-                    : 'bg-gray-50'
-                }`}
-              >
-                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                  milestone.status === 'completed'
-                    ? 'bg-green-500'
-                    : milestone.status === 'in_progress'
-                    ? 'bg-blue-500'
-                    : 'bg-gray-300'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate ${
-                    milestone.status === 'completed' ? 'text-green-700' : 'text-gray-900'
-                  }`}>
-                    {milestone.title}
-                  </p>
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
-                    <Calendar size={12} />
-                    {new Date(milestone.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
-                  </p>
-                </div>
-                {milestone.status === 'completed' && (
-                  <CheckCircle2 size={18} className="text-green-500 flex-shrink-0" />
-                )}
-              </div>
-            ))}
+            {milestones && milestones.length > 0 ? (
+              milestones
+                .filter(m => m.status !== 'Completed')
+                .slice(0, 5)
+                .map((milestone) => (
+                  <div
+                    key={milestone._id}
+                    className={`flex items-center gap-3 p-3 rounded-lg ${
+                      milestone.status === 'In Progress'
+                        ? 'bg-blue-50'
+                        : 'bg-gray-50'
+                    }`}
+                  >
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                      milestone.status === 'In Progress'
+                        ? 'bg-blue-500'
+                        : 'bg-gray-300'
+                    }`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate text-gray-900">
+                        {milestone.title}
+                      </p>
+                      {milestone.dueDate && (
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Calendar size={12} />
+                          {new Date(milestone.dueDate).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))
+            ) : (
+              <p className="text-center text-gray-500 py-4">No upcoming milestones</p>
+            )}
           </div>
         </div>
 

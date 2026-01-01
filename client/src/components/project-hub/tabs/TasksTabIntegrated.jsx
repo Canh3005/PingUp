@@ -16,12 +16,12 @@ import {
 } from 'lucide-react';
 import taskApi from '../../../api/taskApi';
 
-const TasksTab = ({ project }) => {
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [filterOpen, setFilterOpen] = useState(false);
+const TasksTabIntegrated = ({ project }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   // Column configuration
   const columnConfig = {
@@ -32,7 +32,7 @@ const TasksTab = ({ project }) => {
     done: { title: 'Done', color: 'bg-green-500' },
   };
 
-  // Load tasks when project changes
+  // Load tasks
   useEffect(() => {
     if (project?._id) {
       loadTasks();
@@ -54,11 +54,8 @@ const TasksTab = ({ project }) => {
   };
 
   // Group tasks by column
-  const columns = Object.keys(columnConfig).reduce((acc, columnKey) => {
-    acc[columnKey] = {
-      ...columnConfig[columnKey],
-      tasks: tasks.filter((task) => task.column === columnKey),
-    };
+  const groupedTasks = Object.keys(columnConfig).reduce((acc, columnKey) => {
+    acc[columnKey] = tasks.filter((task) => task.column === columnKey);
     return acc;
   }, {});
 
@@ -109,8 +106,8 @@ const TasksTab = ({ project }) => {
       {/* Labels */}
       {task.labels && task.labels.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
-          {task.labels.slice(0, 2).map((label, idx) => (
-            <span key={idx} className={`text-xs px-2 py-0.5 rounded-full ${getLabelColor(label)}`}>
+          {task.labels.slice(0, 2).map((label) => (
+            <span key={label} className={`text-xs px-2 py-0.5 rounded-full ${getLabelColor(label)}`}>
               {label}
             </span>
           ))}
@@ -136,8 +133,8 @@ const TasksTab = ({ project }) => {
               {task.assignees.slice(0, 3).map((assignee, idx) => (
                 <img
                   key={assignee._id || idx}
-                  src={assignee.avatarUrl || assignee.avatar || 'https://via.placeholder.com/50'}
-                  alt={assignee.name || ''}
+                  src={assignee.avatarUrl || 'https://via.placeholder.com/50'}
+                  alt={assignee.name}
                   className="w-6 h-6 rounded-full border-2 border-white"
                 />
               ))}
@@ -163,14 +160,6 @@ const TasksTab = ({ project }) => {
             </span>
           )}
 
-          {/* Comments - placeholder for now */}
-          {task.comments > 0 && (
-            <span className="flex items-center gap-1 text-xs">
-              <MessageSquare size={12} />
-              {task.comments}
-            </span>
-          )}
-
           {/* Attachments */}
           {task.attachments && task.attachments.length > 0 && (
             <span className="flex items-center gap-1 text-xs">
@@ -183,7 +172,6 @@ const TasksTab = ({ project }) => {
     </div>
   );
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -192,7 +180,6 @@ const TasksTab = ({ project }) => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
@@ -241,14 +228,14 @@ const TasksTab = ({ project }) => {
 
       {/* Kanban Board */}
       <div className="flex gap-4 overflow-x-auto pb-4">
-        {Object.entries(columns).map(([columnId, column]) => (
+        {Object.entries(columnConfig).map(([columnId, column]) => (
           <div key={columnId} className="flex-shrink-0 w-72">
             {/* Column Header */}
             <div className="flex items-center gap-2 mb-4">
               <div className={`w-3 h-3 rounded-full ${column.color}`} />
               <h3 className="font-semibold text-gray-900">{column.title}</h3>
               <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                {column.tasks.length}
+                {groupedTasks[columnId]?.length || 0}
               </span>
               <button className="ml-auto text-gray-400 hover:text-gray-600 p-1">
                 <MoreHorizontal size={16} />
@@ -257,7 +244,7 @@ const TasksTab = ({ project }) => {
 
             {/* Task Cards */}
             <div className="space-y-3">
-              {column.tasks.map((task) => (
+              {groupedTasks[columnId]?.map((task) => (
                 <TaskCard key={task._id} task={task} />
               ))}
 
@@ -271,11 +258,10 @@ const TasksTab = ({ project }) => {
         ))}
       </div>
 
-      {/* Task Detail Modal */}
+      {/* Task Detail Modal - Simplified for now */}
       {selectedTask && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {getPriorityIcon(selectedTask.priority)}
@@ -289,122 +275,38 @@ const TasksTab = ({ project }) => {
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-6 space-y-6">
-              {/* Labels */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Labels</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedTask.labels.map((label) => (
-                    <span key={label} className={`text-sm px-3 py-1 rounded-full ${getLabelColor(label)}`}>
-                      {label}
-                    </span>
-                  ))}
-                  <button className="text-sm px-3 py-1 rounded-full border border-dashed border-gray-300 text-gray-500 hover:border-blue-400 hover:text-blue-500">
-                    + Add
-                  </button>
-                </div>
-              </div>
-
-              {/* Description */}
+            <div className="p-6 space-y-4">
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
-                <p className="text-gray-700">{selectedTask.description}</p>
+                <p className="text-gray-700">{selectedTask.description || 'No description'}</p>
               </div>
 
-              {/* Assignees */}
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Assignees</h4>
-                <div className="flex items-center gap-2">
-                  {selectedTask.assignees.map((assignee) => (
-                    <img
-                      key={assignee.id}
-                      src={assignee.avatar}
-                      alt=""
-                      className="w-8 h-8 rounded-full border-2 border-white shadow"
-                    />
-                  ))}
-                  <button className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-500">
-                    <Plus size={14} />
-                  </button>
-                </div>
+                <h4 className="text-sm font-medium text-gray-500 mb-2">Status</h4>
+                <p className="text-gray-700">{selectedTask.status}</p>
               </div>
 
-              {/* Due Date */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Due Date</h4>
-                <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg ${
-                  selectedTask.dueDate && isOverdue(selectedTask.dueDate)
-                    ? 'bg-red-50 text-red-600'
-                    : 'bg-gray-100 text-gray-700'
-                }`}>
-                  <Calendar size={16} />
-                  {selectedTask.dueDate
-                    ? new Date(selectedTask.dueDate).toLocaleDateString('en-US', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })
-                    : 'No due date'}
+              {selectedTask.dueDate && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">Due Date</h4>
+                  <p className="text-gray-700">
+                    {new Date(selectedTask.dueDate).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </p>
                 </div>
-              </div>
-
-              {/* Checklist placeholder */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Checklist</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" defaultChecked />
-                    <span className="text-gray-600 line-through">Setup development environment</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" defaultChecked />
-                    <span className="text-gray-600 line-through">Write initial code structure</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" />
-                    <span className="text-gray-700">Implement core functionality</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600" />
-                    <span className="text-gray-700">Write unit tests</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Activity placeholder */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Activity</h4>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <img
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop"
-                      alt=""
-                      className="w-8 h-8 rounded-full flex-shrink-0"
-                    />
-                    <div className="flex-1 bg-gray-50 rounded-lg p-3">
-                      <p className="text-sm">
-                        <span className="font-medium">Alex Chen</span>
-                        <span className="text-gray-500"> added this task</span>
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">2 days ago</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
 
-            {/* Modal Footer */}
             <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
               <button
                 onClick={() => setSelectedTask(null)}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 Close
-              </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Save Changes
               </button>
             </div>
           </div>
@@ -414,4 +316,4 @@ const TasksTab = ({ project }) => {
   );
 };
 
-export default TasksTab;
+export default TasksTabIntegrated;
