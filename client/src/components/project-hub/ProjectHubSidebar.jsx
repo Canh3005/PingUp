@@ -16,9 +16,9 @@ import {
 const ProjectHubSidebar = ({ project, activeTab, setActiveTab, collapsed, setCollapsed }) => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'milestones', label: 'Milestones', icon: Target },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
     { id: 'devlogs', label: 'Devlogs', icon: FileText },
-    { id: 'milestones', label: 'Milestones', icon: Target },
     { id: 'files', label: 'Files', icon: FolderOpen },
     { id: 'recruitment', label: 'Recruitment', icon: UserPlus },
     { id: 'team', label: 'Team', icon: Users },

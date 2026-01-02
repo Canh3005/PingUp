@@ -1,6 +1,8 @@
 import Milestone from '../models/Milestone.js';
 import ProjectHub from '../models/ProjectHub.js';
 import projectHubService from './projectHubService.js';
+import hubActivityService from './hubActivityService.js';
+import ACTIVITY_TYPES from '../constants/activityTypes.js';
 
 class MilestoneService {
   // Create new milestone
@@ -30,6 +32,17 @@ class MilestoneService {
       // Add milestone to project hub
       projectHub.milestones.push(milestone._id);
       await projectHub.save();
+
+      // Log activity
+      await hubActivityService.logActivity({
+        projectHubId: projectHubId,
+        user: userId,
+        action: 'created milestone',
+        activityType: ACTIVITY_TYPES.MILESTONE_CREATED,
+        targetId: milestone._id,
+        targetName: milestone.title,
+        details: `Created milestone: ${milestone.title}`,
+      });
 
       // Update project progress
       await projectHubService.updateProgress(projectHubId);
@@ -99,6 +112,17 @@ class MilestoneService {
       Object.assign(milestone, updateData);
       await milestone.save();
 
+      // Log activity
+      await hubActivityService.logActivity({
+        projectHubId: projectHub._id,
+        user: userId,
+        action: 'updated milestone',
+        activityType: ACTIVITY_TYPES.MILESTONE_UPDATED,
+        targetId: milestone._id,
+        targetName: milestone.title,
+        details: `Updated milestone: ${milestone.title}`,
+      });
+
       // Update project progress if status changed
       if (updateData.status) {
         await projectHubService.updateProgress(projectHub._id);
@@ -141,6 +165,17 @@ class MilestoneService {
       milestone.status = status;
       await milestone.save();
 
+      // Log activity
+      await hubActivityService.logActivity({
+        projectHubId: projectHub._id,
+        user: userId,
+        action: 'changed milestone status',
+        activityType: ACTIVITY_TYPES.MILESTONE_STATUS_CHANGED,
+        targetId: milestone._id,
+        targetName: milestone.title,
+        details: `Changed milestone status to: ${status}`,
+      });
+
       // Update project progress
       await projectHubService.updateProgress(projectHub._id);
 
@@ -177,6 +212,17 @@ class MilestoneService {
         m => m.toString() !== milestoneId
       );
       await projectHub.save();
+
+      // Log activity
+      await hubActivityService.logActivity({
+        projectHubId: projectHub._id,
+        user: userId,
+        action: 'deleted milestone',
+        activityType: ACTIVITY_TYPES.MILESTONE_DELETED,
+        targetId: milestone._id,
+        targetName: milestone.title,
+        details: `Deleted milestone: ${milestone.title}`,
+      });
 
       await milestone.deleteOne();
 

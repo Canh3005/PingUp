@@ -127,9 +127,9 @@ const MilestonesTab = ({ project }) => {
     }
   };
 
-  const isOverdue = (dueDate) => {
+  const isOverdue = (dueDate, status) => {
     if (!dueDate) return false;
-    return new Date(dueDate) < new Date() && new Date(dueDate).toDateString() !== new Date().toDateString();
+    return new Date(dueDate) < new Date() && new Date(dueDate).toDateString() !== new Date().toDateString() && status !== 'Completed';
   };
 
   const MilestoneCard = ({ milestone }) => (
@@ -164,10 +164,9 @@ const MilestonesTab = ({ project }) => {
             <div className="flex items-center gap-4 text-sm">
               {milestone.fromDate && milestone.dueDate && (
                 <span className={`flex items-center gap-1 ${
-                  isOverdue(milestone.dueDate) ? 'text-red-600 font-medium' : 'text-gray-500'
+                  isOverdue(milestone.dueDate, milestone.status) ? 'text-red-600 font-medium' : 'text-gray-500'
                 }`}>
                   <Calendar size={14} />
-                  {isOverdue(milestone.dueDate) && '⚠️ '}
                   {new Date(milestone.fromDate).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric'
@@ -180,10 +179,9 @@ const MilestonesTab = ({ project }) => {
               )}
               {!milestone.fromDate && milestone.dueDate && (
                 <span className={`flex items-center gap-1 ${
-                  isOverdue(milestone.dueDate) ? 'text-red-600 font-medium' : 'text-gray-500'
+                  isOverdue(milestone.dueDate, milestone.status) ? 'text-yellow-600 font-medium' : 'text-gray-500'
                 }`}>
                   <Calendar size={14} />
-                  {isOverdue(milestone.dueDate) && '⚠️ '}
                   Due {new Date(milestone.dueDate).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -191,7 +189,7 @@ const MilestonesTab = ({ project }) => {
                   })}
                 </span>
               )}
-              <span className="flex items-center gap-1 text-gray-500">
+              <span className={`flex items-center gap-1 ${getStatusColor(milestone.status)}`}>
                 <Target size={14} />
                 {milestone.status}
               </span>

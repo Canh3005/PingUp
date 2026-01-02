@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ACTIVITY_TYPES, getAllActivityTypes } from '../constants/activityTypes.js';
 
 const hubActivitySchema = new mongoose.Schema(
   {
@@ -19,8 +20,8 @@ const hubActivitySchema = new mongoose.Schema(
     },
     activityType: {
         type: String,
-        enum: ['task', 'milestone', 'devlog', 'member', 'file', 'comment', 'other'],
-        default: 'other',
+        enum: getAllActivityTypes(),
+        default: ACTIVITY_TYPES.OTHER,
     },
     targetId: {
         type: mongoose.Schema.Types.ObjectId,
