@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pingup
+  labels:
+    name: pingup
+    environment: development

@@ -1,0 +1,59 @@
+---
+# Client Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  namespace: pingup
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: pingup-client:latest
+        imagePullPolicy: Never  # Use local image (for development)
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+# Client Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: pingup
+spec:
+  selector:
+    app: client
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP
