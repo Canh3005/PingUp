@@ -22,6 +22,7 @@ const ProjectHubTopBar = ({ project, activeTab }) => {
     const titles = {
       overview: 'Overview',
       tasks: 'Task Board',
+      milestones: 'Milestones',
       devlogs: 'Development Logs',
       files: 'Files & Assets',
       recruitment: 'Recruitment',

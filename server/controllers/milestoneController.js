@@ -132,6 +132,26 @@ class MilestoneController {
       });
     }
   }
+
+  // Recalculate milestone progress
+  async recalculateProgress(req, res) {
+    try {
+      const { milestoneId } = req.params;
+
+      const milestone = await milestoneService.recalculateMilestoneProgress(milestoneId);
+
+      res.status(200).json({
+        success: true,
+        message: 'Milestone progress recalculated successfully',
+        data: milestone,
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new MilestoneController();

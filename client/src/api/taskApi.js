@@ -73,6 +73,24 @@ const taskApi = {
     const res = await httpClient.get(`/tasks/project/${projectHubId}/statistics`);
     return res.data;
   },
+
+  // Add label to task
+  addLabel: async (taskId, data) => {
+    const res = await httpClient.post(`/tasks/${taskId}/labels`, data);
+    return res.data;
+  },
+
+  // Remove label from task
+  removeLabel: async (taskId, data) => {
+    const res = await httpClient.delete(`/tasks/${taskId}/labels`, { data });
+    return res.data;
+  },
+
+  // Get available labels
+  getAvailableLabels: async () => {
+    const res = await httpClient.get('/tasks/labels/available');
+    return res.data;
+  },
 };
 
 export default taskApi;

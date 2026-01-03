@@ -10,10 +10,15 @@ import {
   MoreVertical,
   Loader2,
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  X,
+  User,
+  RefreshCw
 } from 'lucide-react';
 import milestoneApi from '../../../api/milestoneApi';
+import taskApi from '../../../api/taskApi';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
+import { getLabelColor } from '../../../constants/labelTypes';
 
 const MilestonesTab = ({ project }) => {
   const [milestones, setMilestones] = useState([]);
@@ -23,6 +28,9 @@ const MilestonesTab = ({ project }) => {
   const [editingMilestone, setEditingMilestone] = useState(null);
   const [milestoneMenuOpen, setMilestoneMenuOpen] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [milestoneTasks, setMilestoneTasks] = useState([]);
+  const [loadingMilestoneTasks, setLoadingMilestoneTasks] = useState(false);
 
   // Load milestones when project changes
   useEffect(() => {
@@ -91,6 +99,53 @@ const MilestonesTab = ({ project }) => {
     }
   };
 
+  const handleViewMilestoneTasks = async (milestone) => {
+    try {
+      setLoadingMilestoneTasks(true);
+      setSelectedMilestone(milestone);
+      const tasksData = await taskApi.getTasksByMilestone(milestone._id);
+      setMilestoneTasks(Array.isArray(tasksData) ? tasksData : []);
+    } catch (err) {
+      console.error('Error loading milestone tasks:', err);
+      alert(err.response?.data?.message || 'Failed to load milestone tasks');
+    } finally {
+      setLoadingMilestoneTasks(false);
+    }
+  };
+
+  const handleRefreshProgress = async (milestoneId, e) => {
+    e.stopPropagation();
+    try {
+      const response = await milestoneApi.recalculateProgress(milestoneId);
+      const updatedMilestone = response.data;
+      setMilestones(milestones.map(m => 
+        m._id === milestoneId ? updatedMilestone : m
+      ));
+      setMilestoneMenuOpen(null);
+    } catch (err) {
+      console.error('Error refreshing progress:', err);
+      alert(err.response?.data?.message || 'Failed to refresh progress');
+    }
+  };
+
+  const getPriorityIcon = (priority) => {
+    switch (priority) {
+      case 'high':
+        return <AlertCircle size={14} className="text-red-500" />;
+      case 'medium':
+        return <Clock size={14} className="text-yellow-500" />;
+      case 'low':
+        return <CheckCircle2 size={14} className="text-green-500" />;
+      default:
+        return null;
+    }
+  };
+
+  const isOverdue = (dateStr) => {
+    if (!dateStr) return false;
+    return new Date(dateStr) < new Date();
+  };
+
   // Filter milestones
   const filteredMilestones = milestones.filter(m => {
     if (filterStatus === 'all') return true;
@@ -127,13 +182,16 @@ const MilestonesTab = ({ project }) => {
     }
   };
 
-  const isOverdue = (dueDate, status) => {
+  const isMilestoneOverdue = (dueDate, status) => {
     if (!dueDate) return false;
     return new Date(dueDate) < new Date() && new Date(dueDate).toDateString() !== new Date().toDateString() && status !== 'Completed';
   };
 
   const MilestoneCard = ({ milestone }) => (
-    <div className={`bg-white border rounded-xl p-6 hover:shadow-md transition-all ${getStatusColor(milestone.status)}`}>
+    <div 
+      onClick={() => handleViewMilestoneTasks(milestone)}
+      className={`bg-white border rounded-xl p-6 hover:shadow-md transition-all cursor-pointer ${getStatusColor(milestone.status)}`}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start gap-3 flex-1">
           <div className={`w-3 h-3 rounded-full mt-1.5 flex-shrink-0 ${getStatusDotColor(milestone.status)}`} />
@@ -164,7 +222,7 @@ const MilestonesTab = ({ project }) => {
             <div className="flex items-center gap-4 text-sm">
               {milestone.fromDate && milestone.dueDate && (
                 <span className={`flex items-center gap-1 ${
-                  isOverdue(milestone.dueDate, milestone.status) ? 'text-red-600 font-medium' : 'text-gray-500'
+                  isMilestoneOverdue(milestone.dueDate, milestone.status) ? 'text-red-600 font-medium' : 'text-gray-500'
                 }`}>
                   <Calendar size={14} />
                   {new Date(milestone.fromDate).toLocaleDateString('en-US', {
@@ -179,7 +237,7 @@ const MilestonesTab = ({ project }) => {
               )}
               {!milestone.fromDate && milestone.dueDate && (
                 <span className={`flex items-center gap-1 ${
-                  isOverdue(milestone.dueDate, milestone.status) ? 'text-yellow-600 font-medium' : 'text-gray-500'
+                  isMilestoneOverdue(milestone.dueDate, milestone.status) ? 'text-yellow-600 font-medium' : 'text-gray-500'
                 }`}>
                   <Calendar size={14} />
                   Due {new Date(milestone.dueDate).toLocaleDateString('en-US', {
@@ -200,7 +258,10 @@ const MilestonesTab = ({ project }) => {
         {/* Actions Menu */}
         <div className="relative">
           <button
-            onClick={() => setMilestoneMenuOpen(milestoneMenuOpen === milestone._id ? null : milestone._id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMilestoneMenuOpen(milestoneMenuOpen === milestone._id ? null : milestone._id);
+            }}
             className="p-2 hover:bg-white/50 rounded-lg transition-colors"
           >
             <MoreVertical size={18} className="text-gray-400" />
@@ -208,6 +269,13 @@ const MilestonesTab = ({ project }) => {
           
           {milestoneMenuOpen === milestone._id && (
             <div className="absolute right-0 top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[160px]">
+              <button
+                onClick={(e) => handleRefreshProgress(milestone._id, e)}
+                className="w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 flex items-center gap-2"
+              >
+                <RefreshCw size={14} />
+                Refresh Progress
+              </button>
               <button
                 onClick={() => handleEditMilestone(milestone)}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
@@ -384,6 +452,117 @@ const MilestonesTab = ({ project }) => {
         onMilestoneCreated={handleMilestoneCreated}
         editMilestone={editingMilestone}
       />
+
+      {/* Milestone Tasks Modal */}
+      {selectedMilestone && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">{selectedMilestone.title}</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {milestoneTasks.length} {milestoneTasks.length === 1 ? 'task' : 'tasks'}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedMilestone(null);
+                  setMilestoneTasks([]);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {loadingMilestoneTasks ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                </div>
+              ) : milestoneTasks.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-400">No tasks in this milestone</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {milestoneTasks.map((task) => (
+                    <div
+                      key={task._id}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            {getPriorityIcon(task.priority)}
+                            <h3 className="font-medium text-gray-900">{task.title}</h3>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <span className={`px-2 py-1 rounded-full ${
+                              task.column === 'backlog' ? 'bg-gray-100 text-gray-700' :
+                              task.column === 'todo' ? 'bg-blue-100 text-blue-700' :
+                              task.column === 'doing' ? 'bg-yellow-100 text-yellow-700' :
+                              task.column === 'review' ? 'bg-purple-100 text-purple-700' :
+                              'bg-green-100 text-green-700'
+                            }`}>
+                              {task.column === 'backlog' && 'Backlog'}
+                              {task.column === 'todo' && 'To Do'}
+                              {task.column === 'doing' && 'In Progress'}
+                              {task.column === 'review' && 'Review'}
+                              {task.column === 'done' && 'Done'}
+                            </span>
+                            
+                            {task.dueDate && (
+                              <span className={`flex items-center gap-1 ${
+                                isOverdue(task.dueDate) ? 'text-red-500' : ''
+                              }`}>
+                                <Calendar size={12} />
+                                {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </span>
+                            )}
+
+                            {task.assignees && task.assignees.length > 0 && (
+                              <div className="flex -space-x-2">
+                                {task.assignees.slice(0, 3).map((assignee) => (
+                                  <img
+                                    key={assignee._id}
+                                    src={assignee.avatarUrl || assignee.avatar || 'https://via.placeholder.com/50'}
+                                    alt={assignee.name || ''}
+                                    className="w-6 h-6 rounded-full border-2 border-white"
+                                    title={assignee.name}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {task.labels && task.labels.length > 0 && (
+                          <div className="flex flex-wrap gap-1 ml-4">
+                            {task.labels.slice(0, 2).map((label) => (
+                              <span key={label} className={`text-xs px-2 py-0.5 rounded-full ${getLabelColor(label)}`}>
+                                {label}
+                              </span>
+                            ))}
+                            {task.labels.length > 2 && (
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                +{task.labels.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

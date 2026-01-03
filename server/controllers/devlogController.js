@@ -4,7 +4,7 @@ class DevlogController {
   // Create devlog
   async createDevlog(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const devlog = await devlogService.createDevlog(userId, req.body);
       res.status(201).json(devlog);
     } catch (error) {
@@ -54,7 +54,7 @@ class DevlogController {
   // Update devlog
   async updateDevlog(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const devlog = await devlogService.updateDevlog(req.params.id, userId, req.body);
       res.json(devlog);
     } catch (error) {
@@ -65,7 +65,7 @@ class DevlogController {
   // Delete devlog
   async deleteDevlog(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const result = await devlogService.deleteDevlog(req.params.id, userId);
       res.json(result);
     } catch (error) {
@@ -76,7 +76,7 @@ class DevlogController {
   // Add reaction
   async addReaction(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const { reactionType } = req.body;
       const devlog = await devlogService.addReaction(req.params.id, userId, reactionType);
       res.json(devlog);
@@ -88,7 +88,7 @@ class DevlogController {
   // Remove reaction
   async removeReaction(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const devlog = await devlogService.removeReaction(req.params.id, userId);
       res.json(devlog);
     } catch (error) {
@@ -99,7 +99,7 @@ class DevlogController {
   // Toggle pin
   async togglePin(req, res) {
     try {
-      const userId = req.user.profileId;
+      const userId = req.user.profile?._id;
       const devlog = await devlogService.togglePin(req.params.id, userId);
       res.json(devlog);
     } catch (error) {

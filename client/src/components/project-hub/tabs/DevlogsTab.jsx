@@ -10,7 +10,9 @@ import {
   Loader2,
   AlertCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Flame,
+  Rocket
 } from 'lucide-react';
 import devlogApi from '../../../api/devlogApi';
 import CreateDevlogModal from '../modals/CreateDevlogModal';
@@ -162,14 +164,14 @@ const DevlogsTab = ({ project }) => {
               onClick={() => handleReaction(devlog._id, 'fire')}
               className="flex items-center gap-2 text-gray-600 hover:text-orange-500 transition-colors"
             >
-              <span className="text-lg">🔥</span>
+              <Flame size={18} />
               <span className="text-sm">{devlog.reactions?.fire || 0}</span>
             </button>
             <button
               onClick={() => handleReaction(devlog._id, 'rocket')}
               className="flex items-center gap-2 text-gray-600 hover:text-blue-500 transition-colors"
             >
-              <span className="text-lg">🚀</span>
+              <Rocket size={18} />
               <span className="text-sm">{devlog.reactions?.rocket || 0}</span>
             </button>
           </div>

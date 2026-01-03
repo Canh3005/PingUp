@@ -1,5 +1,6 @@
 import Milestone from '../models/Milestone.js';
 import ProjectHub from '../models/ProjectHub.js';
+import Task from '../models/Task.js';
 import projectHubService from './projectHubService.js';
 import hubActivityService from './hubActivityService.js';
 import ACTIVITY_TYPES from '../constants/activityTypes.js';
@@ -232,6 +233,32 @@ class MilestoneService {
       return { message: 'Milestone deleted successfully' };
     } catch (error) {
       throw new Error(`Error deleting milestone: ${error.message}`);
+    }
+  }
+
+  // Recalculate milestone progress based on tasks
+  async recalculateMilestoneProgress(milestoneId) {
+    try {
+      const milestone = await Milestone.findById(milestoneId);
+
+      if (!milestone) {
+        throw new Error('Milestone not found');
+      }
+
+      // Get all tasks for this milestone
+      const tasks = await Task.find({ milestone: milestoneId });
+
+      if (tasks.length === 0) {
+        milestone.progress = 0;
+      } else {
+        const completedTasks = tasks.filter((t) => t.status === 'Completed').length;
+        milestone.progress = Math.round((completedTasks / tasks.length) * 100);
+      }
+
+      await milestone.save();
+      return milestone;
+    } catch (error) {
+      throw new Error(`Error recalculating milestone progress: ${error.message}`);
     }
   }
 }

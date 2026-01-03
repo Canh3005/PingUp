@@ -14,10 +14,12 @@ import {
 } from 'lucide-react';
 import devlogApi from '../../../api/devlogApi';
 import hubActivityApi from '../../../api/hubActivityApi';
+import taskApi from '../../../api/taskApi';
 
 const OverviewTab = ({ project, milestones }) => {
   const [recentDevlogs, setRecentDevlogs] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
+  const [recentTasks, setRecentTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -33,14 +35,16 @@ const OverviewTab = ({ project, milestones }) => {
       setLoading(true);
       setError('');
       
-      // Fetch recent devlogs and activities in parallel
-      const [devlogsData, activitiesData] = await Promise.all([
+      // Fetch recent devlogs, activities, and tasks in parallel
+      const [devlogsData, activitiesData, tasksData] = await Promise.all([
         devlogApi.getRecentDevlogs(project._id, 3),
-        hubActivityApi.getRecentActivities(project._id, 5)
+        hubActivityApi.getRecentActivities(project._id, 5),
+        taskApi.getTasksByProjectHub(project._id, { limit: 5, sortBy: 'createdAt', sortOrder: 'desc' })
       ]);
 
       setRecentDevlogs(devlogsData);
       setRecentActivity(activitiesData);
+      setRecentTasks(Array.isArray(tasksData) ? tasksData.slice(0, 5) : []);
     } catch (err) {
       console.error('Error loading overview data:', err);
       setError(err.response?.data?.message || 'Failed to load data');
@@ -48,14 +52,6 @@ const OverviewTab = ({ project, milestones }) => {
       setLoading(false);
     }
   };
-
-  // Quick tasks
-  const quickTasks = [
-    { id: 1, title: 'Fix camera shake bug', priority: 'high', assignee: 'Mike Johnson' },
-    { id: 2, title: 'Add tutorial tooltips', priority: 'medium', assignee: 'Sarah Kim' },
-    { id: 3, title: 'Optimize texture loading', priority: 'high', assignee: 'Alex Chen' },
-    { id: 4, title: 'Record explosion SFX', priority: 'low', assignee: 'Emily Wang' },
-  ];
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -65,6 +61,17 @@ const OverviewTab = ({ project, milestones }) => {
       default: return 'bg-gray-100 text-gray-700';
     }
   };
+
+  // Calculate project progress based on milestones
+  const calculateProgress = () => {
+    if (!milestones || milestones.length === 0) return 0;
+    const completedCount = milestones.filter(m => m.status === 'Completed').length;
+    return Math.round((completedCount / milestones.length) * 100);
+  };
+
+  const projectProgress = calculateProgress();
+  const completedMilestones = milestones ? milestones.filter(m => m.status === 'Completed').length : 0;
+  const totalMilestones = milestones ? milestones.length : 0;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -179,25 +186,25 @@ const OverviewTab = ({ project, milestones }) => {
           </div>
 
           <div className="flex items-end gap-3 mb-4">
-            <span className="text-4xl font-bold">{project.progress}%</span>
+            <span className="text-4xl font-bold">{projectProgress}%</span>
             <span className="text-blue-200 text-sm mb-1">completed</span>
           </div>
 
           <div className="w-full bg-white/20 rounded-full h-3 mb-4">
             <div
               className="bg-white rounded-full h-3 transition-all duration-500"
-              style={{ width: `${project.progress}%` }}
+              style={{ width: `${projectProgress}%` }}
             />
           </div>
 
           <div className="flex justify-between text-sm">
             <span className="text-blue-200">
               <CheckCircle2 size={14} className="inline mr-1" />
-              {project.completedTasks} done
+              {completedMilestones} completed
             </span>
             <span className="text-blue-200">
               <Target size={14} className="inline mr-1" />
-              {project.totalTasks} total
+              {totalMilestones} milestones
             </span>
           </div>
         </div>
@@ -211,71 +218,86 @@ const OverviewTab = ({ project, milestones }) => {
               milestones
                 .filter(m => m.status !== 'Completed')
                 .slice(0, 5)
-                .map((milestone) => (
-                  <div
-                    key={milestone._id}
-                    className={`flex items-center gap-3 p-3 rounded-lg ${
-                      milestone.status === 'In Progress'
-                        ? 'bg-blue-50'
-                        : 'bg-gray-50'
-                    }`}
-                  >
-                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                      milestone.status === 'In Progress'
-                        ? 'bg-blue-500'
-                        : 'bg-gray-300'
-                    }`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate text-gray-900">
-                        {milestone.title}
-                      </p>
-                      {milestone.dueDate && (
-                        <p className="text-xs text-gray-500 flex items-center gap-1">
-                          <Calendar size={12} />
-                          {new Date(milestone.dueDate).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
+                .map((milestone) => {
+                  const getStatusColor = (status) => {
+                    switch (status) {
+                      case 'Completed':
+                        return { bg: 'bg-green-50', dot: 'bg-green-500' };
+                      case 'In Progress':
+                        return { bg: 'bg-blue-50', dot: 'bg-blue-500' };
+                      default: // Not Started
+                        return { bg: 'bg-gray-50', dot: 'bg-gray-300' };
+                    }
+                  };
+                  
+                  const colors = getStatusColor(milestone.status);
+                  
+                  return (
+                    <div
+                      key={milestone._id}
+                      className={`flex items-center gap-3 p-3 rounded-lg ${colors.bg}`}
+                    >
+                      <div className={`w-3 h-3 rounded-full flex-shrink-0 ${colors.dot}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate text-gray-900">
+                          {milestone.title}
                         </p>
-                      )}
+                        {milestone.dueDate && (
+                          <p className="text-xs text-gray-500 flex items-center gap-1">
+                            <Calendar size={12} />
+                            {new Date(milestone.dueDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
             ) : (
               <p className="text-center text-gray-500 py-4">No upcoming milestones</p>
             )}
           </div>
         </div>
 
-        {/* Quick Task List */}
+        {/* Recent Tasks */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-900">Quick Tasks</h3>
-            <button className="text-blue-600 hover:text-blue-700">
-              <Plus size={18} />
-            </button>
+            <h3 className="font-bold text-gray-900">Recent Tasks</h3>
+            <span className="text-xs text-gray-500">Latest created</span>
           </div>
 
           <div className="space-y-2">
-            {quickTasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
-                  <p className="text-xs text-gray-500">{task.assignee}</p>
-                </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${getPriorityColor(task.priority)}`}>
-                  {task.priority}
-                </span>
+            {loading ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
               </div>
-            ))}
+            ) : recentTasks.length > 0 ? (
+              recentTasks.map((task) => (
+                <div
+                  key={task._id}
+                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    task.status === 'Completed' ? 'bg-green-500' :
+                    task.status === 'In Progress' ? 'bg-blue-500' : 'bg-gray-300'
+                  }`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+                    <p className="text-xs text-gray-500">
+                      {task.createdBy?.name || 'Unknown'} • {new Date(task.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${getPriorityColor(task.priority)}`}>
+                    {task.priority}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-4">No tasks yet</p>
+            )}
           </div>
         </div>
 

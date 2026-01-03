@@ -22,4 +22,7 @@ router.put('/:milestoneId/status', auth, milestoneController.updateMilestoneStat
 // Delete milestone (authenticated)
 router.delete('/:milestoneId', auth, milestoneController.deleteMilestone);
 
+// Recalculate milestone progress
+router.post('/:milestoneId/recalculate-progress', auth, milestoneController.recalculateProgress);
+
 export default router;

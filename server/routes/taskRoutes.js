@@ -23,6 +23,11 @@ router.put('/:id/unassign', auth, taskController.unassignUser);
 router.post('/:id/attachments', auth, taskController.addAttachment);
 router.delete('/:id/attachments/:attachmentId', auth, taskController.removeAttachment);
 
+// Labels
+router.post('/:id/labels', auth, taskController.addLabel);
+router.delete('/:id/labels', auth, taskController.removeLabel);
+router.get('/labels/available', auth, taskController.getAvailableLabels);
+
 // Statistics
 router.get('/project/:projectHubId/statistics', auth, taskController.getTaskStatistics);
 

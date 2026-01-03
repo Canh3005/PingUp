@@ -13,6 +13,9 @@ class DevlogService {
       });
 
       await devlog.save();
+      
+      // Populate author before returning
+      await devlog.populate('author', 'name avatarUrl jobTitle');
 
       // Log activity
       await this.logDevlogActivity(

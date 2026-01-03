@@ -2,17 +2,25 @@ import Task from '../models/Task.js';
 import Milestone from '../models/Milestone.js';
 import HubActivity from '../models/HubActivity.js';
 import ProjectHub from '../models/ProjectHub.js';
+import { ACTIVITY_TYPES } from '../constants/activityTypes.js';
+import { getAllLabelTypes } from '../constants/labelTypes.js';
 
 class TaskService {
   // Create new task
   async createTask(userId, taskData) {
     try {
+      console.log('Creating task with data:', taskData, 'by user:', userId);
       const task = new Task({
         ...taskData,
         createdBy: userId,
       });
 
       await task.save();
+
+      // Populate the createdBy field before returning
+      await task.populate('createdBy', 'name avatarUrl');
+      await task.populate('assignees', 'name avatarUrl jobTitle');
+      await task.populate('mileStoneId', 'title');
 
       // Update milestone task count
       if (taskData.mileStoneId) {
@@ -117,7 +125,24 @@ class TaskService {
       const oldStatus = task.status;
 
       Object.assign(task, updateData);
+      
+      // Auto-update status based on column if column changed
+      if (task.column !== oldColumn) {
+        if (task.column === 'done') {
+          task.status = 'Completed';
+        } else if (task.column === 'doing' || task.column === 'review') {
+          task.status = 'In Progress';
+        } else {
+          task.status = 'Not Started';
+        }
+      }
+      
       await task.save();
+      
+      // Populate fields before returning
+      await task.populate('createdBy', 'name avatarUrl');
+      await task.populate('assignees', 'name avatarUrl jobTitle');
+      await task.populate('mileStoneId', 'title');
 
       // Update milestone progress if status or column changed
       if (oldColumn !== task.column || oldStatus !== task.status) {
@@ -375,12 +400,16 @@ class TaskService {
       throw new Error('Project hub not found');
     }
 
-    const isOwner = projectHub.owner.toString() === userId;
+    // Convert userId to string for comparison
+    const userIdStr = userId.toString();
+
+    // Check if user is owner (owner is User._id, but we have UserProfile._id)
+    // So we need to check members array which uses UserProfile._id
     const isMember = projectHub.members.some(
-      (member) => member.user.toString() === userId
+      (member) => member.user.toString() === userIdStr
     );
 
-    if (!isOwner && !isMember) {
+    if (!isMember) {
       throw new Error('Not authorized to modify this task');
     }
 
@@ -390,11 +419,26 @@ class TaskService {
   // Log task activity
   async logTaskActivity(projectHubId, userId, action, targetId, targetName, metadata = null) {
     try {
+      // Determine activity type based on action
+      let activityType = ACTIVITY_TYPES.TASK_UPDATED;
+      
+      if (action.includes('created')) {
+        activityType = ACTIVITY_TYPES.TASK_CREATED;
+      } else if (action.includes('deleted')) {
+        activityType = ACTIVITY_TYPES.TASK_DELETED;
+      } else if (action.includes('moved')) {
+        activityType = ACTIVITY_TYPES.TASK_MOVED;
+      } else if (action.includes('assigned')) {
+        activityType = ACTIVITY_TYPES.TASK_ASSIGNED;
+      } else if (action.includes('completed')) {
+        activityType = ACTIVITY_TYPES.TASK_COMPLETED;
+      }
+
       const activity = new HubActivity({
         projectHubId,
         user: userId,
         action,
-        activityType: 'task',
+        activityType,
         targetId,
         targetName,
         metadata,
@@ -435,6 +479,78 @@ class TaskService {
       return stats;
     } catch (error) {
       throw new Error(`Error getting task statistics: ${error.message}`);
+    }
+  }
+
+  // Add label to task
+  async addLabel(taskId, userId, label) {
+    try {
+      const task = await Task.findById(taskId);
+
+      if (!task) {
+        throw new Error('Task not found');
+      }
+
+      await this.checkTaskPermission(task.projectHubId, userId);
+
+      // Check if label already exists
+      if (task.labels.includes(label)) {
+        throw new Error('Label already exists on this task');
+      }
+
+      task.labels.push(label);
+      await task.save();
+
+      await this.logTaskActivity(
+        task.projectHubId,
+        userId,
+        `added label "${label}"`,
+        task._id,
+        task.title,
+        { label }
+      );
+
+      return task;
+    } catch (error) {
+      throw new Error(`Error adding label: ${error.message}`);
+    }
+  }
+
+  // Remove label from task
+  async removeLabel(taskId, userId, label) {
+    try {
+      const task = await Task.findById(taskId);
+
+      if (!task) {
+        throw new Error('Task not found');
+      }
+
+      await this.checkTaskPermission(task.projectHubId, userId);
+
+      task.labels = task.labels.filter((l) => l !== label);
+      await task.save();
+
+      await this.logTaskActivity(
+        task.projectHubId,
+        userId,
+        `removed label "${label}"`,
+        task._id,
+        task.title,
+        { label }
+      );
+
+      return task;
+    } catch (error) {
+      throw new Error(`Error removing label: ${error.message}`);
+    }
+  }
+
+  // Get available labels
+  async getAvailableLabels() {
+    try {
+      return getAllLabelTypes();
+    } catch (error) {
+      throw new Error(`Error getting available labels: ${error.message}`);
     }
   }
 }

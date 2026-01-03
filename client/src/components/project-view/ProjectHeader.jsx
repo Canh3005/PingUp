@@ -10,7 +10,7 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
       navigate(`/project-hub/${project.projectHubId}`);
   };
   const handleCreateHub = () => {
-      navigate(`/project-hub/create`);
+      navigate(`/project-hub/create`, { state: { projectId: project._id } });
   };
 
   return (

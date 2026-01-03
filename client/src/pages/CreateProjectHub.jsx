@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Upload, Plus, X } from 'lucide-react';
-import { useAuth } from '../context/authContext';
+import { ArrowLeft, Upload, X } from 'lucide-react';
 import projectHubApi from '../api/projectHubApi';
 import projectApi from '../api/projectApi';
 import uploadApi from '../api/uploadApi';
 import Loading from '../components/Loading';
+import toast from 'react-hot-toast';
 
 const CreateProjectHub = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
   const projectId = location.state?.projectId;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [project, setProject] = useState(null);
+  const [, setProject] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
   
@@ -122,6 +121,8 @@ const CreateProjectHub = () => {
       setIsLoading(true);
       setError('');
 
+      console.log('Creating project hub with projectId:', projectId);
+
       let logoUrl = '';
       
       // Upload logo if provided
@@ -148,10 +149,12 @@ const CreateProjectHub = () => {
           });
         } catch (updateError) {
           console.error('Error updating project with hub ID:', updateError);
+          toast.error('Project hub created but failed to link to project');
           // Continue anyway, hub is created successfully
         }
       }
 
+      toast.success('Project hub created successfully!');
       // Navigate to the new project hub
       navigate(`/project-hub/${newHub._id}`);
     } catch (error) {

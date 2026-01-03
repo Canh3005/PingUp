@@ -37,6 +37,12 @@ const milestoneApi = {
     const res = await httpClient.delete(`/milestones/${milestoneId}`);
     return res.data;
   },
+
+  // Recalculate milestone progress
+  recalculateProgress: async (milestoneId) => {
+    const res = await httpClient.post(`/milestones/${milestoneId}/recalculate-progress`);
+    return res.data;
+  },
 };
 
 export default milestoneApi;
