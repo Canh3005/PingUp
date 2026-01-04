@@ -77,7 +77,7 @@ const ProjectHub = () => {
       case 'recruitment':
         return <RecruitmentTab project={project} />;
       case 'team':
-        return <TeamTab project={project} />;
+        return <TeamTab project={project} onRefresh={loadProjectHub} />;
       case 'settings':
         return <SettingsTab project={project} setProject={setProject} />;
       default:

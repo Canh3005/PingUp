@@ -4,7 +4,7 @@ class ProjectHubController {
   // Create new project hub
   async createProjectHub(req, res) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const hubData = req.body;
 
       const projectHub = await projectHubService.createProjectHub(userId, hubData);
@@ -44,7 +44,7 @@ class ProjectHubController {
   // Get user's project hubs
   async getUserProjectHubs(req, res) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       const projectHubs = await projectHubService.getUserProjectHubs(userId);
 
@@ -93,7 +93,7 @@ class ProjectHubController {
   async updateProjectHub(req, res) {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const updateData = req.body;
 
       const projectHub = await projectHubService.updateProjectHub(hubId, userId, updateData);
@@ -115,7 +115,7 @@ class ProjectHubController {
   async deleteProjectHub(req, res) {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       await projectHubService.deleteProjectHub(hubId, userId);
 
@@ -135,7 +135,7 @@ class ProjectHubController {
   async addMember(req, res) {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const { memberId, permissionRole, jobPosition } = req.body;
 
       const memberData = {
@@ -162,7 +162,7 @@ class ProjectHubController {
   async removeMember(req, res) {
     try {
       const { hubId, userId: memberIdToRemove } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       const projectHub = await projectHubService.removeMember(hubId, userId, memberIdToRemove);
 
@@ -183,7 +183,7 @@ class ProjectHubController {
   async updateMemberRole(req, res) {
     try {
       const { hubId, userId: memberIdToUpdate } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const { permissionRole, jobPosition } = req.body;
 
       const updateData = {
@@ -215,7 +215,7 @@ class ProjectHubController {
   async linkShowcaseProject(req, res) {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const { showcaseProjectId } = req.body;
 
       const projectHub = await projectHubService.linkShowcaseProject(
@@ -241,7 +241,7 @@ class ProjectHubController {
   async updateIntegrations(req, res) {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const { integrations } = req.body;
 
       const projectHub = await projectHubService.updateIntegrations(

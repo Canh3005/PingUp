@@ -36,7 +36,7 @@ export const getUserRole = async (hubId, userId) => {
 export const checkIsMember = async (req, res, next) => {
   try {
     const { hubId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.profile._id.toString();
 
     const role = await getUserRole(hubId, userId);
 
@@ -64,7 +64,7 @@ export const checkIsMember = async (req, res, next) => {
 export const checkIsAdminOrOwner = async (req, res, next) => {
   try {
     const { hubId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.profile._id.toString();
 
     const role = await getUserRole(hubId, userId);
 
@@ -91,7 +91,7 @@ export const checkIsAdminOrOwner = async (req, res, next) => {
 export const checkIsOwner = async (req, res, next) => {
   try {
     const { hubId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.profile._id.toString();
 
     const role = await getUserRole(hubId, userId);
 
@@ -119,7 +119,7 @@ export const checkPermission = (permission) => {
   return async (req, res, next) => {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       const role = await getUserRole(hubId, userId);
 
@@ -148,7 +148,7 @@ export const checkAnyPermission = (...permissions) => {
   return async (req, res, next) => {
     try {
       const { hubId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       const role = await getUserRole(hubId, userId);
 

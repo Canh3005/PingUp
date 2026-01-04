@@ -19,7 +19,7 @@ import EditMemberModal from './EditMemberModal';
 import useProjectHubPermissions from '../../../hooks/useProjectHubPermissions';
 import Loading from '../../Loading';
 
-const TeamTab = ({ project }) => {
+const TeamTab = ({ project, onRefresh }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -47,15 +47,15 @@ const TeamTab = ({ project }) => {
 
   const handleEditMember = (member, e) => {
     e.stopPropagation();
-    console.log('Member data:', member); // Debug: check member structure
-    console.log('Member user:', member.user); // Debug: check user data
     setSelectedMember(member);
     setShowEditModal(true);
   };
 
-  const handleRefresh = () => {
-    // Trigger parent component to reload project data
-    window.location.reload(); // Simple approach, or use a callback prop
+  const handleRefresh = async () => {
+    // Trigger parent component to reload project data without losing tab state
+    if (onRefresh) {
+      await onRefresh();
+    }
   };
 
   if (!project) {

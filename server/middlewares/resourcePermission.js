@@ -71,7 +71,7 @@ export const getUserRole = async (hubId, userId) => {
 
     // Find user in members
     const member = projectHub.members.find(
-      m => m.user.toString() === userId
+      m => m.user.toString() === userId.toString()
     );
 
     return member ? member.permissionRole : null;
@@ -88,7 +88,7 @@ export const getUserRole = async (hubId, userId) => {
 export const checkResourcePermission = (resourceType, permission) => {
   return async (req, res, next) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user.profile._id;
       const resourceId = req.params.id || req.params.milestoneId;
 
       // Get hubId from resource
@@ -190,7 +190,8 @@ export const checkDevlogPermission = (action) => {
  */
 export const checkCanReviewApplication = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.profile._id;
+    console.log('User ID for Reviewing Application:', userId);
     const applicationId = req.params.id;
 
     const hubId = await getHubIdFromResource('application', applicationId);
@@ -203,7 +204,7 @@ export const checkCanReviewApplication = async (req, res, next) => {
     }
 
     const role = await getUserRole(hubId, userId);
-
+    console.log('User Role for Reviewing Application:', role);
     if (!role || !hasPermission(role, PROJECT_HUB_PERMISSIONS.REVIEW_APPLICATION)) {
       return res.status(403).json({
         success: false,

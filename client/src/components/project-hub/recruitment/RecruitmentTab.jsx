@@ -459,8 +459,8 @@ const RecruitmentTab = ({ project }) => {
               )}
             </div>
 
-            {/* Applicants Section */}
-            {role.status === 'open' && (
+            {/* Applicants Section - Show for both open and filled status */}
+            {(role.status === 'open' || role.status === 'filled') && (
               <div className="border-t border-gray-100">
                 <button
                   onClick={() => {

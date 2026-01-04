@@ -16,8 +16,26 @@ const register = async ({ userName, email, password }) => {
   if (existingUser) {
     throw new Error("User already exists");
   }
+  
+  // Create user
   const user = new User({ userName, email, password: hashedPassword });
   await user.save();
+  
+  // Automatically create UserProfile for new user
+  const userProfile = new UserProfile({
+    userId: user._id,
+    name: userName,
+    email: email,
+    jobTitle: 'New Member', // Default job title
+    bio: '',
+    website: '',
+    location: '',
+    skills: [],
+    avatarUrl: '',
+    coverImageUrl: '',
+  });
+  await userProfile.save();
+  
   return user;
 };
 

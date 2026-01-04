@@ -4,7 +4,7 @@ class MilestoneController {
   // Create new milestone
   async createMilestone(req, res) {
     try {
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const milestoneData = req.body;
 
       const milestone = await milestoneService.createMilestone(userId, milestoneData);
@@ -65,7 +65,7 @@ class MilestoneController {
   async updateMilestone(req, res) {
     try {
       const { milestoneId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const updateData = req.body;
 
       const milestone = await milestoneService.updateMilestone(
@@ -91,7 +91,7 @@ class MilestoneController {
   async updateMilestoneStatus(req, res) {
     try {
       const { milestoneId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
       const { status } = req.body;
 
       const milestone = await milestoneService.updateMilestoneStatus(
@@ -117,7 +117,7 @@ class MilestoneController {
   async deleteMilestone(req, res) {
     try {
       const { milestoneId } = req.params;
-      const userId = req.user.id;
+      const userId = req.user.profile._id.toString();
 
       await milestoneService.deleteMilestone(milestoneId, userId);
 

@@ -15,6 +15,7 @@ import {
 import devlogApi from '../../../api/devlogApi';
 import hubActivityApi from '../../../api/hubActivityApi';
 import taskApi from '../../../api/taskApi';
+import useProjectHubPermissions from '../../../hooks/useProjectHubPermissions';
 
 const OverviewTab = ({ project, milestones }) => {
   const [recentDevlogs, setRecentDevlogs] = useState([]);
@@ -22,6 +23,9 @@ const OverviewTab = ({ project, milestones }) => {
   const [recentTasks, setRecentTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Get current user's permissions
+  const { canAddMember } = useProjectHubPermissions(project);
 
   // Load data when project changes
   useEffect(() => {
@@ -77,6 +81,41 @@ const OverviewTab = ({ project, milestones }) => {
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* Left Column - 60% */}
       <div className="lg:col-span-3 space-y-6">
+        {/* Team Members */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-gray-900">Team Members</h3>
+            <span className="text-sm text-gray-500">{project.members.length} members</span>
+          </div>
+
+          <div className="flex -space-x-3">
+            {project.members.slice(0, 5).map((member, index) => (
+              <img
+                key={member._id || member.user?._id || index}
+                src={member.user?.avatarUrl || member.user?.imageUrl || member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`}
+                alt={member.user?.name || member.name || 'Team member'}
+                title={member.user?.name || member.name || 'Team member'}
+                className="w-10 h-10 rounded-full border-2 border-white hover:z-10 hover:scale-110 transition-transform cursor-pointer"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`;
+                }}
+              />
+            ))}
+            {project.members.length > 5 && (
+              <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-sm font-medium text-gray-600">
+                +{project.members.length - 5}
+              </div>
+            )}
+          </div>
+
+          {canAddMember && (
+            <button className="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              <Plus size={16} />
+              Invite Member
+            </button>
+          )}
+        </div>
+
         {/* Latest Devlogs */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
@@ -299,39 +338,6 @@ const OverviewTab = ({ project, milestones }) => {
               <p className="text-center text-gray-500 py-4">No tasks yet</p>
             )}
           </div>
-        </div>
-
-        {/* Team Members */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-900">Team Members</h3>
-            <span className="text-sm text-gray-500">{project.members.length} members</span>
-          </div>
-
-          <div className="flex -space-x-3">
-            {project.members.slice(0, 5).map((member, index) => (
-              <img
-                key={member._id || member.user?._id || index}
-                src={member.user?.avatarUrl || member.user?.imageUrl || member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`}
-                alt={member.user?.name || member.name || 'Team member'}
-                title={member.user?.name || member.name || 'Team member'}
-                className="w-10 h-10 rounded-full border-2 border-white hover:z-10 hover:scale-110 transition-transform cursor-pointer"
-                onError={(e) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`;
-                }}
-              />
-            ))}
-            {project.members.length > 5 && (
-              <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-sm font-medium text-gray-600">
-                +{project.members.length - 5}
-              </div>
-            )}
-          </div>
-
-          <button className="w-full mt-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 text-sm font-medium transition-colors flex items-center justify-center gap-2">
-            <Plus size={16} />
-            Invite Member
-          </button>
         </div>
       </div>
     </div>
