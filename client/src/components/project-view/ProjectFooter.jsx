@@ -33,7 +33,7 @@ const ProjectFooter = ({ project, onLike }) => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-neutral-900 to-neutral-950 text-white max-w-7xl mx-auto py-12">
+    <div className="bg-gradient-to-b from-neutral-900 to-neutral-950 text-white max-w-7xl mx-auto py-12 mt-4 rounded-t-2xl">
       <div className="px-6 text-center">
         {/* Like button with animation */}
         <div className="relative inline-block mb-8">

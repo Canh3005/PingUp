@@ -7,6 +7,7 @@ import followApi from '../api/followApi';
 import ProjectHeader from '../components/project-view/ProjectHeader';
 import ProjectSidebar from '../components/project-view/ProjectSidebar';
 import ProjectContent from '../components/project-view/ProjectContent';
+import ProjectRecruitment from '../components/project-view/ProjectRecruitment';
 import ProjectFooter from '../components/project-view/ProjectFooter';
 import ProjectAuthorWorks from '../components/project-view/ProjectAuthorWorks';
 import ProjectComments from '../components/project-view/ProjectComments';
@@ -219,6 +220,10 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
 
             <div className="max-w-7xl mx-auto">
               <ProjectContent project={project}/>
+            </div>
+
+            <div className="max-w-7xl mx-auto">
+              <ProjectRecruitment project={project} />
             </div>
 
             <ProjectFooter project={project} onLike={handleLike} isOwnProject={isOwnProject} />

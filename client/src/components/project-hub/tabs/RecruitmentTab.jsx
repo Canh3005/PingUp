@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Plus,
   Users,
@@ -9,135 +9,258 @@ import {
   Briefcase,
   Star,
   ExternalLink,
-  Mail,
-  MoreHorizontal,
-  Search,
-  Filter,
-  X,
-  Send,
   ChevronDown,
-  UserPlus
+  UserPlus,
+  Loader2,
+  Edit2,
+  Trash2,
+  MoreHorizontal,
+  Search
 } from 'lucide-react';
+import recruitmentApi from '../../../api/recruitmentApi';
+import applicationApi from '../../../api/applicationApi';
+import { toast } from 'react-hot-toast';
+import CreateRoleModal from './modals/CreateRoleModal';
+import EditRoleModal from './modals/EditRoleModal';
+import ApplicationDetailsModal from './modals/ApplicationDetailsModal';
 
 const RecruitmentTab = ({ project }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingRole, setEditingRole] = useState(null);
   const [showApplyModal, setShowApplyModal] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [applications, setApplications] = useState({});
+  const [loadingApplications, setLoadingApplications] = useState({});
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  
+  // Form state for creating recruitment
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    type: 'Full-time',
+    location: 'Remote',
+    credits: '',
+    requirements: '',
+  });
 
-  // Mock roles data
-  const roles = [
-    {
-      id: 1,
-      title: '3D Character Artist',
-      description: 'Looking for a skilled 3D artist to create and animate character models for our space exploration game. Experience with stylized art and game-ready optimization is a plus.',
-      requirements: [
-        'Proficient in Blender or Maya',
-        '3+ years of character modeling experience',
-        'Strong portfolio showcasing game-ready models',
-        'Understanding of rigging and basic animation'
-      ],
-      type: 'Part-time',
-      location: 'Remote',
-      credits: '500-800 credits/month',
-      status: 'open',
-      applicants: [
-        {
-          id: 1,
-          name: 'David Park',
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop',
-          portfolio: 'https://portfolio.example.com',
-          coverNote: 'I have 5 years of experience in character modeling for indie games. Would love to contribute to this amazing project!',
-          appliedAt: '2024-02-10',
-          status: 'pending'
-        },
-        {
-          id: 2,
-          name: 'Lisa Chen',
-          avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=50&h=50&fit=crop',
-          portfolio: 'https://portfolio.example.com',
-          coverNote: 'Excited about the art style of Cosmic Explorer! My experience includes work on similar sci-fi projects.',
-          appliedAt: '2024-02-11',
-          status: 'shortlisted'
-        },
-        {
-          id: 3,
-          name: 'Tom Wilson',
-          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop',
-          portfolio: 'https://portfolio.example.com',
-          coverNote: 'I specialize in stylized characters and have worked on several space-themed games.',
-          appliedAt: '2024-02-12',
-          status: 'pending'
-        }
-      ],
-      postedAt: '2024-02-05'
-    },
-    {
-      id: 2,
-      title: 'Level Designer',
-      description: 'We need a creative level designer to craft engaging space environments and mission layouts. You\'ll work closely with our art and gameplay teams.',
-      requirements: [
-        'Experience with Unity level design',
-        'Understanding of game pacing and flow',
-        'Portfolio with completed levels or environments',
-        'Good communication skills'
-      ],
+  // Load recruitments
+  useEffect(() => {
+    if (project?._id) {
+      loadRecruitments();
+    }
+  }, [project, activeFilter]);
+
+  const loadRecruitments = async () => {
+    try {
+      setLoading(true);
+      const response = await recruitmentApi.getRecruitmentsByProjectHub(
+        project._id,
+        activeFilter
+      );
+      setRoles(response.data.data);
+    } catch (error) {
+      console.error('Error loading recruitments:', error);
+      toast.error('Failed to load recruitments');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadApplications = async (recruitmentId) => {
+    if (applications[recruitmentId]) {
+      return; // Already loaded
+    }
+
+    try {
+      setLoadingApplications(prev => ({ ...prev, [recruitmentId]: true }));
+      const response = await applicationApi.getApplicationsByRecruitment(recruitmentId);
+      setApplications(prev => ({ 
+        ...prev, 
+        [recruitmentId]: response.data.data 
+      }));
+    } catch (error) {
+      console.error('Error loading applications:', error);
+      toast.error('Failed to load applications');
+    } finally {
+      setLoadingApplications(prev => ({ ...prev, [recruitmentId]: false }));
+    }
+  };
+
+  const handleApplicationStatusUpdate = async (applicationId, newStatus, reviewNotes = '') => {
+    try {
+      setUpdatingStatus(true);
+      await applicationApi.updateApplicationStatus(applicationId, newStatus, reviewNotes);
+      
+      toast.success(`Application ${newStatus}!`);
+      
+      // Reload applications for the current recruitment
+      const app = selectedApplication;
+      if (app) {
+        const recruitmentId = app.recruitment._id || app.recruitment;
+        setApplications(prev => ({ ...prev, [recruitmentId]: undefined }));
+        await loadApplications(recruitmentId);
+      }
+      
+      handleCloseApplicationModal();
+      loadRecruitments(); // Refresh recruitment data
+    } catch (error) {
+      console.error('Error updating application status:', error);
+      toast.error('Failed to update application status');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const handleCloseApplicationModal = () => {
+    setShowApplicationModal(false);
+    setSelectedApplication(null);
+  };
+
+  const viewApplicationDetails = (application) => {
+    setSelectedApplication(application);
+    setShowApplicationModal(true);
+  };
+
+  const handleCreateRecruitment = async () => {
+    try {
+      // Validate form
+      if (!formData.title || !formData.description || !formData.requirements) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+
+      // Parse requirements (split by newline and filter empty)
+      const requirementsArray = formData.requirements
+        .split('\n')
+        .map((r) => r.trim())
+        .filter((r) => r.length > 0);
+
+      const recruitmentData = {
+        projectHub: project._id,
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        location: formData.location,
+        credits: formData.credits,
+        requirements: requirementsArray,
+      };
+
+      await recruitmentApi.createRecruitment(recruitmentData);
+      toast.success('Role posted successfully!');
+      handleCloseCreateModal();
+      loadRecruitments();
+    } catch (error) {
+      console.error('Error creating recruitment:', error);
+      toast.error(error.response?.data?.message || 'Failed to create recruitment');
+    }
+  };
+
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+    setFormData({
+      title: '',
+      description: '',
       type: 'Full-time',
       location: 'Remote',
-      credits: '1000-1500 credits/month',
-      status: 'open',
-      applicants: [
-        {
-          id: 4,
-          name: 'Marcus Brown',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop',
-          portfolio: 'https://portfolio.example.com',
-          coverNote: 'Level design is my passion! I\'ve designed over 50 levels for various indie projects.',
-          appliedAt: '2024-02-08',
-          status: 'pending'
-        }
-      ],
-      postedAt: '2024-02-08'
-    },
-    {
-      id: 3,
-      title: 'Voice Actor',
-      description: 'Seeking voice actors for main character roles and NPC dialogue. Multiple roles available.',
-      requirements: [
-        'Professional recording setup',
-        'Demo reel required',
-        'Availability for recording sessions',
-        'Sci-fi or gaming experience preferred'
-      ],
-      type: 'Contract',
-      location: 'Remote',
-      credits: '200-400 credits/session',
-      status: 'filled',
-      applicants: [],
-      postedAt: '2024-01-20',
-      filledBy: {
-        name: 'Jennifer Adams',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&h=50&fit=crop'
+      credits: '',
+      requirements: '',
+    });
+  };
+
+  const handleEditRecruitment = async () => {
+    try {
+      // Validate form
+      if (!formData.title || !formData.description || !formData.requirements) {
+        toast.error('Please fill in all required fields');
+        return;
       }
-    },
-    {
-      id: 4,
-      title: 'QA Tester',
-      description: 'Help us find and document bugs before release. Ideal for someone who loves breaking games!',
-      requirements: [
-        'Detail-oriented mindset',
-        'Experience writing bug reports',
-        'Available for regular testing sessions',
-        'Gaming experience required'
-      ],
-      type: 'Part-time',
-      location: 'Remote',
-      credits: '300-500 credits/month',
-      status: 'open',
-      applicants: [],
-      postedAt: '2024-02-12'
+
+      // Parse requirements (split by newline and filter empty)
+      const requirementsArray = formData.requirements
+        .split('\n')
+        .map((r) => r.trim())
+        .filter((r) => r.length > 0);
+
+      const updateData = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        location: formData.location,
+        credits: formData.credits,
+        requirements: requirementsArray,
+      };
+
+      await recruitmentApi.updateRecruitment(editingRole._id, updateData);
+      toast.success('Role updated successfully!');
+      handleCloseEditModal();
+      loadRecruitments();
+    } catch (error) {
+      console.error('Error updating recruitment:', error);
+      toast.error(error.response?.data?.message || 'Failed to update recruitment');
     }
-  ];
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditingRole(null);
+    setFormData({
+      title: '',
+      description: '',
+      type: 'Full-time',
+      location: 'Remote',
+      credits: '',
+      requirements: '',
+    });
+  };
+
+  const openEditModal = (role) => {
+    setEditingRole(role);
+    setFormData({
+      title: role.title,
+      description: role.description,
+      type: role.type,
+      location: role.location,
+      credits: role.credits,
+      requirements: role.requirements.join('\n'),
+    });
+    setShowEditModal(true);
+    setOpenMenuId(null);
+  };
+
+  const handleCloseRecruitment = async (recruitmentId, filledBy = null) => {
+    try {
+      await recruitmentApi.closeRecruitment(recruitmentId, filledBy);
+      toast.success(filledBy ? 'Recruitment filled!' : 'Recruitment closed');
+      loadRecruitments();
+    } catch (error) {
+      console.error('Error closing recruitment:', error);
+      toast.error('Failed to close recruitment');
+    }
+  };
+
+  const handleDeleteRecruitment = async (recruitmentId) => {
+    if (!window.confirm('Are you sure you want to delete this role?')) {
+      return;
+    }
+
+    try {
+      await recruitmentApi.deleteRecruitment(recruitmentId);
+      toast.success('Role deleted successfully');
+      setOpenMenuId(null);
+      loadRecruitments();
+    } catch (error) {
+      console.error('Error deleting recruitment:', error);
+      toast.error('Failed to delete role');
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -165,9 +288,19 @@ const RecruitmentTab = ({ project }) => {
     }
   };
 
-  const filteredRoles = activeFilter === 'all'
-    ? roles
-    : roles.filter(role => role.status === activeFilter);
+  const filteredRoles = roles.filter((role) => {
+    const matchesSearch = role.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          role.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 size={32} className="text-blue-600 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -213,6 +346,8 @@ const RecruitmentTab = ({ project }) => {
           <input
             type="text"
             placeholder="Search roles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -221,7 +356,7 @@ const RecruitmentTab = ({ project }) => {
       {/* Roles List */}
       <div className="space-y-4">
         {filteredRoles.map((role) => (
-          <div key={role.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div key={role._id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             {/* Role Header */}
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
@@ -245,16 +380,47 @@ const RecruitmentTab = ({ project }) => {
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock size={14} />
-                      Posted {new Date(role.postedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      Posted {new Date(role.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
                 </div>
-                <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                  <MoreHorizontal size={20} />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenMenuId(openMenuId === role._id ? null : role._id)}
+                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <MoreHorizontal size={20} />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {openMenuId === role._id && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setOpenMenuId(null)}
+                      />
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                        <button
+                          onClick={() => openEditModal(role)}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Edit2 size={16} />
+                          Edit Role
+                        </button>
+                        <button
+                          onClick={() => handleDeleteRecruitment(role._id)}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 size={16} />
+                          Delete Role
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
-              <p className="text-gray-700 mb-4">{role.description}</p>
+              <p className="text-gray-700 mb-4 whitespace-pre-line">{role.description}</p>
 
               {/* Requirements */}
               <div className="mb-4">
@@ -273,7 +439,7 @@ const RecruitmentTab = ({ project }) => {
               {role.status === 'filled' && role.filledBy && (
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <img
-                    src={role.filledBy.avatar}
+                    src={role.filledBy.avatarUrl || '/default-avatar.png'}
                     alt={role.filledBy.name}
                     className="w-10 h-10 rounded-full"
                   />
@@ -289,76 +455,79 @@ const RecruitmentTab = ({ project }) => {
             {role.status === 'open' && (
               <div className="border-t border-gray-100">
                 <button
-                  onClick={() => setSelectedRole(selectedRole === role.id ? null : role.id)}
+                  onClick={() => {
+                    const isExpanding = selectedRole !== role._id;
+                    setSelectedRole(isExpanding ? role._id : null);
+                    if (isExpanding) {
+                      loadApplications(role._id);
+                    }
+                  }}
                   className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <Users size={18} className="text-gray-500" />
                     <span className="font-medium text-gray-900">
-                      {role.applicants.length} Applicant{role.applicants.length !== 1 ? 's' : ''}
+                      {role.applicantCount || 0} Applicant{role.applicantCount !== 1 ? 's' : ''}
                     </span>
-                    {role.applicants.filter(a => a.status === 'pending').length > 0 && (
-                      <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
-                        {role.applicants.filter(a => a.status === 'pending').length} new
-                      </span>
-                    )}
                   </div>
                   <ChevronDown
                     size={18}
-                    className={`text-gray-400 transition-transform ${selectedRole === role.id ? 'rotate-180' : ''}`}
+                    className={`text-gray-400 transition-transform ${selectedRole === role._id ? 'rotate-180' : ''}`}
                   />
                 </button>
 
-                {selectedRole === role.id && role.applicants.length > 0 && (
-                  <div className="px-6 pb-4 space-y-3">
-                    {role.applicants.map((applicant) => (
-                      <div key={applicant.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                        <img
-                          src={applicant.avatar}
-                          alt={applicant.name}
-                          className="w-12 h-12 rounded-full"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium text-gray-900">{applicant.name}</p>
-                            {getApplicantStatusBadge(applicant.status)}
-                          </div>
-                          <p className="text-sm text-gray-600 mb-2">{applicant.coverNote}</p>
-                          <div className="flex items-center gap-4 text-sm">
-                            <a
-                              href={applicant.portfolio}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700"
-                            >
-                              <ExternalLink size={14} />
-                              Portfolio
-                            </a>
-                            <span className="text-gray-400">
-                              Applied {new Date(applicant.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Message">
-                            <Mail size={18} />
-                          </button>
-                          <button className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
-                            Shortlist
-                          </button>
-                          <button className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            Accept
-                          </button>
-                        </div>
+                {/* Applications List */}
+                {selectedRole === role._id && (
+                  <div className="px-6 pb-6">
+                    {loadingApplications[role._id] ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 size={24} className="text-blue-600 animate-spin" />
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                {selectedRole === role.id && role.applicants.length === 0 && (
-                  <div className="px-6 pb-6 text-center">
-                    <UserPlus size={32} className="mx-auto text-gray-300 mb-2" />
-                    <p className="text-gray-500">No applications yet</p>
+                    ) : applications[role._id]?.length > 0 ? (
+                      <div className="space-y-3">
+                        {applications[role._id].map((app) => (
+                          <div
+                            key={app._id}
+                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <img
+                                src={app.applicant?.avatarUrl || '/default-avatar.png'}
+                                alt={app.applicant?.name}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-medium text-gray-900">
+                                    {app.applicant?.name || 'Unknown'}
+                                  </h4>
+                                  {getApplicantStatusBadge(app.status)}
+                                </div>
+                                <p className="text-sm text-gray-500">
+                                  Applied {new Date(app.createdAt).toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => viewApplicationDetails(app)}
+                              className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            >
+                              <ExternalLink size={16} />
+                              View Details
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <UserPlus size={32} className="mx-auto text-gray-300 mb-2" />
+                        <p className="text-gray-500">No applications yet</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -390,91 +559,32 @@ const RecruitmentTab = ({ project }) => {
       )}
 
       {/* Create Role Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Post New Role</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
+      <CreateRoleModal
+        isOpen={showCreateModal}
+        onClose={handleCloseCreateModal}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleCreateRecruitment}
+      />
 
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Role Title</label>
-                <input
-                  type="text"
-                  placeholder="e.g., 3D Character Artist"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+      {/* Edit Role Modal */}
+      <EditRoleModal
+        isOpen={showEditModal}
+        onClose={handleCloseEditModal}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleEditRecruitment}
+      />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  rows={4}
-                  placeholder="Describe the role and what you're looking for..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Full-time</option>
-                    <option>Part-time</option>
-                    <option>Contract</option>
-                    <option>One-time</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Remote</option>
-                    <option>On-site</option>
-                    <option>Hybrid</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Credits/Compensation</label>
-                <input
-                  type="text"
-                  placeholder="e.g., 500-800 credits/month"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Requirements (one per line)</label>
-                <textarea
-                  rows={4}
-                  placeholder="Enter each requirement on a new line..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                Cancel
-              </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Post Role
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Application Details Modal */}
+      <ApplicationDetailsModal
+        isOpen={showApplicationModal}
+        onClose={handleCloseApplicationModal}
+        application={selectedApplication}
+        onStatusUpdate={handleApplicationStatusUpdate}
+        updatingStatus={updatingStatus}
+        getApplicantStatusBadge={getApplicantStatusBadge}
+      />
     </div>
   );
 };

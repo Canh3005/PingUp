@@ -81,7 +81,7 @@ const ProjectAuthorWorks = ({ project, isOwnProject, isFollowing, isFollowLoadin
   }
 
   return (
-    <div className="bg-gradient-to-b from-neutral-950 to-neutral-900 text-white py-12 max-w-7xl mx-auto">
+    <div className="bg-gradient-to-b from-neutral-950 to-neutral-900 text-white py-12 max-w-7xl mx-auto rounded-b-2xl mb-8">
       <div className="w-full px-6">
         {/* Author Card */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 mb-10 border border-white/10">
