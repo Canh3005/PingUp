@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { PROJECT_HUB_ROLES } from '../constants/projectHubRoles.js';
 
 const projectSchema = new mongoose.Schema(
   {
@@ -44,7 +45,13 @@ const projectSchema = new mongoose.Schema(
           ref: 'UserProfile',
           required: true,
         },
-        role: {
+        permissionRole: {
+          type: String,
+          enum: Object.values(PROJECT_HUB_ROLES),
+          default: PROJECT_HUB_ROLES.MEMBER,
+          required: true,
+        },
+        jobPosition: {
           type: String,
           trim: true,
         },

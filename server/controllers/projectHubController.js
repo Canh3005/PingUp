@@ -136,9 +136,14 @@ class ProjectHubController {
     try {
       const { hubId } = req.params;
       const userId = req.user.id;
-      const { memberId, role } = req.body;
+      const { memberId, permissionRole, jobPosition } = req.body;
 
-      const projectHub = await projectHubService.addMember(hubId, userId, memberId, role);
+      const memberData = {
+        permissionRole,
+        jobPosition,
+      };
+
+      const projectHub = await projectHubService.addMember(hubId, userId, memberId, memberData);
 
       res.status(200).json({
         success: true,
@@ -179,13 +184,18 @@ class ProjectHubController {
     try {
       const { hubId, userId: memberIdToUpdate } = req.params;
       const userId = req.user.id;
-      const { role } = req.body;
+      const { permissionRole, jobPosition } = req.body;
+
+      const updateData = {
+        permissionRole,
+        jobPosition,
+      };
 
       const projectHub = await projectHubService.updateMemberRole(
         hubId,
         userId,
         memberIdToUpdate,
-        role
+        updateData
       );
 
       res.status(200).json({

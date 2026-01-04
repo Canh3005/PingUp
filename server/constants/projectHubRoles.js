@@ -1,0 +1,132 @@
+// Project Hub Permission Roles
+export const PROJECT_HUB_ROLES = {
+  OWNER: 'owner',
+  ADMIN: 'admin',
+  MEMBER: 'member',
+  VIEWER: 'viewer',
+};
+
+// Project Hub Permissions
+export const PROJECT_HUB_PERMISSIONS = {
+  // Hub Management
+  DELETE_HUB: 'delete_hub',
+  UPDATE_HUB_INFO: 'update_hub_info',
+  UPDATE_HUB_SETTINGS: 'update_hub_settings',
+  
+  // Member Management
+  ADD_MEMBER: 'add_member',
+  REMOVE_MEMBER: 'remove_member',
+  UPDATE_MEMBER_ROLE: 'update_member_role',
+  
+  // Recruitment
+  CREATE_RECRUITMENT: 'create_recruitment',
+  UPDATE_RECRUITMENT: 'update_recruitment',
+  DELETE_RECRUITMENT: 'delete_recruitment',
+  REVIEW_APPLICATION: 'review_application',
+  
+  // Content Management
+  CREATE_MILESTONE: 'create_milestone',
+  UPDATE_MILESTONE: 'update_milestone',
+  DELETE_MILESTONE: 'delete_milestone',
+  CREATE_TASK: 'create_task',
+  UPDATE_TASK: 'update_task',
+  DELETE_TASK: 'delete_task',
+  CREATE_DEVLOG: 'create_devlog',
+  UPDATE_DEVLOG: 'update_devlog',
+  DELETE_DEVLOG: 'delete_devlog',
+  
+  // View
+  VIEW_HUB: 'view_hub',
+};
+
+// Permission Matrix: Role -> Permissions
+export const ROLE_PERMISSIONS = {
+  [PROJECT_HUB_ROLES.OWNER]: [
+    // All permissions
+    PROJECT_HUB_PERMISSIONS.DELETE_HUB,
+    PROJECT_HUB_PERMISSIONS.UPDATE_HUB_INFO,
+    PROJECT_HUB_PERMISSIONS.UPDATE_HUB_SETTINGS,
+    PROJECT_HUB_PERMISSIONS.ADD_MEMBER,
+    PROJECT_HUB_PERMISSIONS.REMOVE_MEMBER,
+    PROJECT_HUB_PERMISSIONS.UPDATE_MEMBER_ROLE,
+    PROJECT_HUB_PERMISSIONS.CREATE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.UPDATE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.DELETE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.REVIEW_APPLICATION,
+    PROJECT_HUB_PERMISSIONS.CREATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.UPDATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.DELETE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.CREATE_TASK,
+    PROJECT_HUB_PERMISSIONS.UPDATE_TASK,
+    PROJECT_HUB_PERMISSIONS.DELETE_TASK,
+    PROJECT_HUB_PERMISSIONS.CREATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.UPDATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.DELETE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.VIEW_HUB,
+  ],
+  
+  [PROJECT_HUB_ROLES.ADMIN]: [
+    PROJECT_HUB_PERMISSIONS.UPDATE_HUB_INFO,
+    PROJECT_HUB_PERMISSIONS.UPDATE_HUB_SETTINGS,
+    PROJECT_HUB_PERMISSIONS.ADD_MEMBER,
+    PROJECT_HUB_PERMISSIONS.REMOVE_MEMBER,
+    PROJECT_HUB_PERMISSIONS.CREATE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.UPDATE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.DELETE_RECRUITMENT,
+    PROJECT_HUB_PERMISSIONS.REVIEW_APPLICATION,
+    PROJECT_HUB_PERMISSIONS.CREATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.UPDATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.DELETE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.CREATE_TASK,
+    PROJECT_HUB_PERMISSIONS.UPDATE_TASK,
+    PROJECT_HUB_PERMISSIONS.DELETE_TASK,
+    PROJECT_HUB_PERMISSIONS.CREATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.UPDATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.DELETE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.VIEW_HUB,
+  ],
+  
+  [PROJECT_HUB_ROLES.MEMBER]: [
+    PROJECT_HUB_PERMISSIONS.CREATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.UPDATE_MILESTONE,
+    PROJECT_HUB_PERMISSIONS.CREATE_TASK,
+    PROJECT_HUB_PERMISSIONS.UPDATE_TASK,
+    PROJECT_HUB_PERMISSIONS.CREATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.UPDATE_DEVLOG,
+    PROJECT_HUB_PERMISSIONS.VIEW_HUB,
+  ],
+  
+  [PROJECT_HUB_ROLES.VIEWER]: [
+    PROJECT_HUB_PERMISSIONS.VIEW_HUB,
+  ],
+};
+
+// Helper function to check if a role has a specific permission
+export const hasPermission = (role, permission) => {
+  if (!role || !ROLE_PERMISSIONS[role]) {
+    return false;
+  }
+  return ROLE_PERMISSIONS[role].includes(permission);
+};
+
+// Helper function to check if user is owner
+export const isOwner = (role) => {
+  return role === PROJECT_HUB_ROLES.OWNER;
+};
+
+// Helper function to check if user is admin or owner
+export const isAdminOrOwner = (role) => {
+  return role === PROJECT_HUB_ROLES.OWNER || role === PROJECT_HUB_ROLES.ADMIN;
+};
+
+// Helper function to check if user is member (any role except viewer)
+export const isMember = (role) => {
+  return role === PROJECT_HUB_ROLES.OWNER || 
+         role === PROJECT_HUB_ROLES.ADMIN || 
+         role === PROJECT_HUB_ROLES.MEMBER;
+};
+
+// Get all available roles
+export const getAllRoles = () => {
+  return Object.values(PROJECT_HUB_ROLES);
+};

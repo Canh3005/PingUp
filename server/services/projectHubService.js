@@ -2,14 +2,29 @@ import ProjectHub from '../models/ProjectHub.js';
 import Milestone from '../models/Milestone.js';
 import User from '../models/User.js';
 import UserProfile from '../models/UserProfile.js';
+import { PROJECT_HUB_ROLES } from '../constants/projectHubRoles.js';
 
 class ProjectHubService {
   // Create new project hub
   async createProjectHub(userId, hubData) {
     try {
+      // Get user's profile to add to members
+      const userProfile = await UserProfile.findOne({ user: userId });
+      
+      if (!userProfile) {
+        throw new Error('User profile not found');
+      }
+
       const projectHub = new ProjectHub({
         ...hubData,
         owner: userId,
+        members: [
+          {
+            user: userProfile._id,
+            permissionRole: PROJECT_HUB_ROLES.OWNER,
+            jobPosition: hubData.ownerJobPosition || 'Project Owner',
+          },
+        ],
       });
 
       await projectHub.save();
@@ -101,14 +116,28 @@ class ProjectHubService {
         throw new Error('Project hub not found');
       }
 
-      // Check if user is owner or member
-      const isOwner = projectHub.owner.toString() === userId;
-      const isMember = projectHub.members.some(
-        member => member.user.toString() === userId
+      // Check if user has permission (owner or admin)
+      const currentUserMember = projectHub.members.find(
+        m => m.user.toString() === userId
       );
+      
+      const isOwner = projectHub.owner.toString() === userId;
+      const isAdmin = currentUserMember && 
+        (currentUserMember.permissionRole === PROJECT_HUB_ROLES.OWNER || 
+         currentUserMember.permissionRole === PROJECT_HUB_ROLES.ADMIN);
 
-      if (!isOwner && !isMember) {
-        throw new Error('Not authorized to update this project hub');
+      if (!isOwner && !isAdmin) {
+        throw new Error('Not authorized to update this project hub. Only owner or admin can update.');
+      }
+
+      // Prevent updating owner field
+      if (updateData.owner) {
+        delete updateData.owner;
+      }
+
+      // Prevent updating members directly (use addMember/removeMember instead)
+      if (updateData.members) {
+        delete updateData.members;
       }
 
       Object.assign(projectHub, updateData);
@@ -145,7 +174,7 @@ class ProjectHubService {
   }
 
   // Add member to project hub
-  async addMember(hubId, userId, memberId, role = 'Member') {
+  async addMember(hubId, userId, memberId, memberData = {}) {
     try {
       const projectHub = await ProjectHub.findById(hubId);
 
@@ -153,9 +182,23 @@ class ProjectHubService {
         throw new Error('Project hub not found');
       }
 
-      // Only owner can add members
-      if (projectHub.owner.toString() !== userId) {
-        throw new Error('Not authorized to add members');
+      // Check if user has permission (owner or admin)
+      const currentUserMember = projectHub.members.find(
+        m => m.user.toString() === userId
+      );
+      
+      const isOwner = projectHub.owner.toString() === userId;
+      const isAdmin = currentUserMember && 
+        (currentUserMember.permissionRole === PROJECT_HUB_ROLES.OWNER || 
+         currentUserMember.permissionRole === PROJECT_HUB_ROLES.ADMIN);
+
+      if (!isOwner && !isAdmin) {
+        throw new Error('Not authorized to add members. Only owner or admin can add members.');
+      }
+
+      // Prevent adding another owner
+      if (memberData.permissionRole === PROJECT_HUB_ROLES.OWNER) {
+        throw new Error('Cannot add another owner. A project hub can only have one owner.');
       }
 
       // Check if member already exists
@@ -168,14 +211,15 @@ class ProjectHubService {
       }
 
       // Verify member exists
-      const userProfile = await UserProfile.findOne({ userId: memberId });
+      const userProfile = await UserProfile.findOne({ user: memberId });
       if (!userProfile) {
         throw new Error('User profile not found');
       }
 
       projectHub.members.push({
         user: userProfile._id,
-        role,
+        permissionRole: memberData.permissionRole || PROJECT_HUB_ROLES.MEMBER,
+        jobPosition: memberData.jobPosition || '',
       });
 
       await projectHub.save();
@@ -196,18 +240,33 @@ class ProjectHubService {
         throw new Error('Project hub not found');
       }
 
-      // Only owner can remove members
-      if (projectHub.owner.toString() !== userId) {
-        throw new Error('Not authorized to remove members');
+      // Check if user has permission (owner or admin)
+      const currentUserMember = projectHub.members.find(
+        m => m.user.toString() === userId
+      );
+      
+      const isOwner = projectHub.owner.toString() === userId;
+      const isAdmin = currentUserMember && 
+        (currentUserMember.permissionRole === PROJECT_HUB_ROLES.OWNER || 
+         currentUserMember.permissionRole === PROJECT_HUB_ROLES.ADMIN);
+
+      if (!isOwner && !isAdmin) {
+        throw new Error('Not authorized to remove members. Only owner or admin can remove members.');
       }
 
-      // Find and remove member
+      // Find member to remove
       const memberIndex = projectHub.members.findIndex(
         member => member.user.toString() === memberIdToRemove
       );
 
       if (memberIndex === -1) {
         throw new Error('Member not found in this project hub');
+      }
+
+      // Prevent removing owner
+      const memberToRemove = projectHub.members[memberIndex];
+      if (memberToRemove.permissionRole === PROJECT_HUB_ROLES.OWNER) {
+        throw new Error('Cannot remove the owner from the project hub');
       }
 
       projectHub.members.splice(memberIndex, 1);
@@ -220,7 +279,7 @@ class ProjectHubService {
   }
 
   // Update member role
-  async updateMemberRole(hubId, userId, memberIdToUpdate, newRole) {
+  async updateMemberRole(hubId, userId, memberIdToUpdate, updateData = {}) {
     try {
       const projectHub = await ProjectHub.findById(hubId);
 
@@ -230,10 +289,10 @@ class ProjectHubService {
 
       // Only owner can update member roles
       if (projectHub.owner.toString() !== userId) {
-        throw new Error('Not authorized to update member roles');
+        throw new Error('Not authorized to update member roles. Only owner can update roles.');
       }
 
-      // Find and update member role
+      // Find member to update
       const member = projectHub.members.find(
         member => member.user.toString() === memberIdToUpdate
       );
@@ -242,7 +301,26 @@ class ProjectHubService {
         throw new Error('Member not found in this project hub');
       }
 
-      member.role = newRole;
+      // Prevent changing owner's permission role
+      if (member.permissionRole === PROJECT_HUB_ROLES.OWNER) {
+        throw new Error('Cannot change the owner\'s permission role');
+      }
+
+      // Prevent setting another member as owner
+      if (updateData.permissionRole === PROJECT_HUB_ROLES.OWNER) {
+        throw new Error('Cannot assign owner role to another member. A project hub can only have one owner.');
+      }
+
+      // Update permission role if provided
+      if (updateData.permissionRole) {
+        member.permissionRole = updateData.permissionRole;
+      }
+
+      // Update job position if provided
+      if (updateData.jobPosition !== undefined) {
+        member.jobPosition = updateData.jobPosition;
+      }
+
       await projectHub.save();
       await projectHub.populate('members.user', 'name jobTitle avatarUrl');
 

@@ -1,6 +1,11 @@
 import express from 'express';
 import projectHubController from '../controllers/projectHubController.js';
 import auth from '../middlewares/auth.js';
+import { 
+  checkIsMember, 
+  checkIsAdminOrOwner, 
+  checkIsOwner 
+} from '../middlewares/projectHubAuth.js';
 
 const router = express.Router();
 
@@ -13,28 +18,28 @@ router.get('/my-hubs', auth, projectHubController.getUserProjectHubs);
 // Get all project hubs (public)
 router.get('/', projectHubController.getAllProjectHubs);
 
-// Get project hub by ID
+// Get project hub by ID (members only can see private info)
 router.get('/:hubId', projectHubController.getProjectHub);
 
-// Update project hub (authenticated)
-router.put('/:hubId', auth, projectHubController.updateProjectHub);
+// Update project hub (owner or admin only)
+router.put('/:hubId', auth, checkIsAdminOrOwner, projectHubController.updateProjectHub);
 
-// Delete project hub (authenticated)
-router.delete('/:hubId', auth, projectHubController.deleteProjectHub);
+// Delete project hub (owner only)
+router.delete('/:hubId', auth, checkIsOwner, projectHubController.deleteProjectHub);
 
-// Add member to project hub (authenticated)
-router.post('/:hubId/members', auth, projectHubController.addMember);
+// Add member to project hub (owner or admin only)
+router.post('/:hubId/members', auth, checkIsAdminOrOwner, projectHubController.addMember);
 
-// Remove member from project hub (authenticated)
-router.delete('/:hubId/members/:userId', auth, projectHubController.removeMember);
+// Remove member from project hub (owner or admin only)
+router.delete('/:hubId/members/:userId', auth, checkIsAdminOrOwner, projectHubController.removeMember);
 
-// Update member role (authenticated)
-router.put('/:hubId/members/:userId', auth, projectHubController.updateMemberRole);
+// Update member role (owner only)
+router.put('/:hubId/members/:userId', auth, checkIsOwner, projectHubController.updateMemberRole);
 
-// Link showcase project (authenticated)
-router.put('/:hubId/showcase', auth, projectHubController.linkShowcaseProject);
+// Link showcase project (owner or admin only)
+router.put('/:hubId/showcase', auth, checkIsAdminOrOwner, projectHubController.linkShowcaseProject);
 
-// Update integrations (authenticated)
-router.put('/:hubId/integrations', auth, projectHubController.updateIntegrations);
+// Update integrations (owner or admin only)
+router.put('/:hubId/integrations', auth, checkIsAdminOrOwner, projectHubController.updateIntegrations);
 
 export default router;
