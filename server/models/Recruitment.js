@@ -31,6 +31,11 @@ const recruitmentSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    positions: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
     status: {
       type: String,
       enum: ['open', 'filled', 'closed'],

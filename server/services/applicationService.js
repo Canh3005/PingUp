@@ -156,10 +156,15 @@ class ApplicationService {
       // Check permission - must be project hub owner or admin
       const recruitment = application.recruitment;
       const projectHub = await ProjectHub.findById(recruitment.projectHub);
-      const isOwner = projectHub.owner.toString() === userId;
+      
+      if (!projectHub) {
+        throw new Error('Project hub not found');
+      }
+
+      const isOwner = projectHub.owner.toString() === userId.toString();
       const isMember = projectHub.members.some(
         (member) =>
-          member.user.toString() === userId &&
+          member.user.toString() === userId.toString() &&
           (member.role === 'admin' || member.role === 'owner')
       );
 
@@ -176,7 +181,7 @@ class ApplicationService {
 
       await application.save();
 
-      // If accepted, add to project hub members
+      // If accepted, add to project hub members and check if recruitment should be filled
       if (status === 'accepted') {
         const existingMember = projectHub.members.find(
           (m) => m.user.toString() === application.applicant.toString()
@@ -189,6 +194,21 @@ class ApplicationService {
             joinedAt: new Date(),
           });
           await projectHub.save();
+        }
+
+        // Check if recruitment should be filled
+        const acceptedCount = await Application.countDocuments({
+          recruitment: recruitment._id,
+          status: 'accepted',
+        });
+
+        // If we have enough accepted applications, mark recruitment as filled
+        if (acceptedCount >= (recruitment.positions || 1)) {
+          recruitment.status = 'filled';
+          recruitment.filledAt = new Date();
+          await recruitment.save();
+
+          console.log('Recruitment marked as filled');
         }
 
         // Log activity

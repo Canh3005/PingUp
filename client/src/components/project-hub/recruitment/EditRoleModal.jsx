@@ -78,15 +78,28 @@ const EditRoleModal = ({
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Credits/Compensation</label>
-            <input
-              type="text"
-              placeholder="e.g., 500-800 credits/month"
-              value={formData.credits}
-              onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Number of Positions</label>
+              <input
+                type="number"
+                min="1"
+                placeholder="e.g., 2"
+                value={formData.positions || 1}
+                onChange={(e) => setFormData({ ...formData, positions: parseInt(e.target.value) || 1 })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Credits/Compensation</label>
+              <input
+                type="text"
+                placeholder="e.g., 500-800 credits/month"
+                value={formData.credits}
+                onChange={(e) => setFormData({ ...formData, credits: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           <div>

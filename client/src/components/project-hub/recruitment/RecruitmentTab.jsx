@@ -48,6 +48,7 @@ const RecruitmentTab = ({ project }) => {
     type: 'Full-time',
     location: 'Remote',
     credits: '',
+    positions: 1,
     requirements: '',
   });
 
@@ -171,6 +172,7 @@ const RecruitmentTab = ({ project }) => {
       type: 'Full-time',
       location: 'Remote',
       credits: '',
+      positions: 1,
       requirements: '',
     });
   };
@@ -217,6 +219,7 @@ const RecruitmentTab = ({ project }) => {
       type: 'Full-time',
       location: 'Remote',
       credits: '',
+      positions: 1,
       requirements: '',
     });
   };
@@ -229,6 +232,7 @@ const RecruitmentTab = ({ project }) => {
       type: role.type,
       location: role.location,
       credits: role.credits,
+      positions: role.positions || 1,
       requirements: role.requirements.join('\n'),
     });
     setShowEditModal(true);
@@ -373,6 +377,10 @@ const RecruitmentTab = ({ project }) => {
                     <span className="flex items-center gap-1">
                       <MapPin size={14} />
                       {role.location}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users size={14} />
+                      {role.positions || 1} {role.positions === 1 ? 'position' : 'positions'}
                     </span>
                     <span className="flex items-center gap-1">
                       <Star size={14} />
