@@ -20,9 +20,9 @@ import {
 import recruitmentApi from '../../../api/recruitmentApi';
 import applicationApi from '../../../api/applicationApi';
 import { toast } from 'react-hot-toast';
-import CreateRoleModal from './modals/CreateRoleModal';
-import EditRoleModal from './modals/EditRoleModal';
-import ApplicationDetailsModal from './modals/ApplicationDetailsModal';
+import CreateRoleModal from './CreateRoleModal';
+import EditRoleModal from './EditRoleModal';
+import ApplicationDetailsModal from './ApplicationDetailsModal';
 
 const RecruitmentTab = ({ project }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);

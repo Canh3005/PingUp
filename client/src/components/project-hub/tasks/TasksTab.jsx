@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import taskApi from '../../../api/taskApi';
 import milestoneApi from '../../../api/milestoneApi';
-import CreateTaskModal from '../modals/CreateTaskModal';
+import CreateTaskModal from './CreateTaskModal';
 import { getAllLabelTypes, getLabelColor as getConstantLabelColor } from '../../../constants/labelTypes';
 
 const TasksTab = ({ project }) => {

@@ -15,7 +15,7 @@ import {
   Rocket
 } from 'lucide-react';
 import devlogApi from '../../../api/devlogApi';
-import CreateDevlogModal from '../modals/CreateDevlogModal';
+import CreateDevlogModal from './CreateDevlogModal';
 
 const DevlogsTab = ({ project }) => {
   const [devlogs, setDevlogs] = useState([]);

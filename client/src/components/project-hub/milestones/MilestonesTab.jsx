@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import milestoneApi from '../../../api/milestoneApi';
 import taskApi from '../../../api/taskApi';
-import CreateMilestoneModal from '../modals/CreateMilestoneModal';
+import CreateMilestoneModal from './CreateMilestoneModal';
 import { getLabelColor } from '../../../constants/labelTypes';
 
 const MilestonesTab = ({ project }) => {
