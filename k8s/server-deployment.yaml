@@ -20,15 +20,15 @@ spec:
         image: pingup-server:latest
         imagePullPolicy: Never  # Use local image (for development)
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
           name: http
         env:
         # Environment variables from ConfigMap
-        - name: MONGO_URI
+        - name: MONGODB_URI
           valueFrom:
             configMapKeyRef:
               name: pingup-config
-              key: MONGO_URI
+              key: MONGODB_URI
         - name: REDIS_HOST
           valueFrom:
             configMapKeyRef:
@@ -56,6 +56,11 @@ spec:
             secretKeyRef:
               name: pingup-secrets
               key: JWT_SECRET
+        - name: JWT_REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: pingup-secrets
+              key: JWT_REFRESH_SECRET
         - name: CLOUDINARY_CLOUD_NAME
           valueFrom:
             secretKeyRef:
@@ -81,18 +86,16 @@ spec:
             cpu: "500m"
         
         livenessProbe:
-          httpGet:
-            path: /
-            port: 5000
+          tcpSocket:
+            port: 3000
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
         
         readinessProbe:
-          httpGet:
-            path: /
-            port: 5000
+          tcpSocket:
+            port: 3000
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 3
@@ -109,7 +112,7 @@ spec:
   selector:
     app: server
   ports:
-  - port: 5000
-    targetPort: 5000
+  - port: 3000
+    targetPort: 3000
     protocol: TCP
   type: ClusterIP

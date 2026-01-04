@@ -12,8 +12,8 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
-# Expose port
-EXPOSE 5000
+# Expose port (must match PORT env variable, default 3000)
+EXPOSE 3000
 
 # Set environment to production
 ENV NODE_ENV=production

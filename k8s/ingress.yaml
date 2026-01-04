@@ -19,7 +19,7 @@ spec:
           service:
             name: server
             port:
-              number: 5000
+              number: 3000
       
       # Socket.io routes
       - path: /socket.io
@@ -28,7 +28,7 @@ spec:
           service:
             name: server
             port:
-              number: 5000
+              number: 3000
       
       # Client routes (catch-all)
       - path: /
