@@ -40,8 +40,8 @@ const projectHubApi = {
   },
 
   // Add member
-  addMember: async (hubId, memberId, role) => {
-    const res = await httpClient.post(`/project-hubs/${hubId}/members`, { memberId, role });
+  addMember: async (hubId, memberData) => {
+    const res = await httpClient.post(`/project-hubs/${hubId}/members`, memberData);
     return res.data;
   },
 
@@ -52,8 +52,8 @@ const projectHubApi = {
   },
 
   // Update member role
-  updateMemberRole: async (hubId, userId, role) => {
-    const res = await httpClient.put(`/project-hubs/${hubId}/members/${userId}`, { role });
+  updateMemberRole: async (hubId, userId, updateData) => {
+    const res = await httpClient.put(`/project-hubs/${hubId}/members/${userId}`, updateData);
     return res.data;
   },
 

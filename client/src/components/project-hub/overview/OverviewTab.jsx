@@ -309,13 +309,16 @@ const OverviewTab = ({ project, milestones }) => {
           </div>
 
           <div className="flex -space-x-3">
-            {project.members.slice(0, 5).map((member) => (
+            {project.members.slice(0, 5).map((member, index) => (
               <img
-                key={member.id}
-                src={member.avatar}
-                alt={member.name}
-                title={member.name}
+                key={member._id || member.user?._id || index}
+                src={member.user?.avatarUrl || member.user?.imageUrl || member.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`}
+                alt={member.user?.name || member.name || 'Team member'}
+                title={member.user?.name || member.name || 'Team member'}
                 className="w-10 h-10 rounded-full border-2 border-white hover:z-10 hover:scale-110 transition-transform cursor-pointer"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.user?.name || member.name || 'User')}`;
+                }}
               />
             ))}
             {project.members.length > 5 && (

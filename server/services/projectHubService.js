@@ -39,7 +39,7 @@ class ProjectHubService {
     try {
       const projectHub = await ProjectHub.findById(hubId)
         .populate('owner', 'userName email imageUrl')
-        .populate('members.user', 'name jobTitle avatarUrl')
+        .populate('members.user', 'name email jobTitle avatarUrl')
         .populate('milestones')
         .populate('showcaseProjectId', 'title coverImage');
 
@@ -63,7 +63,7 @@ class ProjectHubService {
         ]
       })
         .populate('owner', 'userName email imageUrl')
-        .populate('members.user', 'name jobTitle avatarUrl')
+        .populate('members.user', 'name email jobTitle avatarUrl')
         .populate('milestones')
         .sort({ updatedAt: -1 });
 
@@ -88,7 +88,7 @@ class ProjectHubService {
       const [projectHubs, total] = await Promise.all([
         ProjectHub.find(query)
           .populate('owner', 'userName email imageUrl')
-          .populate('members.user', 'name jobTitle avatarUrl')
+          .populate('members.user', 'name email jobTitle avatarUrl')
           .sort({ updatedAt: -1 })
           .skip(skip)
           .limit(limit),
@@ -223,7 +223,7 @@ class ProjectHubService {
       });
 
       await projectHub.save();
-      await projectHub.populate('members.user', 'name jobTitle avatarUrl');
+      await projectHub.populate('members.user', 'name email jobTitle avatarUrl');
 
       return projectHub;
     } catch (error) {
@@ -322,7 +322,7 @@ class ProjectHubService {
       }
 
       await projectHub.save();
-      await projectHub.populate('members.user', 'name jobTitle avatarUrl');
+      await projectHub.populate('members.user', 'name email jobTitle avatarUrl');
 
       return projectHub;
     } catch (error) {

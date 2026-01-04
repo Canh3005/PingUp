@@ -1,4 +1,5 @@
 import UserProfile from '../models/UserProfile.js';
+import User from '../models/User.js';
 
 class ProfileService {
   // Get user profile by userId
@@ -8,9 +9,16 @@ class ProfileService {
       
       // If profile doesn't exist, create a default one
       if (!profile) {
+        // Get user email from User model
+        const user = await User.findById(userId);
+        if (!user) {
+          throw new Error('User not found');
+        }
+
         profile = await UserProfile.create({
           userId,
-          name: '',
+          name: user.username || '',
+          email: user.email,
           jobTitle: '',
           bio: '',
           website: '',
@@ -32,12 +40,19 @@ class ProfileService {
     try {
       const { name, jobTitle, bio, website, location, skills, avatarUrl, coverImageUrl } = profileData;
 
+      // Get user email from User model
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
       // Find and update, or create if doesn't exist
       const profile = await UserProfile.findOneAndUpdate(
         { userId },
         {
           userId,
           name,
+          email: user.email, // Always sync email from User model
           jobTitle,
           bio,
           website,

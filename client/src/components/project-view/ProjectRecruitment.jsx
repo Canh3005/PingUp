@@ -18,7 +18,6 @@ import { useAuth } from '../../context/authContext';
 
 const ProjectRecruitment = ({ project }) => {
   const { user } = useAuth();
-  console.log('ProjectRecruitment - Current user:', user);
   
   const [recruitments, setRecruitments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +57,6 @@ const ProjectRecruitment = ({ project }) => {
   const loadUserApplications = async () => {
     try {
       const response = await applicationApi.getMyApplications();
-      console.log('User applications:', response.data.data);
       setUserApplications(response.data.data);
     } catch (error) {
       console.error('Error loading user applications:', error);
@@ -183,10 +181,7 @@ const ProjectRecruitment = ({ project }) => {
                   </div>
                   <button
                     onClick={() => {
-                      console.log('Apply button clicked for role:', role._id);
-                      console.log('User:', user);
                       const applied = hasApplied(role._id);
-                      console.log('Has applied:', applied);
                       
                       if (applied) {
                         toast('You have already applied to this position', { icon: 'ℹ️' });
