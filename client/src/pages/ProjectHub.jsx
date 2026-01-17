@@ -13,6 +13,7 @@ import SettingsTab from '../components/project-hub/settings/SettingsTab';
 import Loading from '../components/Loading';
 import projectHubApi from '../api/projectHubApi';
 import milestoneApi from '../api/milestoneApi';
+import useProjectHubPermissions from '../hooks/useProjectHubPermissions';
 
 const ProjectHub = () => {
   const { projectId } = useParams();
@@ -23,6 +24,8 @@ const ProjectHub = () => {
   const [project, setProject] = useState(null);
   const [milestones, setMilestones] = useState([]);
   const [error, setError] = useState('');
+  
+  const { isOwner } = useProjectHubPermissions(project);
 
   // Load project hub data
   useEffect(() => {
@@ -79,7 +82,7 @@ const ProjectHub = () => {
       case 'team':
         return <TeamTab project={project} onRefresh={loadProjectHub} />;
       case 'settings':
-        return <SettingsTab project={project} setProject={setProject} />;
+        return isOwner ? <SettingsTab project={project} setProject={setProject} /> : <OverviewTab project={project} milestones={milestones} />;
       default:
         return <OverviewTab project={project} milestones={milestones} />;
     }
@@ -121,6 +124,7 @@ const ProjectHub = () => {
           setActiveTab={setActiveTab}
           collapsed={sidebarCollapsed}
           setCollapsed={setSidebarCollapsed}
+          isOwner={isOwner}
         />
 
         {/* Main Content */}

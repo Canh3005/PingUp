@@ -13,7 +13,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-const ProjectHubSidebar = ({ project, activeTab, setActiveTab, collapsed, setCollapsed }) => {
+const ProjectHubSidebar = ({ project, activeTab, setActiveTab, collapsed, setCollapsed, isOwner }) => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'milestones', label: 'Milestones', icon: Target },
@@ -22,8 +22,8 @@ const ProjectHubSidebar = ({ project, activeTab, setActiveTab, collapsed, setCol
     { id: 'files', label: 'Files', icon: FolderOpen },
     { id: 'recruitment', label: 'Recruitment', icon: UserPlus },
     { id: 'team', label: 'Team', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
+    isOwner && { id: 'settings', label: 'Settings', icon: Settings },
+  ].filter(Boolean);
 
   return (
     <div
