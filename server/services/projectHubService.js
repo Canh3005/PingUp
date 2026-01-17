@@ -3,6 +3,7 @@ import Milestone from '../models/Milestone.js';
 import User from '../models/User.js';
 import UserProfile from '../models/UserProfile.js';
 import { PROJECT_HUB_ROLES } from '../constants/projectHubRoles.js';
+import { PROJECT_VISIBILITY } from '../constants/projectVisibility.js';
 
 class ProjectHubService {
   // Create new project hub
@@ -17,7 +18,7 @@ class ProjectHubService {
 
       const projectHub = new ProjectHub({
         ...hubData,
-        owner: userId,
+        owner: userProfile._id, // Use UserProfile ID for consistency with members
         members: [
           {
             user: userProfile._id,
@@ -35,16 +36,32 @@ class ProjectHubService {
   }
 
   // Get project hub by ID
-  async getProjectHubById(hubId) {
+  async getProjectHubById(hubId, requestUserId = null) {
     try {
       const projectHub = await ProjectHub.findById(hubId)
-        .populate('owner', 'userName email imageUrl')
+        .populate('owner', 'name email jobTitle avatarUrl')
         .populate('members.user', 'name email jobTitle avatarUrl')
         .populate('milestones')
         .populate('showcaseProjectId', 'title coverImage');
 
       if (!projectHub) {
         throw new Error('Project hub not found');
+      }
+
+      // Check access for private projects
+      if (projectHub.visibility === PROJECT_VISIBILITY.PRIVATE) {
+        // Check if user is owner
+        const isOwner = requestUserId && projectHub.owner._id.toString() === requestUserId;
+        
+        // Check if user is a member
+        const isMember = requestUserId && projectHub.members.some(
+          m => m.user._id.toString() === requestUserId
+        );
+        
+        // Deny access if not owner or member
+        if (!isOwner && !isMember) {
+          throw new Error('Access denied. This project is private.');
+        }
       }
 
       return projectHub;
@@ -62,7 +79,7 @@ class ProjectHubService {
           { 'members.user': userId }
         ]
       })
-        .populate('owner', 'userName email imageUrl')
+        .populate('owner', 'name email jobTitle avatarUrl')
         .populate('members.user', 'name email jobTitle avatarUrl')
         .populate('milestones')
         .sort({ updatedAt: -1 });
@@ -76,7 +93,8 @@ class ProjectHubService {
   // Get all project hubs with pagination and filters
   async getAllProjectHubs(page = 1, limit = 10, tags = null) {
     try {
-      const query = {};
+      // Only show public projects in the public listing
+      const query = { visibility: PROJECT_VISIBILITY.PUBLIC };
       
       if (tags) {
         const tagArray = Array.isArray(tags) ? tags : tags.split(',');
@@ -87,7 +105,7 @@ class ProjectHubService {
 
       const [projectHubs, total] = await Promise.all([
         ProjectHub.find(query)
-          .populate('owner', 'userName email imageUrl')
+          .populate('owner', 'name email jobTitle avatarUrl')
           .populate('members.user', 'name email jobTitle avatarUrl')
           .sort({ updatedAt: -1 })
           .skip(skip)

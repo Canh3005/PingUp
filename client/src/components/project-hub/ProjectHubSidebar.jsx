@@ -43,11 +43,11 @@ const ProjectHubSidebar = ({ project, activeTab, setActiveTab, collapsed, setCol
             <div className="min-w-0 flex-1">
               <h2 className="font-bold text-white truncate">{project.name}</h2>
               <span className={`text-xs px-2 py-0.5 rounded-full ${
-                project.invisibility === 'public'
+                project.visibility === 'public'
                   ? 'bg-green-500/20 text-green-400'
                   : 'bg-yellow-500/20 text-yellow-400'
               }`}>
-                {project.invisibility}
+                {project.visibility}
               </span>
             </div>
           )}

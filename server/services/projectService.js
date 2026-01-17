@@ -23,7 +23,8 @@ class ProjectService {
   async getProjectById(projectId, userId = null) {
     try {
       const project = await Project.findById(projectId)
-        .populate('owner', 'userName imageUrl email');
+        .populate('owner', 'userName imageUrl email')
+        .populate('projectHubId', 'visibility'); // Populate ProjectHub visibility
       
       if (!project) {
         throw new Error('Project not found');

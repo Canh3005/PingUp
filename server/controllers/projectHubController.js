@@ -26,15 +26,18 @@ class ProjectHubController {
   async getProjectHub(req, res) {
     try {
       const { hubId } = req.params;
-
-      const projectHub = await projectHubService.getProjectHubById(hubId);
+      // Get userId from req.user (can be null if not authenticated)
+      const userId = req.user?.profile?._id?.toString() || null;
+      const projectHub = await projectHubService.getProjectHubById(hubId, userId);
 
       res.status(200).json({
         success: true,
         data: projectHub,
       });
     } catch (error) {
-      res.status(404).json({
+      // Return 403 for access denied, 404 for not found
+      const statusCode = error.message.includes('Access denied') ? 403 : 404;
+      res.status(statusCode).json({
         success: false,
         message: error.message,
       });

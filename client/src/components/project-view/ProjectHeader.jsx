@@ -1,13 +1,22 @@
 import React from 'react';
 import { Edit3, ExternalLink, LayoutDashboard, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PROJECT_VISIBILITY } from '../../constants/projectVisibility';
 
 const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
   const navigate = useNavigate();
   const hasProjectHub = !!project.projectHubId;
+  
+  // Check if ProjectHub is public or user is owner
+  const canViewProjectHub = hasProjectHub && (
+    project.projectHubId?.visibility === PROJECT_VISIBILITY.PUBLIC || 
+    isOwnProject
+  );
 
   const handleOpenHub = () => {
-      navigate(`/project-hub/${project.projectHubId}`);
+    // projectHubId is populated, so we need to get the _id
+    const hubId = project.projectHubId?._id || project.projectHubId;
+    navigate(`/project-hub/${hubId}`);
   };
   const handleCreateHub = () => {
       navigate(`/project-hub/create`, { state: { projectId: project._id } });
@@ -46,8 +55,8 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          {/* Project Hub Button */}
-          {hasProjectHub && (
+          {/* Project Hub Button - Only show if public or user is owner */}
+          {canViewProjectHub && (
             <button
               onClick={handleOpenHub}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25"

@@ -14,6 +14,7 @@ import Loading from '../components/Loading';
 import projectHubApi from '../api/projectHubApi';
 import milestoneApi from '../api/milestoneApi';
 import useProjectHubPermissions from '../hooks/useProjectHubPermissions';
+import AccessDenied from '../components/project-hub/AccessDenied';
 
 const ProjectHub = () => {
   const { projectId } = useParams();
@@ -54,12 +55,17 @@ const ProjectHub = () => {
       }
     } catch (error) {
       console.error('Error loading project hub:', error);
-      setError(error.response?.data?.message || 'Failed to load project hub');
       
-      // Redirect if project not found
-      if (error.response?.status === 404) {
-        setTimeout(() => navigate('/'), 2000);
+      // Handle different error types
+      if (error.response?.status === 403) {
+        setError('access_denied');
+      } else if (error.response?.status === 404) {
+        setError('not_found');
+      } else {
+        setError(error.response?.data?.message || 'Failed to load project hub');
       }
+      
+      // Don't redirect immediately, let user see the error message
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +98,12 @@ const ProjectHub = () => {
     return <Loading />;
   }
 
+  // Handle access denied (403)
+  if (error === 'access_denied') {
+    return <AccessDenied projectName={project?.name} />;
+  }
+
+  // Handle not found (404) and other errors
   if (error) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">

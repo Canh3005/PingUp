@@ -51,7 +51,7 @@ const CreateProjectHub = () => {
         ...prev,
         name: projectData.title || '',
         description: projectData.description || '',
-        invisibility: projectData.visibility || ''
+        visibility: projectData.visibility || ''
       }));
     } catch (error) {
       console.error('Error loading project:', error);

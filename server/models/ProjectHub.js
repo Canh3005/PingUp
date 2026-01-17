@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { PROJECT_HUB_ROLES } from '../constants/projectHubRoles.js';
+import { PROJECT_VISIBILITY } from '../constants/projectVisibility.js';
 
 const projectSchema = new mongoose.Schema(
   {
@@ -35,7 +36,7 @@ const projectSchema = new mongoose.Schema(
     ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'UserProfile',
       required: true,
     },
     members: [
@@ -72,8 +73,11 @@ const projectSchema = new mongoose.Schema(
       figma: { type: String, trim: true },
       discord: { type: String, trim: true },
     },
-    invisibility: {
+    visibility: {
       type: String,
+      enum: Object.values(PROJECT_VISIBILITY),
+      default: PROJECT_VISIBILITY.PUBLIC,
+      required: true,
     },
   },
   {

@@ -18,8 +18,8 @@ router.get('/my-hubs', auth, projectHubController.getUserProjectHubs);
 // Get all project hubs (public)
 router.get('/', projectHubController.getAllProjectHubs);
 
-// Get project hub by ID (members only can see private info)
-router.get('/:hubId', projectHubController.getProjectHub);
+// Get project hub by ID (TODO: optionalAuth - works for both authenticated and unauthenticated users)
+router.get('/:hubId', auth, projectHubController.getProjectHub);
 
 // Update project hub (owner or admin only)
 router.put('/:hubId', auth, checkIsAdminOrOwner, projectHubController.updateProjectHub);
