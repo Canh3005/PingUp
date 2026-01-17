@@ -1,17 +1,30 @@
 import React from 'react';
-import { Edit3, ExternalLink, LayoutDashboard, Trash2 } from 'lucide-react';
+import { Edit3, ExternalLink, LayoutDashboard, Trash2, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PROJECT_VISIBILITY } from '../../constants/projectVisibility';
 
-const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
+const ProjectHeader = ({ project, isOwnProject, onDelete, user }) => {
   const navigate = useNavigate();
   const hasProjectHub = !!project.projectHubId;
   
-  // Check if ProjectHub is public or user is owner
-  const canViewProjectHub = hasProjectHub && (
-    project.projectHubId?.visibility === PROJECT_VISIBILITY.PUBLIC || 
-    isOwnProject
-  );
+  // Check if user is owner or member of the Project Hub
+  const canViewProjectHub = hasProjectHub && user && (() => {
+    const hub = project.projectHubId;
+    
+    // Check if user is owner of the project (which means owner of hub)
+    if (isOwnProject) return true;
+    
+    // Check if user is a member of the Project Hub
+    if (hub?.members && Array.isArray(hub.members)) {
+      return hub.members.some(member => 
+        member.user?._id === user.profile._id || member.user === user.profile._id
+      );
+    }
+    
+    return false;
+  })();
+
+  // Check if user can request to join (not owner, not member, has hub, logged in)
+  const canRequestToJoin = hasProjectHub && user && !canViewProjectHub;
 
   const handleOpenHub = () => {
     // projectHubId is populated, so we need to get the _id
@@ -20,6 +33,12 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
   };
   const handleCreateHub = () => {
       navigate(`/project-hub/create`, { state: { projectId: project._id } });
+  };
+
+  const handleRequestJoin = () => {
+    // TODO: Implement request to join functionality
+    console.log('Request to join Project Hub');
+    // This will open a modal or send a request to the project owner
   };
 
   return (
@@ -55,7 +74,7 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          {/* Project Hub Button - Only show if public or user is owner */}
+          {/* Project Hub Button - Only show if user is owner or member */}
           {canViewProjectHub && (
             <button
               onClick={handleOpenHub}
@@ -76,6 +95,17 @@ const ProjectHeader = ({ project, isOwnProject, onDelete }) => {
               </button>
             )
           }
+
+          {/* Request to Join Button - Show if user is not member/owner but hub exists */}
+          {canRequestToJoin && (
+            <button
+              onClick={handleRequestJoin}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 backdrop-blur-sm rounded-xl text-white text-sm font-medium transition-all shadow-lg shadow-purple-600/25"
+            >
+              <UserPlus className="w-4 h-4" />
+              Request to Join
+            </button>
+          )}
 
           {isOwnProject && (
             <>

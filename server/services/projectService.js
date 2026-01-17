@@ -1,5 +1,7 @@
 import Project from '../models/Project.js';
 import UserProfile from '../models/UserProfile.js';
+import Devlog from '../models/Devlog.js';
+import Milestone from '../models/Milestone.js';
 import { cloudinary } from '../configs/cloudinary.js';
 
 class ProjectService {
@@ -24,7 +26,15 @@ class ProjectService {
     try {
       const project = await Project.findById(projectId)
         .populate('owner', 'userName imageUrl email')
-        .populate('projectHubId', 'visibility'); // Populate ProjectHub visibility
+        .populate({
+          path: 'projectHubId',
+          select: 'visibility progress totalTasks completedTasks members integrations updatedAt',
+          populate: {
+            path: 'members.user',
+            select: 'name avatarUrl',
+            options: { limit: 6 }
+          }
+        });
       
       if (!project) {
         throw new Error('Project not found');
@@ -43,6 +53,31 @@ class ProjectService {
       const projectObj = project.toObject();
       if (ownerProfile) {
         projectObj.owner.profile = ownerProfile;
+      }
+
+      // Handle Project Hub data
+      if (projectObj.projectHubId) {
+        // Check if ProjectHub is private and user is not authorized
+        if (projectObj.projectHubId.visibility === 'private') {
+          const isOwner = userId && projectObj.owner._id.toString() === userId;
+          const isMember = userId && projectObj.projectHubId.members?.some(
+            m => m.user && m.user._id.toString() === userId
+          );
+          
+          if (!isOwner && !isMember) {
+            // Keep only visibility field for frontend to know it exists but is private
+            projectObj.projectHubId = {
+              _id: projectObj.projectHubId._id,
+              visibility: 'private'
+            };
+          } else {
+            // User is authorized, fetch additional stats
+            await this.enrichProjectHubData(projectObj);
+          }
+        } else {
+          // Public Project Hub, fetch additional stats
+          await this.enrichProjectHubData(projectObj);
+        }
       }
 
       return projectObj;
@@ -457,6 +492,40 @@ class ProjectService {
       return matches ? matches[1] : null;
     } catch {
       return null;
+    }
+  }
+
+  // Helper: Enrich Project Hub data with additional stats
+  async enrichProjectHubData(projectObj) {
+    try {
+      if (!projectObj.projectHubId || !projectObj.projectHubId._id) {
+        return;
+      }
+
+      const hubId = projectObj.projectHubId._id;
+
+      // Fetch devlog count
+      const devlogCount = await Devlog.countDocuments({ projectHub: hubId });
+      
+      // Fetch milestone stats
+      const milestones = await Milestone.find({ projectHubId: hubId });
+      const completedMilestones = milestones.filter(m => m.status === 'Completed').length;
+      
+      // Attach stats to projectHubId
+      projectObj.projectHubId.devlogCount = devlogCount;
+      projectObj.projectHubId.milestoneStats = {
+        completed: completedMilestones,
+        total: milestones.length
+      };
+
+      // Limit members array to 6 if it exists
+      if (projectObj.projectHubId.members && projectObj.projectHubId.members.length > 6) {
+        projectObj.projectHubId.members = projectObj.projectHubId.members.slice(0, 6);
+        projectObj.projectHubId.hasMoreMembers = true;
+      }
+    } catch (error) {
+      console.error('Error enriching Project Hub data:', error);
+      // Don't throw error, just log it and continue
     }
   }
 

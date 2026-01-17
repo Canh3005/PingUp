@@ -7,6 +7,7 @@ import followApi from '../api/followApi';
 import ProjectHeader from '../components/project-view/ProjectHeader';
 import ProjectSidebar from '../components/project-view/ProjectSidebar';
 import ProjectContent from '../components/project-view/ProjectContent';
+import ProjectHubInfo from '../components/project-view/ProjectHubInfo';
 import ProjectRecruitment from '../components/project-view/ProjectRecruitment';
 import ProjectFooter from '../components/project-view/ProjectFooter';
 import ProjectAuthorWorks from '../components/project-view/ProjectAuthorWorks';
@@ -146,7 +147,7 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
       
       // If project has ProjectHub, delete it too
       if (project.projectHubId) {
-        await projectHubApi.deleteProjectHub(project.projectHubId);
+        await projectHubApi.deleteProjectHub(project.projectHubId._id);
       }
       
       toast.success('Project deleted successfully!');
@@ -207,7 +208,7 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
           </div>
         ) : (
           <div className="bg-gradient-to-b from-black/40 to-black/60" onClick={(e) => e.stopPropagation()}>
-            <ProjectHeader project={project} isOwnProject={isOwnProject} onDelete={handleDeleteClick} />
+            <ProjectHeader project={project} isOwnProject={isOwnProject} onDelete={handleDeleteClick} user={user} />
             <ProjectSidebar 
               project={project} 
               onLike={handleLike} 
@@ -221,6 +222,13 @@ const ProjectView = ({ projectId, onClose, onProjectClick }) => {
             <div className="max-w-7xl mx-auto">
               <ProjectContent project={project}/>
             </div>
+
+            {/* Project Hub Info */}
+            {project.projectHubId && project.projectHubId.visibility && (
+              <div className="max-w-7xl mx-auto">
+                <ProjectHubInfo hubData={project.projectHubId} />
+              </div>
+            )}
 
             <div className="max-w-7xl mx-auto">
               <ProjectRecruitment project={project} />

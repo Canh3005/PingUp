@@ -15,8 +15,18 @@ import recruitmentApi from '../../api/recruitmentApi';
 import applicationApi from '../../api/applicationApi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/authContext';
+import { PROJECT_VISIBILITY } from '../../constants/projectVisibility';
 
 const ProjectRecruitment = ({ project }) => {
+  if (!project.projectHubId || !project.projectHubId.visibility) {
+      return null;
+    }
+  
+    // Don't show anything for private hubs (only visibility field is returned)
+    if (project.projectHubId.visibility === PROJECT_VISIBILITY.PRIVATE && !project.projectHubId.progress) {
+      return null;
+    }
+    
   const { user } = useAuth();
   
   const [recruitments, setRecruitments] = useState([]);
@@ -43,7 +53,7 @@ const ProjectRecruitment = ({ project }) => {
     try {
       setLoading(true);
       const response = await recruitmentApi.getRecruitmentsByProjectHub(
-        project.projectHubId,
+        project.projectHubId._id,
         'open'
       );
       setRecruitments(response.data.data);
