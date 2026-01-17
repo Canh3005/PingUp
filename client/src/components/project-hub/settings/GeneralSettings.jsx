@@ -1,5 +1,7 @@
-import React from 'react';
-import { Camera } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import uploadApi from '../../../api/uploadApi';
 
 const GeneralSettings = ({ 
   project, 
@@ -8,8 +10,51 @@ const GeneralSettings = ({
   newTag, 
   setNewTag, 
   handleAddTag, 
-  handleRemoveTag 
+  handleRemoveTag, 
 }) => {
+  const fileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const response = await uploadApi.uploadImage(file);
+      
+      if (response.success && response.result?.url) {
+        handleInputChange('logo', response.result.url);
+        toast.success('Logo uploaded successfully');
+      } else if (response.url) { // Handle different response structure if any
+         handleInputChange('logo', response.url);
+         toast.success('Logo uploaded successfully');
+      } else {
+         toast.error('Failed to get image URL');
+      }
+
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      toast.error('Failed to upload logo');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-6">General Settings</h2>
@@ -18,19 +63,34 @@ const GeneralSettings = ({
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Project Logo</label>
         <div className="flex items-center gap-4">
-          <div className="relative">
+          <div className="relative group cursor-pointer" onClick={handleLogoClick}>
             <img
-              src={project.logo}
+              src={formData.logo || project.logo || "https://placehold.co/200x200?text=Project"}
               alt={project.name}
-              className="w-20 h-20 rounded-xl object-cover"
+              className={`w-20 h-20 rounded-xl object-cover transition-opacity ${isUploading ? 'opacity-50' : ''}`}
             />
-            <button className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl opacity-0 hover:opacity-100 transition-opacity">
-              <Camera size={24} className="text-white" />
-            </button>
+            <div className={`absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+              {isUploading ? (
+                <Loader2 size={24} className="text-white animate-spin" />
+              ) : (
+                 <Camera size={24} className="text-white" />
+              )}
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
           </div>
           <div>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-              Change Logo
+            <button 
+              onClick={handleLogoClick}
+              disabled={isUploading}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              {isUploading ? 'Uploading...' : 'Change Logo'}
             </button>
             <p className="text-xs text-gray-500 mt-2">Recommended: 200x200px, PNG or JPG</p>
           </div>

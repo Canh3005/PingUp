@@ -21,6 +21,7 @@ const SettingsTab = ({ project, setProject }) => {
 
   // Form states
   const [formData, setFormData] = useState({
+    logo: project.logo,
     name: project.name,
     description: project.description,
     visibility: project.visibility,
@@ -57,6 +58,7 @@ const SettingsTab = ({ project, setProject }) => {
   const handleSave = async () => {
     try {
       const updateData = {
+        logo: formData.logo,
         name: formData.name,
         description: formData.description,
         visibility: formData.visibility,
@@ -172,7 +174,20 @@ const SettingsTab = ({ project, setProject }) => {
             <div className="fixed bottom-6 right-6 flex items-center gap-3 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
               <span className="text-sm text-gray-600">You have unsaved changes</span>
               <button
-                onClick={() => setHasChanges(false)}
+                onClick={() => {
+                  setFormData({
+                    logo: project.logo,
+                    name: project.name,
+                    description: project.description,
+                    visibility: project.visibility,
+                    tags: project.tags,
+                    github: project.integrations?.github || '',
+                    figma: project.integrations?.figma || '',
+                    discord: project.integrations?.discord || '',
+                    website: project.website || '',
+                  });
+                  setHasChanges(false);
+                }}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Discard
