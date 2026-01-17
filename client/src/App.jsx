@@ -15,6 +15,7 @@ import ProjectViewPage from "./pages/ProjectViewPage.jsx";
 import EditProjectPage from "./pages/EditProjectPage.jsx";
 import ProjectHub from "./pages/ProjectHub.jsx";
 import CreateProjectHub from "./pages/CreateProjectHub.jsx";
+import MyHubs from "./pages/MyHubs.jsx";
 
 const App = () => {
 
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="project/:projectId" element={<ProjectViewPage />} />
           <Route path="discover" element={<Discover />} />
         </Route>
+        <Route path="my-hubs" element={<MyHubs />} />
         <Route path="project-hub/create" element={<CreateProjectHub />} />
         <Route path="project-hub/:projectId" element={<ProjectHub />} />
         <Route path="project-hub" element={<ProjectHub />} />

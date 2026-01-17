@@ -44,7 +44,7 @@ const ProjectHubInfo = ({ hubData }) => {
       </div>
 
       {/* Content */}
-      <div className="p-8">
+      <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Progress Section */}
             <div className="lg:col-span-1">

@@ -157,7 +157,7 @@ const Navbar = () => {
                         <button
                           onClick={() => {
                             setShowMenu(false);
-                            navigate("/project-hub");
+                            navigate("/my-hubs");
                           }}
                           className="w-full px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
                         >
