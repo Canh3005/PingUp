@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="UC02" id="uc-showcase">
+    <mxGraphModel dx="1426" dy="743" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="system" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;startSize=40;" value="UC02: QUẢN LÝ PROJECT SHOWCASE" vertex="1">
+          <mxGeometry height="740" width="900" x="135" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc1" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Tạo project" vertex="1">
+          <mxGeometry height="70" width="130" x="140" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="uc2" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Cập nhật project" vertex="1">
+          <mxGeometry height="70" width="130" x="140" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="uc3" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Xóa project" vertex="1">
+          <mxGeometry height="70" width="130" x="140" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="uc4" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Xem project" vertex="1">
+          <mxGeometry height="70" width="130" x="140" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="uc5" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Publish&#xa;project" vertex="1">
+          <mxGeometry height="70" width="130" x="140" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="sub1" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Upload&#xa;media" vertex="1">
+          <mxGeometry height="60" width="110" x="420" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="sub2" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Rich&#xa;Editor" vertex="1">
+          <mxGeometry height="60" width="110" x="420" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="sub3" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Check&#xa;ownership" vertex="1">
+          <mxGeometry height="60" width="110" x="420" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="soc1" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Like project" vertex="1">
+          <mxGeometry height="65" width="120" x="650" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="soc2" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Comment" vertex="1">
+          <mxGeometry height="65" width="120" x="650" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="soc3" parent="system" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Share&#xa;project" vertex="1">
+          <mxGeometry height="65" width="120" x="650" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="rel1" edge="1" parent="system" source="uc1" target="sub1" style="html=1;dashed=1;endArrow=open;endSize=8;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel1lab" value="&lt;&lt;include&gt;&gt;" style="edgeLabel;fontSize=9;" vertex="1" parent="rel1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel2" edge="1" parent="system" source="uc1" target="sub2" style="html=1;dashed=1;endArrow=open;endSize=8;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel2lab" value="&lt;&lt;include&gt;&gt;" style="edgeLabel;fontSize=9;" vertex="1" parent="rel2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel3" edge="1" parent="system" source="uc2" target="sub3" style="html=1;dashed=1;endArrow=open;endSize=8;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel3lab" value="&lt;&lt;include&gt;&gt;" style="edgeLabel;fontSize=9;" vertex="1" parent="rel3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="actor1" parent="1" style="shape=umlActor;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Creator" vertex="1">
+          <mxGeometry height="90" width="45" x="30" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="actor2" parent="1" style="shape=umlActor;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Viewer" vertex="1">
+          <mxGeometry height="90" width="45" x="1095" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" edge="1" parent="1" source="actor1" target="uc1" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" edge="1" parent="1" source="actor1" target="uc2" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" edge="1" parent="1" source="actor1" target="uc3" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" edge="1" parent="1" source="actor1" target="uc4" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" edge="1" parent="1" source="actor1" target="uc5" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" edge="1" parent="1" source="actor2" target="uc4" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" edge="1" parent="1" source="actor2" target="soc1" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" edge="1" parent="1" source="actor2" target="soc2" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" edge="1" parent="1" source="actor2" target="soc3" style="endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

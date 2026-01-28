@@ -1,0 +1,137 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.6">
+  <diagram name="UC04-Activity" id="uc04-activity">
+    <mxGraphModel dx="1826" dy="1143" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" value="ACTIVITY DIAGRAM: XIN APPLY VÀO DỰ ÁN (UC04)" vertex="1">
+          <mxGeometry height="30" width="810" x="-28" y="-95" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_user" parent="1" style="swimlane;html=1;startSize=50;fillColor=#E8E8E8;strokeColor=#000000;fontStyle=1;fontSize=12;horizontal=1;swimlaneFillColor=#F5F5F5;" value="NGƯỜI DÙNG&#xa;(Logged In)" vertex="1">
+          <mxGeometry height="1236" width="323" x="-33" y="-63" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="lane_user" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="120" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="act1" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Xem chi tiết project&#xa;và thông tin tuyển dụng" vertex="1">
+          <mxGeometry height="60" width="150" x="60" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="lane_user" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;" target="act1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="act2" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Nhấn nút&#xa;&quot;Apply&quot;" vertex="1">
+          <mxGeometry height="60" width="150" x="60" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="act3" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Nhập Cover Note&#xa;và Portfolio URL&#xa;(optional)" vertex="1">
+          <mxGeometry height="70" width="150" x="60" y="561" as="geometry" />
+        </mxCell>
+        <mxCell id="act4" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Nhấn&#xa;&quot;Submit Application&quot;" vertex="1">
+          <mxGeometry height="60" width="150" x="60" y="679" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_act3_act4" edge="1" parent="lane_user" source="act3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;" target="act4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="err1" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;dashed=1;" value="Hiển thị lỗi&#xa;&quot;Bạn đã là thành viên&#xa;của dự án rồi&quot;" vertex="1">
+          <mxGeometry height="70" width="150" x="60" y="399" as="geometry" />
+        </mxCell>
+        <mxCell id="err3" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;dashed=1;" value="Hiển thị lỗi&#xa;&quot;URL không hợp lệ&quot;" vertex="1">
+          <mxGeometry height="60" width="150" x="60" y="852" as="geometry" />
+        </mxCell>
+        <mxCell id="act_success" parent="lane_user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Hiển thị thông báo&lt;br&gt;&quot;Application submitted&lt;br&gt;successfully!&quot;" vertex="1">
+          <mxGeometry height="80" width="150" x="60" y="1069" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_success_end" edge="1" parent="lane_user" source="act_success" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="A29nYwnPP2QeELZkRRmJ-1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="135" y="1080" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="A29nYwnPP2QeELZkRRmJ-1" parent="lane_user" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=light-dark(#000000, #ff9090);" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="120" y="1183" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_err2_end" edge="1" parent="lane_user" source="err1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="A29nYwnPP2QeELZkRRmJ-1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="434" />
+              <mxPoint x="20" y="1198" />
+            </Array>
+            <mxPoint x="57" y="639" as="sourcePoint" />
+            <mxPoint x="135" y="1120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="A29nYwnPP2QeELZkRRmJ-3" edge="1" parent="lane_user" source="act1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="586" y="275" as="sourcePoint" />
+            <mxPoint x="586" y="362" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lane_system" parent="1" style="swimlane;html=1;startSize=50;fillColor=#D8D8D8;strokeColor=#000000;fontStyle=1;fontSize=12;horizontal=1;swimlaneFillColor=#ECECEC;" value="HỆ THỐNG&#xa;(Server)" vertex="1">
+          <mxGeometry height="1236" width="540" x="290" y="-63" as="geometry" />
+        </mxCell>
+        <mxCell id="dec2" parent="lane_system" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Là thành viên&amp;nbsp;&lt;div&gt;dự án ?&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="140" x="207" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="sys2" parent="lane_system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Hiển thị popup&#xa;nhập thông tin apply" vertex="1">
+          <mxGeometry height="60" width="180" x="187" y="499" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_dec2_modal" edge="1" parent="lane_system" source="dec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;" target="sys2" value="Không">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dec3" parent="lane_system" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Cover Note&#xa;có rỗng?&#xa;Portfolio URL&#xa;hợp lệ?" vertex="1">
+          <mxGeometry height="100" width="170" x="192" y="752" as="geometry" />
+        </mxCell>
+        <mxCell id="sys3" parent="lane_system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Lưu Application vào DB&#xa;(status: pending)" vertex="1">
+          <mxGeometry height="60" width="180" x="187" y="905" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_valid_save" edge="1" parent="lane_system" source="dec3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;" target="sys3" value="Hợp lệ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sys4" parent="lane_system" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;" value="Gửi thông báo đến&#xa;owner/admin của project&#xa;Log activity" vertex="1">
+          <mxGeometry height="70" width="180" x="187" y="1002" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_save_notify" edge="1" parent="lane_system" source="sys3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;" target="sys4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_act1_sys1" edge="1" parent="1" source="act2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="dec2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="470" y="119" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_sys2_act3" edge="1" parent="1" source="sys2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="act3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_act4_dec3" edge="1" parent="1" source="act4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="dec3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="646" />
+              <mxPoint x="510" y="646" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_dec3_err3" edge="1" parent="1" source="dec3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="err3" value="Không hợp lệ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_err3_back" edge="1" parent="1" source="err3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="act3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="7" y="819" />
+              <mxPoint x="7" y="533" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_sys4_success" edge="1" parent="1" source="sys4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act_success" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="102" y="974" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="A29nYwnPP2QeELZkRRmJ-4" edge="1" parent="1" source="dec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="err1" value="Có">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="564" y="367" as="sourcePoint" />
+            <mxPoint x="564" y="456" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,313 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.6">
+  <diagram id="F-Kh4pa-u4Mi7TCDVs94" name="Page-1">
+    <mxGraphModel dx="1678" dy="874" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1800" pageHeight="1800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=18;fontColor=#000000;" value="SEQUENCE DIAGRAM: APPLY VÀO DỰ ÁN (UC04)" vertex="1">
+          <mxGeometry height="30" width="480" x="420" y="33" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="Client&lt;br&gt;(Browser)" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_client" edge="1" parent="1" source="client" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="55" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_client" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="1400" width="10" x="50" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="server" parent="1" style="ellipse;shape=umlBoundary;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;spacingTop=45;fontColor=#000000;" value="Server&lt;br&gt;(Express)" vertex="1">
+          <mxGeometry height="60" width="70" x="140" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_server" edge="1" parent="1" source="server" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="175" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_server" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="1360" width="10" x="170" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="auth" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="Auth&lt;br&gt;Controller" vertex="1">
+          <mxGeometry height="60" width="70" x="260" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_auth" edge="1" parent="1" source="auth" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="295" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_auth" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="150" width="10" x="290" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="db_user" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="MongoDB&lt;br&gt;(User)" vertex="1">
+          <mxGeometry height="60" width="60" x="380" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_db_user" edge="1" parent="1" source="db_user" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="410" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_db_user" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="50" width="10" x="405" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="app_ctrl" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="Application&lt;br&gt;Controller" vertex="1">
+          <mxGeometry height="60" width="80" x="500" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_app_ctrl" edge="1" parent="1" source="app_ctrl" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="540" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_app_ctrl" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="1140" width="10" x="535" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="app_srv" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="Application&lt;br&gt;Service" vertex="1">
+          <mxGeometry height="60" width="80" x="640" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_app_srv" edge="1" parent="1" source="app_srv" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="680" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_app_srv" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="1080" width="10" x="675" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="db_recruit" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="MongoDB&lt;br&gt;(Recruit)" vertex="1">
+          <mxGeometry height="60" width="60" x="780" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_db_recruit" edge="1" parent="1" source="db_recruit" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="810" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_db_recruit" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="60" width="10" x="805" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="db_hub" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="MongoDB&lt;br&gt;(Hub)" vertex="1">
+          <mxGeometry height="60" width="60" x="920" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_db_hub" edge="1" parent="1" source="db_hub" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="950" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_db_hub" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="60" width="10" x="945" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="db_app" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="MongoDB&lt;br&gt;(App)" vertex="1">
+          <mxGeometry height="60" width="60" x="1060" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_db_app" edge="1" parent="1" source="db_app" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1090" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_db_app" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="350" width="10" x="1085" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="db_act" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="MongoDB&lt;br&gt;(Activity)" vertex="1">
+          <mxGeometry height="60" width="60" x="1200" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_db_act" edge="1" parent="1" source="db_act" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1230" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_db_act" parent="1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffffff;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="60" width="10" x="1225" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="msg1" edge="1" parent="1" source="act_client" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_server" value="1. POST /applications (data)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="160" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg2" edge="1" parent="1" source="act_server" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_auth" value="2. verifyToken(jwt)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="190" y="190" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg3" edge="1" parent="1" source="act_auth" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_user" value="3. User.findById(userId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="210" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg4" edge="1" parent="1" source="act_db_user" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_auth" value="4. user document">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="240" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alt_1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=15;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="alt" vertex="1">
+          <mxGeometry height="80" width="220" x="130" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="txt_alt1_ok" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Hợp lệ]" vertex="1">
+          <mxGeometry height="20" width="50" x="180" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="msg5" edge="1" parent="1" source="act_auth" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_server" value="5. next()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="290" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_alt1" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="130" y="300" as="sourcePoint" />
+            <mxPoint x="350" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="txt_alt1_fail" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Else]" vertex="1">
+          <mxGeometry height="20" width="30" x="130" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="err_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="Error: Unauthorized" vertex="1">
+          <mxGeometry height="20" width="100" x="230" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="msg6" edge="1" parent="1" source="act_server" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_app_ctrl" value="6. createApplication(req, res)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="190" y="360" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg7" edge="1" parent="1" source="act_app_ctrl" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_app_srv" value="7. createApplication(userId, data)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="400" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg8" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_recruit" value="8. Recruitment.findById(id)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="440" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg9" edge="1" parent="1" source="act_db_recruit" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="9. recruitment doc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="480" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alt_2" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=15;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="alt" vertex="1">
+          <mxGeometry height="110" width="220" x="610" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="txt_alt2_err1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Ko tồn tại || status!=open]" vertex="1">
+          <mxGeometry height="20" width="140" x="650" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="err_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="Throw Error" vertex="1">
+          <mxGeometry height="25" width="80" x="700" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="div_alt2" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="610" y="560" as="sourcePoint" />
+            <mxPoint x="830" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="txt_alt2_ok" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Hợp lệ]" vertex="1">
+          <mxGeometry height="20" width="50" x="610" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_cont_2" parent="1" style="text;html=1;align=center;verticalAlign=middle;rounded=0;fontColor=#000000;fontSize=10;" value="Continue" vertex="1">
+          <mxGeometry height="20" width="60" x="700" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="msg11" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_hub" value="11. ProjectHub.findById(hubId)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="650" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg12" edge="1" parent="1" source="act_db_hub" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="12. projectHub doc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="940" y="690" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alt_3" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=15;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="alt" vertex="1">
+          <mxGeometry height="110" width="370" x="610" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="txt_alt3_err" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[User là owner hoặc member]" vertex="1">
+          <mxGeometry height="20" width="150" x="650" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="err_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="Error: &quot;Cannot apply to own project&quot;" vertex="1">
+          <mxGeometry height="25" width="180" x="720" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="div_alt3" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="610" y="770" as="sourcePoint" />
+            <mxPoint x="980" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="txt_alt3_ok" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Hợp lệ]" vertex="1">
+          <mxGeometry height="20" width="50" x="610" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="msg14" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_app" value="14. Application.findOne(filter)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="860" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg15" edge="1" parent="1" source="act_db_app" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="15. existing or null">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="900" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alt_4" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=15;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;" value="alt" vertex="1">
+          <mxGeometry height="110" width="510" x="610" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="txt_alt4_err" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Đã apply]" vertex="1">
+          <mxGeometry height="20" width="60" x="650" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="err_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="Error: &quot;Already applied&quot;" vertex="1">
+          <mxGeometry height="25" width="130" x="780" y="945" as="geometry" />
+        </mxCell>
+        <mxCell id="div_alt4" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;strokeColor=#000000;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="610" y="980" as="sourcePoint" />
+            <mxPoint x="1120" y="980" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="txt_alt4_ok" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontStyle=2;fontSize=10;fontColor=#000000;" value="[Chưa apply]" vertex="1">
+          <mxGeometry height="20" width="70" x="610" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="msg17" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_app" value="17. new Application(data)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="1060" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg18" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_app" value="18. save()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="1100" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg19" edge="1" parent="1" source="act_db_app" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="19. saved application">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="1140" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg20" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_app" value="20. populate(applicant, recruitment)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="1180" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg21" edge="1" parent="1" source="act_db_app" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="21. populated data">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="1220" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg22" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;strokeColor=#000000;" target="act_db_act" value="22. HubActivity.create(...)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="1300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg23" edge="1" parent="1" source="act_db_act" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_srv" value="23. activity logged">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1220" y="1340" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg24" edge="1" parent="1" source="act_app_srv" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_app_ctrl" value="24. return application">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="670" y="1400" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg25" edge="1" parent="1" source="act_app_ctrl" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_server" value="25. res.status(201).json(...)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="1460" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg26" edge="1" parent="1" source="act_server" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;rounded=0;strokeColor=#000000;" target="act_client" value="26. Response: success">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="1520" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

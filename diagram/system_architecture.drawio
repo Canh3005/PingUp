@@ -1,0 +1,176 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.6">
+  <diagram name="System Architecture - PingUp" id="system-arch">
+    <mxGraphModel dx="1188" dy="619" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" value="SYSTEM ARCHITECTURE - PINGUP" vertex="1">
+          <mxGeometry height="40" width="640" x="60" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="client-layer-container" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D4E4F7;strokeColor=#4A90E2;strokeWidth=2;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=12;fontStyle=1;fontColor=#1E3A8A;" value="CLIENT LAYER (Browser)" vertex="1">
+          <mxGeometry height="160" width="610" x="80" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="web-browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3D9FF;strokeColor=#0066CC;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="Web Browser" vertex="1">
+          <mxGeometry height="110" width="570" x="100" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="react" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E6;strokeColor=#FF9800;fontSize=9;fontStyle=0" value="React (Vite)&#xa;v19.1.1" vertex="1">
+          <mxGeometry height="40" width="75" x="115" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="router" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FFA726;fontSize=9;fontStyle=0" value="React Router&#xa;v7.9.5" vertex="1">
+          <mxGeometry height="40" width="70" x="196" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="tailwind" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#66BB6A;fontSize=9;fontStyle=0" value="TailwindCSS&#xa;v4.1.16" vertex="1">
+          <mxGeometry height="40" width="65" x="275" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="socket-client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#AB47BC;fontSize=9;fontStyle=0" value="Socket.IO&#xa;Client" vertex="1">
+          <mxGeometry height="40" width="60" x="350" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="axios" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF7043;fontSize=9;fontStyle=0" value="Axios&#xa;HTTP" vertex="1">
+          <mxGeometry height="40" width="50" x="420" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudinary-widget" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#29B6F6;fontSize=9;fontStyle=0" value="Cloudinary&#xa;Upload" vertex="1">
+          <mxGeometry height="40" width="60" x="480" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="lucide" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FFB74D;fontSize=9;fontStyle=0" value="Lucide&#xa;Icons" vertex="1">
+          <mxGeometry height="40" width="50" x="550" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="toast" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#EF5350;fontSize=9;fontStyle=0" value="React Hot&#xa;Toast" vertex="1">
+          <mxGeometry height="40" width="50" x="610" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="http-arrow" edge="1" parent="1" source="web-browser" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#0066CC;strokeWidth=2;fontSize=10;fontColor=#0066CC;fontStyle=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="server-layer-container" value="HTTP/REST">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="220" y="240" as="sourcePoint" />
+            <mxPoint x="220" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="websocket-arrow" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#AB47BC;strokeWidth=2;fontSize=10;fontColor=#AB47BC;fontStyle=1;dashed=1;" target="socket-server" value="WebSocket">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="530" y="250" />
+            </Array>
+            <mxPoint x="530" y="220" as="sourcePoint" />
+            <mxPoint x="500" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="server-layer-container" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;strokeColor=#4CAF50;strokeWidth=2;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=12;fontStyle=1;fontColor=#1B5E20;" value="SERVER LAYER (Node.js)" vertex="1">
+          <mxGeometry height="240" width="570" x="100" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="express-server" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="Express.js Server" vertex="1">
+          <mxGeometry height="180" width="270" x="120" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="rest-routes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57C00;fontSize=9;fontStyle=1;align=left;spacingLeft=5;verticalAlign=top" value="REST API Routes" vertex="1">
+          <mxGeometry height="75" width="110" x="136" y="341.5" as="geometry" />
+        </mxCell>
+        <mxCell id="routes-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=7;spacingLeft=3" value="/auth/login&#xa;/auth/register&#xa;/profile&#xa;/projects&#xa;/project-hubs&#xa;/tasks" vertex="1">
+          <mxGeometry height="50" width="75" x="150" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="controllers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#E65100;fontSize=9;fontStyle=1;align=left;spacingLeft=5;verticalAlign=top" value="Controllers" vertex="1">
+          <mxGeometry height="75" width="114" x="260" y="341.5" as="geometry" />
+        </mxCell>
+        <mxCell id="controllers-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=7;spacingLeft=3" value="authController&#xa;userController&#xa;projectController&#xa;hubController&#xa;taskController&#xa;chatController" vertex="1">
+          <mxGeometry height="50" width="70" x="270" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="middleware" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F57F17;fontSize=9;fontStyle=0" value="Middlewares&#xa;(Auth, JWT)" vertex="1">
+          <mxGeometry height="30" width="107" x="139" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="services" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Services&#xa;(Business Logic)" vertex="1">
+          <mxGeometry height="30" width="110" x="260" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="validators" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;fontSize=9;fontStyle=0" value="Validators&#xa;(Zod)" vertex="1">
+          <mxGeometry height="25" width="107" x="139" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="utils" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=9;fontStyle=0" value="Utils&#xa;(Helpers)" vertex="1">
+          <mxGeometry height="25" width="111" x="260" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="socket-server" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="Socket.IO Server" vertex="1">
+          <mxGeometry height="180" width="240" x="410" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="realtime-events" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=9;fontStyle=1;align=left;spacingLeft=5;verticalAlign=top" value="Real-time Events" vertex="1">
+          <mxGeometry height="88.5" width="100" x="430" y="341.5" as="geometry" />
+        </mxCell>
+        <mxCell id="event-list" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=7;spacingLeft=3" value="joinRoom&#xa;sendMessage&#xa;typing&#xa;messageRead&#xa;disconnect" vertex="1">
+          <mxGeometry height="50" width="95" x="435" y="364" as="geometry" />
+        </mxCell>
+        <mxCell id="chat-handler" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#6A1B9A;fontSize=9;fontStyle=0" value="ChatHandler" vertex="1">
+          <mxGeometry height="25" width="90" x="547.5" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="notification-handler" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=9;fontStyle=0" value="NotificationManager" vertex="1">
+          <mxGeometry height="25" width="90" x="547.5" y="376.5" as="geometry" />
+        </mxCell>
+        <mxCell id="online-status" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#3F51B5;fontSize=9;fontStyle=0" value="OnlineStatus&#xa;Tracker" vertex="1">
+          <mxGeometry height="25" width="90" x="547.5" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="socket-auth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=9;fontStyle=0" value="Auth&#xa;(Socket Middleware)" vertex="1">
+          <mxGeometry height="35" width="100" x="430" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="security" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;fontSize=9;fontStyle=0" value="Security&#xa;(Helmet, CORS)" vertex="1">
+          <mxGeometry height="25" width="90" x="547.5" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="mongoose-arrow" edge="1" parent="1" source="server-layer-container" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#FF6B00;strokeWidth=2;fontSize=10;fontColor=#FF6B00;fontStyle=1;exitX=0.818;exitY=1.008;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.53;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;" target="database-layer" value="Mongoose">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points" />
+            <mxPoint x="200" y="520" as="sourcePoint" />
+            <mxPoint x="200" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="database-layer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8D6;strokeColor=#FF9800;strokeWidth=2;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;fontSize=12;fontStyle=1;fontColor=#E65100;" value="DATABASE LAYER" vertex="1">
+          <mxGeometry height="151.25" width="370" x="370" y="573.13" as="geometry" />
+        </mxCell>
+        <mxCell id="mongodb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="MongoDB (Mongoose ODM)" vertex="1">
+          <mxGeometry height="97.5" width="330" x="390" y="603.75" as="geometry" />
+        </mxCell>
+        <mxCell id="external-services" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;dashed=1;verticalAlign=top;align=center;spacingLeft=10;spacingTop=5;fontSize=12;fontStyle=1;fontColor=#880E4F;" value="EXTERNAL SERVICES" vertex="1">
+          <mxGeometry height="154.38" width="310" x="40" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudinary-service" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="Cloudinary CDN" vertex="1">
+          <mxGeometry height="106.25" width="120" x="52.5" y="603.75" as="geometry" />
+        </mxCell>
+        <mxCell id="image-storage" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=9" value="Image Storage&#xa;(Avatars, Covers, Media)" vertex="1">
+          <mxGeometry height="35" width="105" x="60" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="security-service" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;strokeWidth=1;verticalAlign=top;align=center;spacingTop=5;fontSize=11;fontStyle=1" value="Security Stack" vertex="1">
+          <mxGeometry height="105" width="160" x="180" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="security-features" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=8;spacingLeft=10" value="• JWT Authentication (jsonwebtoken)&#xa;• Bcrypt Password Hashing&#xa;• Helmet.js (Security Headers)&#xa;• CORS Policy &amp; HTTPS Only" vertex="1">
+          <mxGeometry height="47.5" width="150" x="190" y="633.75" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudinary-arrow" edge="1" parent="1" source="server-layer-container" style="endArrow=classic;html=1;strokeColor=#C2185B;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.186;exitY=1.001;exitDx=0;exitDy=0;dashed=1;exitPerimeter=0;" target="external-services" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="206" y="540" />
+            </Array>
+            <mxPoint x="720" y="400" as="sourcePoint" />
+            <mxPoint x="770" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="User" vertex="1">
+          <mxGeometry height="25" width="50" x="410" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="UserProfile" vertex="1">
+          <mxGeometry height="25" width="60" x="470" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-31" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Project" vertex="1">
+          <mxGeometry height="25" width="50" x="540" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="ProjectHub" vertex="1">
+          <mxGeometry height="25" width="60" x="600" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-33" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Task" vertex="1">
+          <mxGeometry height="25" width="35" x="670" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Milestone" vertex="1">
+          <mxGeometry height="20" width="60" x="410" y="673.74" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Recruitment" vertex="1">
+          <mxGeometry height="20" width="70" x="490" y="673.74" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-36" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Application" vertex="1">
+          <mxGeometry height="20" width="70" x="570" y="673.74" as="geometry" />
+        </mxCell>
+        <mxCell id="Wk6afZprBwEtepLdMYJV-37" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=9;fontStyle=0" value="Comment" vertex="1">
+          <mxGeometry height="20" width="55" x="650" y="673.74" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
