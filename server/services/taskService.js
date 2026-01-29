@@ -279,6 +279,11 @@ class TaskService {
         );
       }
 
+      // Populate fields before returning
+      await task.populate('assignees', 'name avatarUrl jobTitle');
+      await task.populate('createdBy', 'name avatarUrl');
+      await task.populate('mileStoneId', 'title');
+
       return task;
     } catch (error) {
       throw new Error(`Error assigning user: ${error.message}`);
@@ -308,6 +313,11 @@ class TaskService {
         task._id,
         task.title
       );
+
+      // Populate fields before returning
+      await task.populate('assignees', 'name avatarUrl jobTitle');
+      await task.populate('createdBy', 'name avatarUrl');
+      await task.populate('mileStoneId', 'title');
 
       return task;
     } catch (error) {

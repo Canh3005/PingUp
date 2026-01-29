@@ -17,6 +17,7 @@ import {
 import taskApi from '../../../api/taskApi';
 import milestoneApi from '../../../api/milestoneApi';
 import CreateTaskModal from './CreateTaskModal';
+import AssignMemberDropdown from './AssignMemberDropdown';
 import { getAllLabelTypes, getLabelColor as getConstantLabelColor } from '../../../constants/labelTypes';
 
 const TasksTab = ({ project }) => {
@@ -33,6 +34,7 @@ const TasksTab = ({ project }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTask, setEditedTask] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [showAssignDropdown, setShowAssignDropdown] = useState(false);
 
   // Column configuration
   const columnConfig = {
@@ -177,6 +179,40 @@ const TasksTab = ({ project }) => {
       alert(err.response?.data?.message || 'Failed to update task');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleAssignMember = async (taskId, memberId) => {
+    try {
+      const updatedTask = await taskApi.assignUser(taskId, memberId);
+      
+      // Update selected task if it's the one being modified
+      if (selectedTask && selectedTask._id === taskId) {
+        setSelectedTask(updatedTask);
+      }
+      
+      // Update tasks list
+      setTasks(tasks.map(t => t._id === taskId ? updatedTask : t));
+    } catch (err) {
+      console.error('Error assigning member:', err);
+      alert(err.response?.data?.message || 'Failed to assign member');
+    }
+  };
+
+  const handleUnassignMember = async (taskId, memberId) => {
+    try {
+      const updatedTask = await taskApi.unassignUser(taskId, memberId);
+      
+      // Update selected task if it's the one being modified
+      if (selectedTask && selectedTask._id === taskId) {
+        setSelectedTask(updatedTask);
+      }
+      
+      // Update tasks list
+      setTasks(tasks.map(t => t._id === taskId ? updatedTask : t));
+    } catch (err) {
+      console.error('Error unassigning member:', err);
+      alert(err.response?.data?.message || 'Failed to unassign member');
     }
   };
 
@@ -493,7 +529,7 @@ const TasksTab = ({ project }) => {
               {/* Assignees */}
               <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Assignees</h4>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   {selectedTask.assignees && selectedTask.assignees.length > 0 ? (
                     selectedTask.assignees.map((assignee) => (
                       <div key={assignee._id} className="flex items-center gap-2">
@@ -508,9 +544,22 @@ const TasksTab = ({ project }) => {
                   ) : (
                     <span className="text-sm text-gray-400">No assignees yet</span>
                   )}
-                  <button className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-500">
-                    <Plus size={14} />
-                  </button>
+                  <div className="relative">
+                    <button 
+                      onClick={() => setShowAssignDropdown(!showAssignDropdown)}
+                      className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-500 transition-colors"
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <AssignMemberDropdown
+                      task={selectedTask}
+                      projectMembers={project?.members || []}
+                      onAssign={handleAssignMember}
+                      onUnassign={handleUnassignMember}
+                      isOpen={showAssignDropdown}
+                      onClose={() => setShowAssignDropdown(false)}
+                    />
+                  </div>
                 </div>
               </div>
 
